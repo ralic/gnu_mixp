@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+#
+
+TEST_DIR=@abs_top_srcdir@/test
+
+cd ${TEST_DIR} && ../guile-expat ./test-mixp.scm

@@ -5,7 +5,7 @@
  * Portions created by Thierry Bézecourt are Copyright (C) 1999, 2000
  * Thierry Bézecourt. All Rights Reserved.
  * 
- * Copyright (C) 2002 Dmitry Morozhnikov <dmiceman@mail.ru>
+ * Copyright (C) 2002, 2003 Dmitry Morozhnikov <dmiceman@mail.ru>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@
 
 #include "gexpat.h"
 #include "generic_handlers.h"
+
+#include <config.h>
 
 /*
 #define MAX_ALLOC 10000000
@@ -168,14 +170,14 @@ make_xml_parser_smob(XML_Parser xml_parser)
   SCM_DEFER_INTS;
 /*=   copy = (XML_Parser *)scm_must_malloc(sizeof(XML_Parser),
  *= 				       "XML_Parser"); =*/
-  copy = (mixp_xml_parser *)scm_gc_malloc(sizeof(XML_Parser) + sizeof(short),
+  copy = (mixp_xml_parser *)GUILE_GC_MALLOC(sizeof(XML_Parser) + sizeof(short),
 					    "mixp_xml_parser");
   SCM_ALLOW_INTS;
 /*=   *copy = xml_parser; =*/
   copy->p = xml_parser;
   copy->freed = 0;
 
-  smob = scm_cell(xml_parser_tag, copy);
+  SCM_NEWSMOB(smob, xml_parser_tag, copy);
 
   return smob;
 }
@@ -462,7 +464,7 @@ SCM_DEFINE(make_xml_encoding, "make-xml-encoding", \
 	     release, SCM_ARG1, "make-xml-encoding");
     
   SCM_DEFER_INTS;
-  xml_encoding = (XML_Encoding *)scm_gc_malloc(sizeof(XML_Encoding),
+  xml_encoding = (XML_Encoding *)GUILE_GC_MALLOC(sizeof(XML_Encoding),
 						 "XML_Encoding");
   SCM_ALLOW_INTS;
 
@@ -474,7 +476,7 @@ SCM_DEFINE(make_xml_encoding, "make-xml-encoding", \
   /* The user data, which we encapsulate into our own layer, which
      also contains the convert and release functions */
   SCM_DEFER_INTS;
-  xml_encoding->data = scm_gc_malloc(sizeof(xml_encoding_data),
+  xml_encoding->data = GUILE_GC_MALLOC(sizeof(xml_encoding_data),
 				       "xml_encoding_data");
   SCM_ALLOW_INTS;
 
@@ -489,7 +491,7 @@ SCM_DEFINE(make_xml_encoding, "make-xml-encoding", \
   xml_encoding->convert = generic_xml_encoding_convert;
   xml_encoding->release = generic_xml_encoding_release;
   
-  xml_encoding_smob = scm_cell(xml_encoding_tag, xml_encoding);
+  SCM_NEWSMOB(xml_encoding_smob, xml_encoding_tag, xml_encoding);
 
   return xml_encoding_smob;
 }
@@ -935,7 +937,7 @@ SCM_DEFINE(xml_set_unknown_encoding_handler, \
 
   SCM_DEFER_INTS;
   ehd = (encoding_handler_data *)
-    scm_gc_malloc(sizeof(encoding_handler_data), "encoding handler data");
+    GUILE_GC_MALLOC(sizeof(encoding_handler_data), "encoding handler data");
   SCM_ALLOW_INTS;
 
   init_xml_parser1(parser, handler, "expat:set-unknown-encoding-handler",

@@ -1,6 +1,10 @@
 AUTOMAKE_OPTIONS = foreign
 
+ACLOCAL_AMFLAGS = -I aclocal
+
 lib_LTLIBRARIES = libmixp.la
+
+INCLUDES = -I.
 
 libmixp_la_SOURCES = gexpat.c
 libmixp_la_CFLAGS = @EXPAT_CFLAGS@
@@ -25,11 +29,13 @@ subpkgdata_DATA = xml/mixp.scm xml/expat.scm
 
 gexpat.x: gexpat.h generic_handlers.h
 
+TESTS = check-mixp
+
 SUFFIXES = .x
 ## We assume the user has already installed Guile.
 SNARF=guile-snarf
 .c.x:
-	$(SNARF) -D -o $@ $< $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+	$(SNARF) -o $@ $< $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 
 ## Add -MG to make the .x magic work with auto-dep code.
 MKDEP = gcc -M -MG $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
