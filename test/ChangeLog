@@ -1,0 +1,8 @@
+2004-06-28  Dale P. Smith  <dsmith@sourceforge.net>
+
+	* test-mixp.scm: Changed all non-syntax unquoted () to '().
+	Changed all calls to format to include the port (or #t/#f) as a
+	first argument.
+
+	
+
