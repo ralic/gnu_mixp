@@ -1,0 +1,66 @@
+2001-08-12  Seth Alves, Eric Hanchrow
+
+	* Seth and Eric reported a compilation problem: CFLAGS included
+	the standard directories before the expat directory, which could
+	lead to compilation errors if another version of expat is
+	installed somewhere else.
+
+	* Other patches by Seth Alves seem to be necessary with the CVS
+	version of Guile. See the INSTALL file.
+
+2001-07-14  Thierry Bezecourt  <thbz@thbz.org>
+
+        * No functionality modification. I only change my email address.
+	
+2000-08-30  Thierry Bezecourt  <thbz@thbz.cx>
+
+	* mixp.texi: more documentation about handlers.
+
+	* gexpat.c, generic_handlers.h: debugging of the external entity
+	parsing.
+
+2000-08-26  Thierry Bezecourt  <thbz@thbz.cx>
+
+	* gexpat.c, generic_handlers.h: support for external entity
+	parsing (see doc.)
+
+	* xml/mixp.scm: added mixp:call-with-input-string and
+	mixp:call-with-input-file
+
+2000-08-01  Thierry Bezecourt  <thbz@thbz.cx>
+
+	* doc/mixp.texi: bug fix in the documentation (Thanks to Olivier
+	Buechel.)
+
+2000-06-16  Thierry Bezecourt  <thbz@thbz.cx>
+
+	* compilation: replaced deprecated function calls (Thanks to
+	Olivier Buechel.)
+	
+2000-02-07  Thierry Bezecourt  <thbz@worldnet.fr>
+
+	* xml/mixp.scm (mixp:tree->list, mixp:list->tree): added these
+	procs.
+
+	* gexpat.c (xml_get_error_code): fixed the return code of this
+	function (which was simply wrong).
+
+2000-01-27  Thierry Bezecourt  <thbz@worldnet.fr>
+
+	* xml/mixp.scm (xml): added two procedures: mixp:xml->list to build a
+	list of XML nodes from a port, mixp:xml->tree to build a tree
+	of XML nodes from a port (the implementation is tail-recursive to
+	avoid stack overflows).
+
+	* gexpat.c, mixp.texi: removed expat:parser-free from the Scheme
+	interface (the garbage collector will take care of that).
+
+1999-12-22  Thierry Bezecourt  <thbz@worldnet.fr>
+
+	* mixp.scm: added mixp:utf8->latin1 to convert UTF-8 strings
+	(returned by the parser) to Latin-1 strings. Will fail if the
+	original string is not a valid UTF-8 string, or if it contains
+	non-Latin-1 characters.
+
+	* mixp.scm: added other conversion functions: mixp:utf8->ucs2,
+	mixp:utf8->ucs4

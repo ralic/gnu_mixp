@@ -1,0 +1,82 @@
+No autoconf/automake (yet).
+
+To install Mixp:
+
+* Compilation
+
+  Run `make' and everything should be fine.
+
+  However, I have tested the compilation under Linux 2.2 and Solaris
+  2.6 only.  If you are on another platform, or if the compilation
+  fails, you may need to edit the Makefile and follow the instructions
+  at the beginning.  Please let me know if you had to modify the
+  Makefile.
+
+  The compilation builds expat in the expat/ directory, a shared
+  library `libexpat.so', and a main program named `guile-expat'. 
+  guile-expat is not really necessary, it is only a version of the
+  guile shell with Mixp included.
+ 
+  If you have any problem, see Troubleshooting.
+
+* Run the test programs: `make test' in the top-level directory.
+
+  It should print "All tests are successful".  See Troubleshooting if
+  it does not. 
+
+* Add the `mixp' subdirectory to your GUILE_LOAD_PATH variable. 
+
+  Note that only the two following files are necessary to use Mixp:
+
+    mixp.scm
+    libexpat.so
+
+  Now you can run the test program manually (or any other Scheme script
+  which uses Mixp) with:
+
+    cd test && guile -s test-mixp.scm
+
+* Install the documentation
+
+  The documentation is in texinfo and Info format in doc/mixp.texi and
+  doc/mixp.info.  It is also available in HTML in doc/mixp_toc.html
+
+* Troubleshooting.
+
+** If the compilation fails
+
+  Please check your version of Guile.  This version has been tested
+  with Guile 1.4.
+
+  I welcome feedback about installing and using Mixp, especially on
+  other platforms than Linux and Solaris.
+
+  2001/08/09: Seth Alves reports that Mixp cannot be compiled with the
+  latest CVS version of Mixp. See his patch in the file
+  patch-seth-20010809. He also reports that one of the tests fails
+  with that version of Mixp.
+
+** If the test fail
+
+  Please relaunch the test in debug mode with the following commands
+  (replace the second line with `setenv GUILE_LOAD_PATH ..' if your
+  shell is csh or tcsh):
+
+    cd test
+    export GUILE_LOAD_PATH=..
+    guile -s test-mixp.scm -d
+
+  Then send the output to me with any other
+  relevant information (Mixp version, Guile version, operating system,
+  compiler, weather information...).  Of course, a patch to fix the bug
+  will be even more welcome...
+
+* Author information
+
+Thierry Bézecourt <mixp@thbz.org> (or <thbz@free.fr>).
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:

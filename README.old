@@ -1,0 +1,106 @@
+Mixp
+
+* What is Mixp
+
+Mixp is a Guile interface to expat, James Clark's XML Parser.  
+
+It is not complete because some features are lacking or are not
+tested, because I would like to write a more high-level interface, and
+because the documentation is partial.
+
+But I think it is usable.  At least it contains everything I have ever
+used in expat, plus a few ways to build higher-level structure from an
+XML document.
+
+* Expat
+
+A version of Expat is delivered with this distribution in the expat/
+subdirectory.  You may try to use an alternate version of expat by
+changing a variable in the Mixp Makefile. Of course you are on your
+own if Mixp does not compile with your version...
+
+The home page of Expat is at http://expat.sourceforge.net.
+
+* News
+
+This section only lists the most important new features. See the
+documentation to see how to use them, and ChangeLog for minor new
+features and bug fixes.
+
+** News between 20000821 and 20000826
+*** Bug fix
+External entity parsing.  See the documentation (section "How to...").
+
+** News between 20000616 and 20000821
+
+*** Minor modifications
+No functional addition.
+
+** News between 20000220 and 20000616
+
+*** Removed usage of deprecated features
+Removed usage of scm_smobfuns and scm_newsmob, which were deprecated
+(thanks to Olivier Buechel).
+
+** News between 19991221 and 20000220
+
+*** Added conversion functions from UTF-8 to Latin1, UCS-2 and UCS-4.
+These functions may be useful to handle the results of the parser,
+which are in UTF-8.
+
+*** Added mixp:xml->list and mixp:xml->tree to build flat-list of
+hierarchical tree structures from an XML document.
+
+* Installation
+
+See INSTALL.
+
+* Documentation
+
+A documentation in Info and HTML format is available in doc/.  See
+also the Scheme (.scm) test programs for how to use this interface.
+And the expat documentation (xmlparse.h in expat/xmlparse/) for even
+more information.
+
+* Using Mixp
+
+  This is a sample Guile script using Mixp to print the start and end
+  tags of an XML document:
+   
+  (use-modules (xml expat)
+               (xml mixp))
+
+  ;; Create the parser object
+  (let ((parser (expat:parser-create)))
+    ;; Specify callback functions
+    (expat:set-element-handler parser
+	  		       (lambda (p name attribs)
+			         (display "start ")(display name)(newline))
+			       (lambda (p name)
+			         (display "end ")(display name)(newline)))
+    ;; Parse the file
+    (mixp:parse-file parser "REC-xml-19980210.xml")
+
+* Licensing information
+
+Mixp uses the same licensing terms as expat.
+
+Mixp is subject to the Mozilla Public License Version 1.1
+(http://www.mozilla.org/NPL/NPL-1_1Final.html).  Alternatively you may
+use Mixp under the GNU General Public License
+(http://www.gnu.org/copyleft/gpl.html) instead.
+
+* Thanks
+
+Thanks to the following people who provided bug reports and patches:
+Olivier Buechel, Seth Alves, Eric Hanchrow.
+
+* Author
+
+Thierry Bézecourt <mixp@thbz.org> (or <thbz@free.fr>).
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:

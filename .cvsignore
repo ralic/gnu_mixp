@@ -1,5 +1,6 @@
 mixp*.tar.gz
 *.o
+*.lo
 *.la
 *.so
 *.x
@@ -26,3 +27,6 @@ install-sh
 missing
 mkinstalldirs
 stamp-h1
+.deps
+.libs
+config.h
