@@ -25,13 +25,13 @@
 (define-syntax dispfmt
   (syntax-rules ()
     ((dispfmt fmt ...) (if trace
-			   (begin (display (format fmt ...))
+			   (begin (format #t fmt ...)
 				  (newline))))))
 
 (define-syntax err
   (syntax-rules ()
-    ((err fmt ...) (begin (display (format fmt ...) (current-error-port))
-			      (newline)))))
+    ((err fmt ...) (begin (format (current-error-port) fmt ...)
+                          (newline)))))
 
 (define trace-level 0)
 (define (trace . args)
@@ -49,7 +49,7 @@
 			 (lambda () b)
 			 (lambda args (car args)))))
 	 (cond ((eq? res #t)
-		(trace (format "ok ~S: ~A\n" test-counter desc)))
+		(trace (format #t "ok ~S: ~A\n" test-counter desc)))
 	       ((eq? res #f)
 		(begin (set! test-failed (cons (list test-counter
 						     desc)
@@ -85,7 +85,7 @@
 		       (err "not ok ~S: ~A - ~A: missing exception `~S' while evaluating ~S\n"
 			    test-counter desc failed-msg exc 'b)))
 	       ((eq? res exc)
-		(trace (format "ok ~S: ~A - ~A\n"
+		(trace (format #t "ok ~S: ~A - ~A\n"
 			       test-counter desc failed-msg)))
 	       
 	       (#t
@@ -112,7 +112,7 @@
     (trace append indent "§ ELEMENT END '" name "' §\nData: " data "\n"))
 
 (define (my-notation-decl-handler user-data notation-name base system-id public-id)
-    ()
+    '()
     (trace "§ NOTATION: user-data=" user-data
 	   ", notation-name="notation-name
 	   ", base=" base
@@ -177,7 +177,7 @@
       (let ((res-parse (expat:parse my-parser my-document #t)))
 	(check (not (= res-parse 0))
 	       "parse"
-	       (format "Parser error: ~A(~A)"
+	       (format #t "Parser error: ~A(~A)"
 		       (expat:get-error-code my-parser)
 		       (expat:error-string
 			(expat:get-error-code my-parser)))))))
@@ -196,7 +196,7 @@
 	    (let ((code (expat:get-error-code p)))
 	      (check (eqv? code 'expat:XML_ERROR_TAG_MISMATCH)
 		     "Expect an 'expat:XML_ERROR_TAG_MISMATCH error"
-		     (format "Expecting error code 'expat:XML_ERROR_TAG_MISMATCH, received ~A"
+		     (format #t "Expecting error code 'expat:XML_ERROR_TAG_MISMATCH, received ~A"
 			     code))))))
     (trace "Parsing a not well-formed document with mixp:parse-data...\n")
     (check-exc (call-with-input-string bad-xml mixp:parse-data)
@@ -231,14 +231,14 @@
     (let ((res-parse (expat:parse my-parser xml-doc #t)))
       (check (not (= res-parse 0))
 	     "unparsed entities"
-	     (format "Parser error: ~A"
+	     (format #t "Parser error: ~A"
 		     (expat:error-string
 		      (expat:get-error-code my-parser))))
       (check (equal? (cdr (expat:get-user-data my-parser))
 		     '(("vrml" "VRML 2")
 		       ("Antarctica" "http://www.antarctica.net")))
 	     "unparsed entities"
-	     (format "Handler error: received the following user data: ~A"
+	     (format #t "Handler error: received the following user data: ~A"
 		     (cdr (expat:get-user-data my-parser)))))))
 
 (define (test-error-string)
@@ -247,11 +247,11 @@
 	 (msg (expat:error-string code)))
     (check (equal? code code-expected)
 	   "error string"
-	   (format "Returned code was ~A, expecting ~A"
+	   (format #t "Returned code was ~A, expecting ~A"
 		   code code-expected))
     (check (> (string-length msg) 1)
 	   "error string not empty"
-	   (format "Returned message was `~A'" msg))))
+	   (format #t "Returned message was `~A'" msg))))
 	
 ;;; creates and prints a xml-encoding structure, without parsing a
 ;;; document with it
@@ -278,7 +278,7 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
 	  (let ((error-code (expat:get-error-code my-parser)))
 	    (check (eqv? error-code 'expat:XML_ERROR_INVALID_TOKEN)
 		   "Ok, got an INVALID TOKEN error as expected\n"
-		   (format "Error: expecting error code 4, got ~A"
+		   (format #t "Error: expecting error code 4, got ~A"
 			   error-code)))))
     ;; 2. Wrong encoding in the document overriden by a good encoding
     ;; in set-encoding should not raise an errore
@@ -289,7 +289,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
       (let ((res-parse (expat:parse my-parser doc #t)))
 	(check (not (= res-parse 0))
 	       "Parse with ISO-8859-1 encoding"
-	       (format "Parsing error ~A"
+	       (format #t "Parsing error ~A"
 		       (expat:get-error-code my-parser)))))
     ;; 2. set-encoding with an inexistant encoding should raise a 
     ;; specific error
@@ -304,7 +304,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 	    (let ((error-code  (expat:get-error-code my-parser)))
 	      (check (eqv? error-code 'expat:XML_ERROR_UNKNOWN_ENCODING)
 		     "Expect an UNKNOWN ENCODING error"
-		     (format "Error: expecting error code 18, got ~A"
+		     (format #t "Error: expecting error code 18, got ~A"
 			     error-code)))))))
 
 ;;; Sets a Scheme object as the user data, and retrieves it.
@@ -318,11 +318,11 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 	     (n (new-user-data)))
 	(check (equal? n 42)
 	       "User data"
-	       (format "Bad return value: ~A" n))
+	       (format #t "Bad return value: ~A" n))
 	(if (equal? n 42)
 	    (check (eqv? new-user-data user-data)
 		   "User data\n"
-		   (format "The returned user data is not exactly the same: ~A != ~A"
+		   (format #t "The returned user data is not exactly the same: ~A != ~A"
 			   n user-data))))))
 
 (define (test-use-parser-arg)
@@ -336,7 +336,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
       (let ((res-parse (expat:parse my-parser my-document #t)))
 	(check (not (= res-parse 0))
 	       "Use parser"
-	       (format "Parser error: ~A"
+	       (format #t "Parser error: ~A"
 		       (expat:error-string
 			(expat:get-error-code my-parser)))))))
 
@@ -350,7 +350,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
       (let ((res-parse (expat:parse my-parser my-document #t)))
 	(check (not (= res-parse 0))
 	       "Unknown encoding handler"
-	       (format "Parser error: ~A"
+	       (format #t "Parser error: ~A"
 		       (expat:error-string
 			(expat:get-error-code my-parser)))))))
 
@@ -364,7 +364,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
       (let ((res-parse (expat:parse my-parser my-document #t)))
 	(check (not (= res-parse 0))
 	       "Base"
-	       (format "Parser error: ~A"
+	       (format #t "Parser error: ~A"
 		       (expat:error-string (expat:get-error-code my-parser)))))))
 
 ;; This test does not work, it's just an idea about a more convenient
@@ -387,7 +387,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
   (let ((from "an ASCII string"))
     (check (equal? (mixp:utf8->latin1 from) from)
 	   "mixp:utf8->latin1 on ASCII"
-	   (format "error with ascii string ~A != ~A\n"
+	   (format #t "error with ascii string ~A != ~A\n"
 		   (mixp:utf8->latin1 from) from)))
   (let ((from "BÃ©zecourt")(to "Bézecourt"))
     (check (equal? (mixp:utf8->latin1 from) to)
@@ -428,7 +428,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 ;;;	     (display "An error was expected with invalid UTF-8 input (2)\n")
 ;;;	     (throw 'test-error))
 ;;;	   )
-;;;	 (lambda (arg) ()))
+;;;	 (lambda (arg) '()))
 )
 
 ;; Test conversions from XML to lists or trees
@@ -445,7 +445,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 		      (end-element "foo"))))
       (check (equal? xml-list expected)
 	     "xml->list"
-	     (format "list built from XML different from expected list: ~A\n!=\n~A"
+	     (format #t "list built from XML different from expected list: ~A\n!=\n~A"
 		     xml-list expected)))
     (let ((xml-tree (call-with-input-string document
 					    mixp:xml->tree))
@@ -455,7 +455,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 			(element ("void" ()))))))
       (check (equal? xml-tree expected)
 	     "xml->tree"
-	     (format
+	     (format #t
 	      "tree built from XML different from expected tree ~A\n!=\n~A"
 	      xml-tree expected))))
   (let* ((file "../samples/REC-xml-19980210.xml")
@@ -504,7 +504,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 				  #t)))
       (check (not (= res-parse 0))
 	     "parse"
-	     (format "Parser error: ~A(~A)"
+	     (format #t "Parser error: ~A(~A)"
 		     (expat:get-error-code my-parser)
 		     (expat:error-string (expat:get-error-code my-parser))))
       (check (equal? str "0, 2, 4, 6, 8, 1, 3, 5, 7, 9")
@@ -534,7 +534,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 	   (fn)
 	   (if (= (length test-failed) failed-count-before)
 	       (display "=> ok\n")
-	       (display (format "=> not ok: ~A tests failed\n"
+	       (display (format #t "=> not ok: ~A tests failed\n"
 				(- (length test-failed)
 				   failed-count-before))))))
        (list
@@ -560,6 +560,6 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 	(display "All tests are successful") (newline))
       (begin
 	(display "The following tests failed: ") (newline)
-	(for-each (lambda (t) (display (format "\t~A: ~A\n"
+	(for-each (lambda (t) (display (format #t "\t~A: ~A\n"
 					       (car t) (cadr t))))
 		  (reverse test-failed)))))
