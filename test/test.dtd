@@ -1,0 +1,11 @@
+<!-- This DTD is used by the test program -->
+
+<!ENTITY % even "0, 2, 4, 6, 8">
+
+<!ENTITY % odd "1, 3, 5, 7, 9">
+
+<!-- A DTD included inside the DTD -->
+<!ENTITY % subdtd SYSTEM "sub.inc">
+%subdtd;
+
+

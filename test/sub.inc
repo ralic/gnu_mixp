@@ -1,0 +1,2 @@
+
+<!ENTITY numbers "%even;, %odd;">

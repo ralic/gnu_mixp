@@ -1,0 +1,892 @@
+This is Info file mixp.info, produced by Makeinfo version 1.68 from the
+input file mixp.texi.
+
+INFO-DIR-SECTION Scheme Programming
+START-INFO-DIR-ENTRY
+* Mixp: (mixp).                A Guile interface to expat, the XML parser.
+END-INFO-DIR-ENTRY
+
+
+File: mixp.info,  Node: Top,  Next: Introduction,  Prev: (dir),  Up: (dir)
+
+   This is Mixp, an XML Parser for Guile, written as an interface to
+James Clark's expat library.
+
+   The documentation is, of course, incomplete, and the interface is
+subject to change.  However, it should be sufficient to get started.
+
+* Menu:
+
+* Introduction::                Introduction to the expat interface for Guile
+* Expat interface::             The reference documentation
+* High-level extensions::       A few Scheme extensions
+* Concept index::               The concept index
+* Function index::              The function index
+
+   This documentation was last updated on Sun Aug 12 17:18:19 2001 and
+covers Mixp version 0.20010812.
+
+
+File: mixp.info,  Node: Introduction,  Next: Expat interface,  Prev: Top,  Up: Top
+
+Introduction
+************
+
+   Mixp is a Scheme interface to James Clark's expat library. It may be
+used to parse XML documents with Guile.
+
+   If you do not know expat, first have a look at the sample program
+*Note Sample programs::.  Typically, you will create a parser object
+with `expat:parser-create', then associate one or more handlers to it
+(usually with `expat:set-element-handler' and
+`expat:set-character-data-handler'), then parse the document with
+`expat:parse' or `mixp:parse-file'.  The most commonly used functions
+are documented here.  You may guess how others work from their
+prototypes.  See also the test programs in the test/ subdirectory of
+the distribution.
+
+   If you happen to know expat already, you will find easily what you
+are looking for by taking a C expat function name, replacing `XML_'
+with `expat:', using hyphens instead of capital letters to separate the
+words, and searching it in the reference documentation *Note Expat
+interface::.  In most cases, the prototype is the same, modulo the
+differences between C and Scheme.
+
+   Another source of information, maybe more accurate, is expat itself:
+expat.html, xmlparse.h, and http://www.jclark.com/xml/expatfaq.html.
+
+   Another source of information, maybe less accurate, is me (Thierry
+Bézecourt <mixp@thbz.org>, or <thbz@free.fr>).
+
+* Menu:
+
+* Sample programs::             Hello, world
+* Loading Mixp::                The first lines in a program which uses Mixp
+* Mixp components::             Organization of Mixp modules
+* How to...::                   How to perform common tasks
+* Bugs and suggestions::        Contact me
+
+
+File: mixp.info,  Node: Sample programs,  Next: Loading Mixp,  Prev: Introduction,  Up: Introduction
+
+Sample programs
+===============
+
+   The following sample program reads an XML file (provided with the
+Mixp distribution), and prints its start and end tags.  You can launch a
+Guile shell from the samples/ directory of the distribute, and execute
+this code.  Your GUILE_LOAD_PATH variable should contain the directory
+in which you installed Mixp (that is, the directory which contains the
+xml/ subdirectory).
+
+     (use-modules (xml expat)
+                  (xml mixp))
+     
+     ;; Create the parser object
+     (let ((parser (expat:parser-create)))
+       ;; Specify callback functions
+       (expat:set-element-handler parser
+     			     (lambda (p name attribs)
+     			       (display "start ")(display name)(newline))
+     			     (lambda (p name)
+     			       (display "end ")(display name)(newline)))
+       ;; Parse the file
+       (mixp:parse-file parser "REC-xml-19980210.xml"))
+
+   For more information about the Expat interface and handlers, *Note
+Expat interface::.
+
+   The following sample program builds a hierarchical tree structure
+from an XML document which reside in a string.  This tree structure
+should be easy to use with traditional Scheme functions.
+
+     (use-modules (xml mixp))
+     
+     (let ((xml-doc "<foo name='Paul'><bar>Some text</bar><void/></foo>"))
+       (display (call-with-input-string xml-doc mixp:xml->tree)))
+
+   Result is :
+     ((element ("foo" (("name" . "Paul")))
+     	  (element ("bar" ())
+     		   (character-data "Some text"))
+     	  (element ("void" ()))))
+
+   For more information about this interface, *Note High-level
+extensions::.
+
+
+File: mixp.info,  Node: Loading Mixp,  Next: Mixp components,  Prev: Sample programs,  Up: Introduction
+
+Loading Mixp
+============
+
+   From the Guile shell or from a Guile script, you should type the
+following commands before using the Mixp API:
+
+     (use-modules (xml expat))
+     (use-modules (xml mixp))
+
+   Actually, you may load just `xml:expat' if you intend to use only
+the raw expat interface (i.e. the functions which name is prefixed by
+`expat:', *Note Expat interface::.) You need `xml:mixp' if you want to
+use the extension functions (*Note High-level extensions::.)
+
+
+File: mixp.info,  Node: Mixp components,  Next: How to...,  Prev: Loading Mixp,  Up: Introduction
+
+Mixp components
+===============
+
+   Mixp contains two Scheme modules:
+
+   * "xml:expat" is the low-level interface to expat.  It stays as close
+     as possible to the expat API, so that someone who already knows
+     expat will be able to `xml:expat' immediately.  All the functions
+     in this module are prefixed with `expat:'.
+
+   * "xml:mixp" contains additional functions that may be useful.  For
+     example, if you need to parse an XML file, it will be easier to use
+     `mixp:parse-file' than `expat:parse'.  This module may evolve into
+     a higher-level interface, for example an object-based interface.
+     All the functions in this module are prefixed with `mixp:'.
+
+   On another point of view, Mixp contains two files: a shared library,
+`libexpat.so', which defines the `xml:expat' interface and a part of
+the `xml' interface, and a Scheme file, `mixp.scm', which defines other
+parts of the `xml:mixp' interface. Both files are located in the `xml'
+directory somewhere along your GUILE_LOAD_PATH.
+
+
+File: mixp.info,  Node: How to...,  Next: Bugs and suggestions,  Prev: Mixp components,  Up: Introduction
+
+How to...
+=========
+
+   This section describes a few common tasks which may be solved with
+Mixp.
+
+   * Check that a document is well-formed
+
+     Use `mixp:parse-data' without specifying a parser. A default one
+     will be created, and it will do nothing interesting except raising
+     errors if there is any error in the document:
+
+          (call-with-input-string "<doc><elem></elem>" mixp:parse-data)
+
+     *Note High-level extensions::.
+
+   * Retrieve the content of an element
+
+     Suppose you want to retrieve the text contained between an opening
+     tag and the matching closing tag.  You may do that by using an
+     element-handler and a character-data-handler together.  The
+     following code will retrieve the text between `<title>' and
+     `</title' in an XML document:
+
+          (use-modules (xml expat)
+          	     (xml mixp))
+          
+          (let ((parser (expat:parser-create))
+                (in-title-p #f) ;; becomes #t inside the tag
+                (title ""))     ;; will contain the result
+            (expat:set-element-handler parser
+               			     (lambda (p name attribs)
+                                         (if (equal? name "title")
+          				   (set! in-title-p #t)))
+               			     (lambda (p name)
+                                         (if (equal? name "title")
+          				   (set! in-title-p #f))))
+            (expat:set-character-data-handler parser
+          				    (lambda (data value)
+          				      (if (equal? in-title-p #t)
+          					  (set! title
+          						(string-append title value)))))
+            (mixp:call-with-input-string "<doc><title>Hello</title></doc>"
+          			       parser)
+            (display title)(newline))
+
+   * Build a tree structure from an XML document
+
+     Use `mixp:xml->tree'.
+
+          (call-with-input-file "file.xml" mixp:xml->tree)
+
+     *Note High-level extensions::.
+
+   * Read the external DTD
+
+     The following program will read an XML document in "foo.xml", parse
+     the DTD which may be referenced in the `DOCTYPE' declaration and
+     expand the entities.
+
+          (use-modules (xml expat)
+          	     (xml mixp)
+          	     (ice-9 format))
+          
+          (use-syntax (ice-9 syncase))
+          
+          ;; Create the parser object
+          (let ((parser (expat:parser-create))
+                (external-entity-ref-handler
+                 (lambda (my-parser
+          		context
+          		base
+          		system-id
+          		public-id)
+          	 (display (format "Reference to external entity: ~A.\n"
+          			  system-id))
+          	 (open-file system-id "r"))))
+          
+            (expat:set-param-entity-parsing parser
+          				  'expat:XML_PARAM_ENTITY_PARSING_ALWAYS)
+            ;; Specify callback functions
+            (expat:set-character-data-handler parser
+          				    (lambda (p value)
+          				      (display "Char: ")
+          				      (display value)
+          				      (display ".\n")))
+            (expat:set-external-entity-ref-handler parser
+          					 external-entity-ref-handler)
+            ;; Parse the file
+            (mixp:parse-file parser "foo.xml"))
+
+   * Specify handlers to be called in the DTD
+
+     You may want to define handlers to be called when Mixp parses the
+     DTD and finds an element declaration or an attribute list
+     declaration.  Unfortunately, this is not possible, due to
+     limitations in expat.
+
+     However, you may try to use the default handler (*Note Expat
+     handlers::).  If DTD reading is enabled (see the previous item),
+     then the default handler will be called repeatedly while reading
+     the DTD, and will receive each time a part of the DTD.  However,
+     there is no guarantee about what part of the DTD it will receive
+     each time. Building a representation of the DTD would be possible
+     with the default handler, but not easy.
+
+
+File: mixp.info,  Node: Bugs and suggestions,  Prev: How to...,  Up: Introduction
+
+Bugs and suggestions
+====================
+
+   Please send bug reports to me (mixp@thbz.org or thbz@free.fr).  I
+would also appreciate feedback about Mixp, and suggestions about what
+could be improved in the interface.
+
+
+File: mixp.info,  Node: Expat interface,  Next: High-level extensions,  Prev: Introduction,  Up: Top
+
+Expat interface
+***************
+
+   This section contains the reference documentation for the expat
+interface, i.e the `xml:expat' module.
+
+* Menu:
+
+* Expat handlers::              All the available callback functions
+* Other expat functions::       Create a parser, parse a string...
+* Encodings::                   When a document is not ASCII
+* Error handling::              How to catch the errors
+* Not implemented::             What is not here
+
+
+File: mixp.info,  Node: Expat handlers,  Next: Other expat functions,  Prev: Expat interface,  Up: Expat interface
+
+Expat handlers
+==============
+
+   Handlers are functions called by the parser at specific points in the
+XML document (for example when finding a new tag, or a comment, etc).
+This section explains how to specify these handlers, and what their
+prototype should be.
+
+   Most of the time, the first argument will be `user-data'.
+`user-data' is either a user-specified buffer (see
+`expat:set-user-data') or the parser object itself (see
+`expat:use-parser-as-handler-arg').
+
+ - Function: expat:set-element-handler PARSER START-HANDLER END-HANDLER
+     Specify callback functions to be called when an element starts or
+     end.
+
+     PARSER is the parser object returned by `expat:parser-create'.
+
+     START-HANDLER is a function to be called when an opening tag is
+     found.  This function will be called as follows:
+
+          (start-handler USER-DATA NAME ATTRIBUTES)
+
+     NAME is the tag name.  ATTRIBUTES is an association list which
+     contains the attributes with their values.
+
+     END-HANDLER is a function to be called when an closing tag is found
+     (<foo>).  This function will be called as follows:
+
+          (end-handler USER-DATA NAME)
+
+     The arguments have the same meaning as in the start handler.
+
+ - Function: expat:set-character-data-handler PARSER HANDLER
+     Called for normal text (i.e outside <> tags).
+
+          (handler USER-DATA VALUE)
+
+     VALUE is the text encoded in UTF-8.
+
+
+ - Function: expat:set-processing-instruction-handler PARSER HANDLER
+     Sets the processing instruction handler, which should have the
+     following prototype:
+
+          (handler USER-DATA PI-DATA)
+
+     This handler will be called by Mixp every time it finds a
+     processing instruction (`<?  ... ?>').
+
+
+ - Function: expat:set-comment-handler PARSER HANDLER
+     Sets the comment handler, which should have the following
+     prototype:
+
+          (handler USER-DATA COMMENT-DATA)
+
+     This handler will be called by Mixp every time it finds a comment
+     (`<!-- ... -->').
+
+
+ - Function: expat:set-cdata-section-handler PARSER START-HANDLER
+          END-HANDLER
+     Sets the CDATA section handler, which should have the following
+     prototype:
+
+          (start-handler USER-DATA)
+          (end-handler USER-DATA)
+
+     This handler will be called by Mixp every time it finds a CDATA
+     section (`<![CDATA[ ... ]]>').
+
+ - Function: expat:set-default-handler PARSER HANDLER
+     Sets the default handler and also inhibits expansion of internal
+     entities.  The entity reference will be passed to the default
+     handler.
+
+          (handler USER-DATA STRING)
+
+     The default handler is called for any characters in the XML
+     document for which there is no applicable handler.  This includes
+     both characters that are part of markup which is of a kind that is
+     not reported (comments, markup declarations), or characters that
+     are part of a construct which could be reported but for which no
+     handler has been supplied. The characters are passed exactly as
+     they were in the XML document except that they will be encoded in
+     UTF-8.  Line boundaries are not normalized.  Note that a byte
+     order mark character is not passed to the default handler.  There
+     are no guarantees about how characters are divided between calls
+     to the default handler: for example, a comment might be split
+     between multiple calls.
+
+
+ - Function: expat:set-default-handler-expand PARSER HANDLER
+     Sets the default handler but does not inhibit expansion of internal
+     entities.  The entity reference will not be passed to the default
+     handler.
+
+          (handler USER-DATA STRING)
+
+     See `expat:set-default-handler' for a description of the handler.
+
+
+ - Function: expat:set-unparsed-entity-decl-handler PARSER HANDLER
+     Sets the unparsed entity declaration handler, which should have
+     the following prototype:
+
+          (handler USER-DATA ENTITY-NAME BASE SYSTEM-ID
+          PUBLIC-ID NOTATION-NAME)
+
+     The handler is called by Mixp every time it finds a declaration of
+     an unparsed entity (`<!ENTITY Antarctica SYSTEM
+     "http://www.antarctica.net" NDATA vrml>').
+
+     The BASE argument is whatever was set by `expat:set-base'.  The
+     ENTITY-NAME, SYSTEM-ID and NOTATION-NAME arguments will never be
+     `#f'.  The other arguments may be.
+
+ - Function: expat:set-notation-decl-handler PARSER HANDLER
+     Called when finding a notation decl (for example `<!NOTATION vrml
+     PUBLIC "VRML 2">').  This function will be called as follows:
+
+          (handler USER-DATA NOTATION-NAME BASE SYSTEM-ID
+          PUBLIC-ID)
+
+     The BASE argument is whatever was set by `expat:set-base'.
+     NOTATION-NAME will never be `#f'.  The other arguments can be.
+
+ - Function: expat:set-namespace-decl-handler PARSER START-HANDLER
+          END-HANDLER
+     Sets the Namespace declaration handler, which should have the
+     following prototype:
+
+          (start-namespace-decl-handler USER-DATA PREFIX URI)
+          (end-namespace-decl-handler USER-DATA PREFIX URI)
+
+     When namespace processing is enabled, these are called once for
+     each namespace declaration. The call to the start and end element
+     handlers occur between the calls to the start and end namespace
+     declaration handlers. For an xmlns attribute, prefix will be null.
+     For an xmlns="" attribute, uri will be null.
+
+
+ - Function: expat:set-not-standalone-handler PARSER HANDLER
+     Sets the Standalone declartion handler, which should have the
+     following prototype:
+
+          (not-standalone-handler USER-DATA)
+
+     This is called if the document is not standalone (it has an
+     external subset or a reference to a parameter entity, but does not
+     have standalone="yes"). If this handler returns 0, then processing
+     will not continue, and the parser will return a
+     `expat:XML_ERROR_NOT_STANDALONE' error.
+
+ - Function: expat:set-external-entity-ref-handler PARSER HANDLER
+          (external-entity-ref-handler USER-DATA CONTEXT BASE
+          SYSTEM-ID PUBLIC-ID)
+
+     The external entity reference handler is called by Mixp when it
+     finds a reference to an external entity in the document.  For
+     example, the `<!DOCTYPE ...>' declaration contains an external
+     entity reference when it specifies an external DTD.  In that case,
+     you should also call `(expat:set-param-entity-parsing parser) ',
+     because you probably want Mixp to expand the references to
+     entities declared in your DTD.  See *Note How to...:: for an
+     example.
+
+     The external entity reference handler should return an open port
+     to the external entity. For example, assuming that `system-id'
+     refers to a relative file path, you may define the handler as
+     follows:
+
+
+          (lambda (my-parser
+          	 context
+          	 base
+          	 system-id
+          	 public-id)
+            (display (format "Reference to external entity: ~A.\n"
+          		   system-id))
+            (open-file system-id "r"))
+
+     The system identifier is defined by the XML specification as a URI.
+     Therefore, the example above will only work if you know that the
+     system id is actually a file path.  You may need to use, for
+     example, a http library if you want to support URIs which start
+     with "http://".
+
+     Note that the behaviour of this handler is very different in expat.
+
+     Also see `expat:set-external-entity-ref-handler-arg'.
+
+ - Function: expat:set-unknown-encoding-handler PARSER HANDLER
+     Unknown encoding handlers have not been really tested, so they
+     probably don't work for now.
+
+          (unknown-encoding-handler ENCODING-HANDLER-DATA NAME
+          INFO)
+
+
+
+File: mixp.info,  Node: Other expat functions,  Next: Encodings,  Prev: Expat handlers,  Up: Expat interface
+
+Other expat functions
+=====================
+
+ - Function: expat:parser-create ENCODING
+     Constructs a new parser; ENCODING is the encoding specified by the
+     external protocol or `#t' if there is none specified.
+
+ - Function: expat:parser-create-ns ENCODING NAMESPACE-SEPARATOR
+
+ - Function: expat:set-external-entity-ref-handler-arg ARG
+     If a non-nil value for ARG is specified here, then it will be
+     passed as the first argument to the external entity ref handler
+     instead of the parser object.
+
+ - Function: expat:default-current
+
+ - Function: expat:set-user-data PARSER DATA
+     Associates a value to the parser.  This value will be passed as the
+     USER-DATA argument to callbacks, unless
+     `expat:use-parser-as-handler-arg' has been called.  This value can
+     be any Scheme value.
+
+ - Function: expat:get-user-data PARSER
+     Returns the user data associated with the parser object.
+
+ - Function: expat:set-encoding PARSER ENCODING
+     Encoding functions are not really tested for now.
+
+ - Function: expat:use-parser-as-handler-arg
+     Specifies that the user-data argument passed to callbacks should
+     be the parser object itself.  User data may still be associated to
+     the parser with `expat:set-user-data' and retrieved with
+     `expat:get-user-data'.
+
+ - Function: expat:set-base PARSER BASE
+
+ - Function: expat:get-base PARSER
+
+ - Function: expat:get-specified-attribute-count PARSER
+
+ - Function: expat:parse PARSER BUFFER IS-FINAL
+     Parse some input.  Returns 0 if a fatal error is detected.  In that
+     case, you should call `expat:get-error-code' to obtain more
+     information.  The last call to `expat:parse' must have IS-FINAL
+     set to `#t'.
+
+ - Function: expat:parse-buffer LEN IS-FINAL
+
+ - Function: expat:get-error-code PARSER
+     Returns the error code associated with the parser.  This function
+     should be called after `expat:parse' has returned 0 (i.e an
+     error).  The result is a symbol which may have one of the following
+     values:
+
+        - expat:XML_ERROR_NONE
+
+        - expat:XML_ERROR_NO_MEMORY
+
+        - expat:XML_ERROR_SYNTAX
+
+        - expat:XML_ERROR_NO_ELEMENTS
+
+        - expat:XML_ERROR_INVALID_TOKEN
+
+        - expat:XML_ERROR_UNCLOSED_TOKEN
+
+        - expat:XML_ERROR_PARTIAL_CHAR
+
+        - expat:XML_ERROR_TAG_MISMATCH
+
+        - expat:XML_ERROR_DUPLICATE_ATTRIBUTE
+
+        - expat:XML_ERROR_JUNK_AFTER_DOC_ELEMENT
+
+        - expat:XML_ERROR_PARAM_ENTITY_REF
+
+        - expat:XML_ERROR_UNDEFINED_ENTITY
+
+        - expat:XML_ERROR_RECURSIVE_ENTITY_REF
+
+        - expat:XML_ERROR_ASYNC_ENTITY
+
+        - expat:XML_ERROR_BAD_CHAR_REF
+
+        - expat:XML_ERROR_BINARY_ENTITY_REF
+
+        - expat:XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF
+
+        - expat:XML_ERROR_MISPLACED_XML_PI
+
+        - expat:XML_ERROR_UNKNOWN_ENCODING
+
+        - expat:XML_ERROR_INCORRECT_ENCODING
+
+        - expat:XML_ERROR_UNCLOSED_CDATA_SECTION
+
+        - expat:XML_ERROR_EXTERNAL_ENTITY_HANDLING
+
+        - expat:XML_ERROR_NOT_STANDALONE
+
+     An error message describing the error may be obtained by calling
+     `expat:error-string'.
+
+
+ - Function: expat:get-current-byte-count PARSER
+
+ - Function: expat:get-current-line-number PARSER
+
+ - Function: expat:get-current-column-number PARSER
+
+ - Function: expat:get-current-byte-index PARSER
+
+ - Function: expat:error-string CODE
+     Returns an error message describing the expat error code defined by
+     CODE.  CODE is usually obtained by calling `expat:get-error-code'
+     on the parser object.
+
+
+File: mixp.info,  Node: Encodings,  Next: Error handling,  Prev: Other expat functions,  Up: Expat interface
+
+Encodings
+=========
+
+   Expat supports the following encodings : UTF-8, UTF-16, ISO-8859-1,
+US-ASCII.
+
+   The encoding is usually indicated in the first line of an XML file
+(the `<?xml... ?>' declaration).  But every data you will receive in
+your handlers (tag names, attributes, character data...), will be
+encoded in UTF-8, whatever the original encoding was.  UTF-8 represents
+ASCII characters with no modification, but represents other characters
+with multi-byte characters.  In other words, texts with non-ASCII
+characters look very strange on most terminals when they're encoded in
+UTF-8.  ISO-8859-1 has a better support in standard editors, but is too
+euro-centric.
+
+   The encoding features of expat are not completely supported in Mixp.
+Using unknown encoding handlers will not work, or at least I have not
+tested that feature.  However, XML documents which encoding (as
+specified in the `<?xml... ?>' declaration) is supported by expat
+should be parsed correctly.  For example, you should get an error if you
+parse a document which claims to be US-ASCII but contains 8-bit
+characters.
+
+
+File: mixp.info,  Node: Error handling,  Next: Not implemented,  Prev: Encodings,  Up: Expat interface
+
+Error handling
+==============
+
+   In the Expat interface, `expat:parse' returns 0 when an error is
+encountered, i.e when the document is not well-formed.  Then
+`expat:get-error-code' should be called to retrieve an error code, as a
+Scheme symbol, which identifies the error.  The error codes are listed
+in the documentation of `expat:get-error-code' (*Note Other expat
+functions::).
+
+   The functions in the Mixp extensions use the same error codes, but
+they throw them as exceptions instead of returning 0.  The following
+codes demonstrates simple error handling with `mixp:parse-data' :
+
+     (let ((bad-xml "<doc>dfssfd</do>"))
+       (catch #t
+         (lambda ()
+           (call-with-input-string bad-xml mixp:parse-data))
+         (lambda (key)
+           (display "Received an error: ")(display key)(newline))))
+   Received an error: expat:XML_ERROR_TAG_MISMATCH=>
+
+
+File: mixp.info,  Node: Not implemented,  Prev: Error handling,  Up: Expat interface
+
+Not implemented
+===============
+
+   The following function is a part of the expat interface, but it was
+not implemented.
+
+ - Function: XML_GetBuffer
+
+   You should also read the section about encodings *Note Encodings::.
+
+
+File: mixp.info,  Node: High-level extensions,  Next: Concept index,  Prev: Expat interface,  Up: Top
+
+High-level extensions
+*********************
+
+   The following functions are extensions to the raw expat interface,
+but I still don't know exactly what to do here.
+
+ - Function: mixp:parse-file PARSER FILE
+     Parses an XML file *Note Error handling::.
+
+ - Function: mixp:parse-data PORT [PARSER]
+     Parses XML data coming from PORT *Note Error handling::.  If
+     PARSER is specified, it must be a parser object, and it will be
+     used to parse the data.  Else a new parser object will be created
+     with `expat:parser-create', and this procedure will just check
+     that the document is well-formed.  PORT must be an open input port
+     *Note Ports: (guile-ref)Ports.  Parsing will continue until the
+     end of the port data is reached.
+
+ - Function: mixp:call-with-input-string STRING PARSER
+     Parse a string containing an XML document *Note Error handling::.
+     PARSER should be created with another procedure such as
+     `expat:parser-create'.
+
+ - Function: mixp:call-with-input-file FILE PARSER
+     Parse an XML file *Note Error handling::.  PARSER should be
+     created with another procedure such as `expat:parser-create'.
+
+ - Function: mixp:xml->list PORT [PARSER]
+     Parses an XML document from port PORT and returns a list of XML
+     nodes.  Uses PARSER if specified, else creates a new parser with
+     `expat:parser-create'.  Each XML node is a small list which
+     describes a part of the XML file.  The first item in that list is a
+     symbol which value is the node type.  The meaning of the other
+     items depend upon the node type.  The following node types are
+     supported (other kind of data in the XML file is ignored):
+
+    `start-element'
+          A start element.  The second item in the node is the tag
+          name, the third is an alist which represent the attributes.
+
+    `end-element'
+          An end element.  The second item in the node is the tag name.
+
+    `character-data'
+          A character data element.  The second item in the node is the
+          contents of the item.
+
+    `notation-decl'
+          A notation declaration.  The second, third, fourth and fifth
+          items in the node are the notation name, the base, the system
+          id and the public id.
+
+    `entity-decl'
+          An entity declaration.  Only unparsed entity declarations are
+          supported here.  The second, third, fourth, fifth and sixth
+          items in the node are the entity name, the base, the system
+          id, the public id and the notation name.
+
+
+ - Function: mixp:xml->tree PORT [PARSER]
+     Returns a tree structure of XML nodes.  See `mixp:xml->list' above
+     for the arguments, and for the supported node types.  To give an
+     idea of the tree structure which is supported, let us consider the
+     following sample XML document.
+
+          <foo name='Paul'><bar>Some text</bar><void/></foo>
+
+     For this document, `mixp:xml->list' will return the following list:
+
+          ((start-element "foo" (("name" . "Paul")))
+           (start-element "bar" ())
+           (character-data "Some text")
+           (end-element "bar")
+           (start-element "void" ())
+           (end-element "void")
+           (end-element "foo"))
+
+     And this is the data structure produced by `mixp:xml->tree':
+
+          (element ("foo" (("name" . "Paul")))
+          	 (element ("bar" ())
+          		  (character-data "Some text"))
+          	 (element ("void" ())))
+
+     Hint: use `call-with-input-file' or `call-with-input-string' in
+     conjunction with `mixp:xml->list' or `mixp:xml->tree' to create
+     structured views of XML documents:
+
+          (call-with-input-file "foobar.xml" mixp:xml->tree)
+
+
+ - Function: mixp:tree->list TREE
+     Transforms a tree, as returned by `mixp:xml->tree', into a list, as
+     returned by `mixp:xml->list'.
+
+ - Function: mixp:list->tree LIST
+     Transforms a list, as returned by `mixp:xml->list', into a tree, as
+     returned by `mixp:xml->tree'.
+
+ - Function: mixp:expat-error-code INTEGER
+     Returns the Scheme symbol associated with the expat error code
+     INTEGER.
+
+ - Function: mixp:parser? ARG
+     Returns `#t' if the ARG is a parser object (as created by
+     `expat:parser-create'.
+
+
+File: mixp.info,  Node: Concept index,  Next: Function index,  Prev: High-level extensions,  Up: Top
+
+Concept index
+*************
+
+   Sorry, some of the cross-reference links do not work under Emacs
+because the function names in the API contain colons. This is a
+documented bug in Info .
+
+* Menu:
+
+* encodings:                             Encodings.
+* handlers:                              Expat handlers.
+* loading Mixp:                          Loading Mixp.
+* mixp components:                       Mixp components.
+* sample programs:                       Sample programs.
+* xml: API:                              High-level extensions.
+* xml:expat API (handlers):              Expat handlers.
+* xml:expat API (miscellaneous functions): Other expat functions.
+
+
+File: mixp.info,  Node: Function index,  Prev: Concept index,  Up: Top
+
+Function index
+**************
+
+   Sorry, most of the cross-reference links do not work under Emacs
+because the function names contain colons. This is a documented bug in
+Info .
+
+* Menu:
+
+* expat:default-current:                 Other expat functions.
+* expat:error-string:                    Other expat functions.
+* expat:get-base:                        Other expat functions.
+* expat:get-current-byte-count:          Other expat functions.
+* expat:get-current-byte-index:          Other expat functions.
+* expat:get-current-column-number:       Other expat functions.
+* expat:get-current-line-number:         Other expat functions.
+* expat:get-error-code:                  Other expat functions.
+* expat:get-specified-attribute-count:   Other expat functions.
+* expat:get-user-data:                   Other expat functions.
+* expat:parse:                           Other expat functions.
+* expat:parse-buffer:                    Other expat functions.
+* expat:parser-create:                   Other expat functions.
+* expat:parser-create-ns:                Other expat functions.
+* expat:set-base:                        Other expat functions.
+* expat:set-cdata-section-handler:       Expat handlers.
+* expat:set-character-data-handler:      Expat handlers.
+* expat:set-comment-handler:             Expat handlers.
+* expat:set-default-handler:             Expat handlers.
+* expat:set-default-handler-expand:      Expat handlers.
+* expat:set-element-handler:             Expat handlers.
+* expat:set-encoding:                    Other expat functions.
+* expat:set-external-entity-ref-handler: Expat handlers.
+* expat:set-external-entity-ref-handler-arg: Other expat functions.
+* expat:set-namespace-decl-handler:      Expat handlers.
+* expat:set-not-standalone-handler:      Expat handlers.
+* expat:set-notation-decl-handler:       Expat handlers.
+* expat:set-processing-instruction-handler: Expat handlers.
+* expat:set-unknown-encoding-handler:    Expat handlers.
+* expat:set-unparsed-entity-decl-handler: Expat handlers.
+* expat:set-user-data:                   Other expat functions.
+* expat:use-parser-as-handler-arg:       Other expat functions.
+* mixp:call-with-input-file:             High-level extensions.
+* mixp:call-with-input-string:           High-level extensions.
+* mixp:expat-error-code:                 High-level extensions.
+* mixp:list->tree:                       High-level extensions.
+* mixp:parse-data:                       High-level extensions.
+* mixp:parse-file:                       High-level extensions.
+* mixp:parser?:                          High-level extensions.
+* mixp:tree->list:                       High-level extensions.
+* mixp:xml->list:                        High-level extensions.
+* mixp:xml->tree:                        High-level extensions.
+* XML_GetBuffer:                         Not implemented.
+
+
+
+Tag Table:
+Node: Top247
+Node: Introduction972
+Node: Sample programs2674
+Node: Loading Mixp4372
+Node: Mixp components4955
+Node: How to...6074
+Node: Bugs and suggestions10113
+Node: Expat interface10417
+Node: Expat handlers10973
+Node: Other expat functions18784
+Node: Encodings22423
+Node: Error handling23632
+Node: Not implemented24612
+Node: High-level extensions24922
+Node: Concept index29245
+Node: Function index30013
+
+End Tag Table

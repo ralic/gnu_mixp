@@ -1,0 +1,4 @@
+@c This file is generated.  Please do not edit!
+@set UPDATED Sun Aug 12 17:18:19 2001
+@set EDITION 0.20010812
+@set VERSION 0.20010812

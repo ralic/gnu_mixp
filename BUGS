@@ -1,0 +1,10 @@
+* mixp:utf8->ucs2: Does not reject invalid UTF-8 input
+ mixp:utf8->ucs2 does not reject all kind of invalid UTF-8 input.  For example,
+it will accetpt the string (#xC0 #x80) although it should reject it.
+ This bug has no impact on everyday use of Mixp.
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:
