@@ -44,13 +44,19 @@
 
 	list->tree
 	tree->list
+
+    ;; Bug fixed by Christian Neukirchen <chneukirchen@yahoo.de>
+    ;; on 11jan2003. Due a bug in Guile 1.6.1, all macros have to
+	;; be exported.
+	mixp:dispf
+	mixp:bit-eqv?
 )
 
 (define trace #t)
 
-(define-syntax dispf
+(define-syntax mixp:dispf
   (syntax-rules ()
-    ((dispf fmt ...) (if trace
+    ((mixp:dispf fmt ...) (if trace
 			 (begin (display (format fmt ...))
 				(newline))))))
 
@@ -203,42 +209,42 @@ character from the original stream."
 ;; 1111 10xx 10yy yyyy 10yy zzzz 10zz zztt 10tt tttt
 ;; 1111 110x 10xx xxxx 10yy yyyy 10y zzzz 10zz zztt 10tt tttt
 
-(define-syntax bit-eqv?
+(define-syntax mixp:bit-eqv?
   (syntax-rules ()
-    ((bit-eqv? from i j res) (eqv? (bit-extract from i j) res))))
+    ((mixp:bit-eqv? from i j res) (eqv? (bit-extract from i j) res))))
 
 (define (read-utf8 from-string)
   "Reads a UTF-8 sequence and returns the multi-byte character as a
 list. The list may contain one to four bytes"
   (let* ((from (map char->integer from-string))
 	 (len (length from)))
-    (cond ((bit-eqv? (car from) 7 8 #b0)
+    (cond ((mixp:bit-eqv? (car from) 7 8 #b0)
 	   (cons 1 (map integer->char
 			(list (car from)))))
 	  
-	  ((and (bit-eqv? (car from) 5 8 #b110)
+	  ((and (mixp:bit-eqv? (car from) 5 8 #b110)
 		(>= len 2)
-		(bit-eqv? (cadr from) 6 8 #b10))
+		(mixp:bit-eqv? (cadr from) 6 8 #b10))
 	   (cons 2 (map integer->char
 			(list (bit-extract (car from) 2 5)
 			      (make-char (car from) 0 2
 					 (cadr from) 0 6)))))
 	  
-	  ((and (bit-eqv? (car from) 4 8 #b1110)
+	  ((and (mixp:bit-eqv? (car from) 4 8 #b1110)
 		(>= len 3)
-		(bit-eqv? (cadr from) 6 8 #b10)
-		(bit-eqv? (caddr from) 6 8 #b10))
+		(mixp:bit-eqv? (cadr from) 6 8 #b10)
+		(mixp:bit-eqv? (caddr from) 6 8 #b10))
 	   (cons 3 (map integer->char
 			(list (make-char (car from) 0 4
 					 (cadr from) 2 6)
 			      (make-char (cadr from) 0 2
 					 (caddr from) 0 6)))))
 	  
-	  ((and (bit-eqv? (car from) 3 8 #b11110)
+	  ((and (mixp:bit-eqv? (car from) 3 8 #b11110)
 		(>= len 4)
-		(bit-eqv? (cadr from) 6 8 #b10)
-		(bit-eqv? (caddr from) 6 8 #b10)
-		(bit-eqv? (cadddr from) 6 8 #b10))
+		(mixp:bit-eqv? (cadr from) 6 8 #b10)
+		(mixp:bit-eqv? (caddr from) 6 8 #b10)
+		(mixp:bit-eqv? (cadddr from) 6 8 #b10))
 	   (cons 4 (map integer->char
 			(list (make-char (car from) 0 3
 					 (cadr from) 4 6)
@@ -247,12 +253,12 @@ list. The list may contain one to four bytes"
 			      (make-char (caddr from) 0 2
 					 (cadddr from) 0 6)))))
 	  
-	  ((and (bit-eqv? (car from) 2 8 #b111110)
+	  ((and (mixp:bit-eqv? (car from) 2 8 #b111110)
 		(>= len 5)
-		(bit-eqv? (list-ref from 1) 6 8 #b10)
-		(bit-eqv? (list-ref from 2) 6 8 #b10)
-		(bit-eqv? (list-ref from 3) 6 8 #b10)
-		(bit-eqv? (list-ref from 4) 6 8 #b10))
+		(mixp:bit-eqv? (list-ref from 1) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 2) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 3) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 4) 6 8 #b10))
 	   (cons 5 (map integer->char
 			(list (make-char (list-ref from 1) 0 6
 					 (list-ref from 2) 4 6)
@@ -261,13 +267,13 @@ list. The list may contain one to four bytes"
 			      (make-char (list-ref from 3) 0 2
 					 (list-ref from 4) 0 6)))))
 	  
-	  ((and (bit-eqv? (car from) 1 8 #b1111110)
+	  ((and (mixp:bit-eqv? (car from) 1 8 #b1111110)
 		(>= len 6)
-		(bit-eqv? (list-ref from 1) 6 8 #b10)
-		(bit-eqv? (list-ref from 2) 6 8 #b10)
-		(bit-eqv? (list-ref from 3) 6 8 #b10)
-		(bit-eqv? (list-ref from 4) 6 8 #b10)
-		(bit-eqv? (list-ref from 5) 6 8 #b10))
+		(mixp:bit-eqv? (list-ref from 1) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 2) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 3) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 4) 6 8 #b10)
+		(mixp:bit-eqv? (list-ref from 5) 6 8 #b10))
 	   (cons 6 (map integer->char
 			(list (make-char (list-ref from 2) 0 6
 					 (list-ref from 3) 4 6)
@@ -330,7 +336,7 @@ See mixp:xml->list for the XML nodes supported and the ARGS parameter."
 			 (cons (append level
 				       (list (car node-list)))  
 			       up-levels))))
-	  (else (dispf "Unexpected node type: ~A" type)
+	  (else (mixp:dispf "Unexpected node type: ~A" type)
 		throw 'mixp:invalid-node-type)))))
 
 (define (mixp:tree->list tree)
@@ -383,7 +389,7 @@ tree of XML nodes, as returned by mixp:xml->tree."
 			 (cons current-node result)
 			 other-branch
 			 cur-elems))
-	    (else (dispf "Unexpected node type: ~A" type)
+	    (else (mixp:dispf "Unexpected node type: ~A" type)
 		  throw 'mixp:invalid-node-type)
 	    )))))
 
