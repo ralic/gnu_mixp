@@ -2,3 +2,9 @@ Look README.old, INSTALL.old for Thierry Bézecourt notes.
 
 Unlike original mixp, this version has licensed only via GPL. Look at COPYING
 for license text.
+
+Also, unlike original mixp -- expat library not included in distro. You can
+take it from http://expat.sf.net. If ./configure script cannot find location
+where it is installed -- simple specify option --with-expat=/where/they/are
+
+Also -- see INSTALL for generic installation instructions.
