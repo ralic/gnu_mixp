@@ -1,0 +1,34 @@
+# anywhere
+*.la
+*.lo
+*.o
+*.so
+*.x
+.deps
+.libs
+Makefile
+Makefile.in
+
+# specific directories
+/aclocal.m4
+/autom4te.cache
+/config.build-subdirs
+/config.cache
+/config.guess
+/config.h.in
+/config.log
+/config.status
+/config.sub
+/configure
+/libltdl
+/libtool
+/ltconfig
+/ltmain.sh
+/compile
+/depcomp
+/install-sh
+/missing
+/mkinstalldirs
+/stamp-h1
+/config.h
+/check-mixp
