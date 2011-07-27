@@ -1,3 +1,31 @@
+2004-06-28  Dale P. Smith  <dsmith@sourceforge.net>
+
+	[v] Adapt code to Guile 1.6 syntax.
+
+	* test/test-mixp.scm: Changed all non-syntax unquoted () to '().
+	Changed all calls to format to include the port (or #t/#f) as a
+	first argument.
+
+2003-01-15  Dmitry Morozhnikov  <dmiceman@mail.ru>
+
+	Work around Guile 1.6.1 bug: Export (xml mixp) macros, too.
+
+	Reported by Christian Neukirchen.
+
+2003-01-09  Dmitry Morozhnikov  <dmiceman@mail.ru>
+
+	Adapt to work with Guile 1.6.
+
+	Reported by Christian Neukirchen.
+
+2002-09-12  Dmitry Morozhnikov  <dmiceman@mail.ru>
+
+	Also distribute INSTALL.
+
+2002-09-12  Dmitry Morozhnikov  <dmiceman@mail.ru>
+
+	Mention ‘--with-expat’ option to configure script in README.
+
 2001-08-12  Seth Alves, Eric Hanchrow
 
 	* Seth and Eric reported a compilation problem: CFLAGS included
@@ -11,7 +39,7 @@
 2001-07-14  Thierry Bezecourt  <thbz@thbz.org>
 
         * No functionality modification. I only change my email address.
-	
+
 2000-08-30  Thierry Bezecourt  <thbz@thbz.cx>
 
 	* mixp.texi: more documentation about handlers.
@@ -36,7 +64,7 @@
 
 	* compilation: replaced deprecated function calls (Thanks to
 	Olivier Buechel.)
-	
+
 2000-02-07  Thierry Bezecourt  <thbz@worldnet.fr>
 
 	* xml/mixp.scm (mixp:tree->list, mixp:list->tree): added these
@@ -64,3 +92,9 @@
 
 	* mixp.scm: added other conversion functions: mixp:utf8->ucs2,
 	mixp:utf8->ucs4
+
+
+Copyright (C) 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.

@@ -20,7 +20,7 @@ guile_expat_LDADD = libmixp.la
 noinst_HEADERS = generic_handlers.h gexpat.h
 
 EXTRA_DIST = BUGS aclocal doc samples test xml README.old INSTALL.old \
-             ChangeLog.old INSTALL
+             INSTALL
 
 BUILT_SOURCES = gexpat.x
 
