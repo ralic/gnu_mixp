@@ -1,2 +1,3 @@
-The Initial Developer of the Original Code is Thierry Bézecourt.
-Maintainer mixp version for guile 1.6.x and 1.7 is Dmitry Morozhnikov <dmiceman@mail.ru>
+Thierry BÃ©zecourt wrote Mixp originally.
+Dmitry Morozhnikov <dmiceman@mail.ru> made changes for Mixp 0.4.
+Thien-Thi Nguyen made changes for Mixp 0.6 and upward.
