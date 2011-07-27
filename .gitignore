@@ -10,25 +10,27 @@ Makefile
 Makefile.in
 
 # specific directories
+/INSTALL
 /aclocal.m4
 /autom4te.cache
 /config.build-subdirs
 /config.cache
-/config.guess
 /config.h.in
 /config.log
 /config.status
-/config.sub
 /configure
-/libltdl
 /libtool
-/ltconfig
-/ltmain.sh
-/compile
-/depcomp
-/install-sh
-/missing
-/mkinstalldirs
 /stamp-h1
 /config.h
 /check-mixp
+
+/build-aux/config.guess
+/build-aux/config.sub
+/build-aux/install-sh
+/build-aux/libtool.m4
+/build-aux/ltmain.sh
+/build-aux/lt~obsolete.m4
+/build-aux/ltoptions.m4
+/build-aux/ltsugar.m4
+/build-aux/ltversion.m4
+/build-aux/missing

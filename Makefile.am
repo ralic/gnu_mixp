@@ -1,10 +1,8 @@
 AUTOMAKE_OPTIONS = foreign
 
-ACLOCAL_AMFLAGS = -I aclocal
+ACLOCAL_AMFLAGS = -I build-aux
 
 lib_LTLIBRARIES = libmixp.la
-
-INCLUDES = -I.
 
 libmixp_la_SOURCES = gexpat.c
 libmixp_la_CFLAGS = @EXPAT_CFLAGS@
@@ -19,8 +17,7 @@ guile_expat_LDADD = libmixp.la
 
 noinst_HEADERS = generic_handlers.h gexpat.h
 
-EXTRA_DIST = BUGS aclocal doc samples test xml INSTALL.old \
-             INSTALL
+EXTRA_DIST = BUGS doc samples test xml
 
 BUILT_SOURCES = gexpat.x
 

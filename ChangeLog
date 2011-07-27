@@ -1,3 +1,30 @@
+2011-07-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Modernize configure.ac et al a bit.
+
+	* autogen.sh: Rewrite.
+	* configure.ac (AC_PREREQ): Specify ‘2.67’.
+	(AC_INIT): Use 3-arg form.
+	(AC_CONFIG_AUX_DIR): New macro call.
+	(AC_CONFIG_HEADERS): Rename from ‘AM_CONFIG_HEADER’.
+	(AC_CONFIG_MACRO_DIR): New macro call.
+	(AM_INIT_AUTOMAKE): Use 1-arg form.
+	(AM_MAINTAINER_MODE): New macro call.
+	(AC_ISC_POSIX, AC_PROG_LIBTOOL): Delete macro calls.
+	(strerror): New AC_SEARCH_LIBS.
+	(LT_PREREQ, LT_INIT): New macro calls.
+	(AM_WITH_EXPAT): Replace macro call with expansion;
+	use ‘AS_HELP_STRING’, ‘AS_IF’, etc.
+	(AC_CONFIG_FILES): Add Makefile.
+	(AC_OUTPUT): Use no-arg form.
+	* Makefile.am (ACLOCAL_AMFLAGS): Update.
+	(INCLUDES): Delete var.
+	(EXTRA_DIST): Remove aclocal, INSTALL.old, INSTALL.
+	* INSTALL, INSTALL.old: Delete files.
+	* aclocal/guile.m4: Delete file.
+	* aclocal/expat.m4: Delete file.
+	* aclocal/: Delete directory.
+
 2004-06-28  Dale P. Smith  <dsmith@sourceforge.net>
 
 	[v] Adapt code to Guile 1.6 syntax.
