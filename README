@@ -1,10 +1,33 @@
-Look README.old, INSTALL.old for Thierry B�zecourt notes.
+Mixp
 
-Unlike original mixp, this version has licensed only via GPL. Look at COPYING
-for license text.
+Mixp is a Guile interface to expat, James Clark's XML Parser,
+originally written by Thierry Bézecourt.  This release of Mixp is
+available under the terms of the GNU GPL v3 (or later); see COPYING.
+It has been tested with Guile 1.4 and 1.6.
 
-Also, unlike original mixp -- expat library not included in distro. You can
-take it from http://expat.sf.net. If ./configure script cannot find location
-where it is installed -- simple specify option --with-expat=/where/they/are
+Mixp provides two modules for use by Guile Scheme code:
 
-Also -- see INSTALL for generic installation instructions.
+  (xml expat)  -- corresponds to libexpat API
+  (xml mixp)   -- high-level convenience procs
+
+See documentation in doc/ for details.
+
+
+Installation
+------------
+Generic install instructions are provided in the file INSTALL.
+If you're in a hurry:
+
+  ./configure [options]
+  make
+  make check
+  make install
+
+Normally, the configure script looks for the system-installed expat and
+Guile headers/libs.  Option ‘--with-expat=DIR’ specifies another location.
+
+
+Don't Panic
+-----------
+Please report bugs to Thien-Thi Nguyen (the current Mixp maintainer).
+The email address is available in the output of "./configure --help".
