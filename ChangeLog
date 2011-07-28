@@ -1,5 +1,15 @@
 2011-07-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Import variant source from ttn-do 381.
+
+	See <http://www.gnuvola.org/software/ttn-do/> for details.
+
+	* src/expat.c: New file.
+	* src/gi.h: New file.
+	* src/mixp.scm: New file.
+
+2011-07-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc int] Add infrastructure for building documentation.
 
 	* doc/Makefile.am: New file.
