@@ -102,10 +102,10 @@ xml/ subdirectory).
 (let ((parser (expat:parser-create)))
   ;; Specify callback functions
   (expat:set-element-handler parser
-			     (lambda (p name attribs)
-			       (display "start ")(display name)(newline))
-			     (lambda (p name)
-			       (display "end ")(display name)(newline)))
+                             (lambda (p name attribs)
+                               (display "start ")(display name)(newline))
+                             (lambda (p name)
+                               (display "end ")(display name)(newline)))
   ;; Parse the file
   (mixp:parse-file parser "REC-xml-19980210.xml"))
 @end lisp
@@ -127,9 +127,9 @@ easy to use with traditional Scheme functions.
 Result is :
 @lisp
 ((element ("foo" (("name" . "Paul")))
-	  (element ("bar" ())
-		   (character-data "Some text"))
-	  (element ("void" ()))))
+   (element ("bar" ())
+     (character-data "Some text"))
+   (element ("void" ()))))
 @end lisp
 
 For more information about this interface, @xref{High-level extensions}.
@@ -161,7 +161,7 @@ Mixp contains two Scheme modules:
 
 @itemize @bullet
 
-@item 
+@item
 @dfn{xml:expat} is the low-level interface to expat.  It stays as close
 as possible to the expat API, so that someone who already knows expat
 will be able to @code{xml:expat} immediately.  All the functions in this
@@ -212,25 +212,25 @@ an XML document:
 
 @lisp
 (use-modules (xml expat)
-	     (xml mixp))
+             (xml mixp))
 
 (let ((parser (expat:parser-create))
       (in-title-p #f) ;; becomes #t inside the tag
       (title ""))     ;; will contain the result
   (expat:set-element-handler parser
-     			     (lambda (p name attribs)
+                             (lambda (p name attribs)
                                (if (equal? name "title")
-				   (set! in-title-p #t)))
-     			     (lambda (p name)
+                                   (set! in-title-p #t)))
+                             (lambda (p name)
                                (if (equal? name "title")
-				   (set! in-title-p #f))))
+                                   (set! in-title-p #f))))
   (expat:set-character-data-handler parser
-				    (lambda (data value)
-				      (if (equal? in-title-p #t)
-					  (set! title
-						(string-append title value)))))
-  (mixp:call-with-input-string "<doc><title>Hello</title></doc>" 
-			       parser)
+                                    (lambda (data value)
+                                      (if (equal? in-title-p #t)
+                                          (set! title
+                                                (string-append title value)))))
+  (mixp:call-with-input-string "<doc><title>Hello</title></doc>"
+                               parser)
   (display title)(newline))
 @end lisp
 
@@ -252,8 +252,8 @@ expand the entities.
 
 @lisp
 (use-modules (xml expat)
-	     (xml mixp)
-	     (ice-9 format))
+             (xml mixp)
+             (ice-9 format))
 
 (use-syntax (ice-9 syncase))
 
@@ -261,24 +261,24 @@ expand the entities.
 (let ((parser (expat:parser-create))
       (external-entity-ref-handler
        (lambda (my-parser
-		context
-		base
-		system-id
-		public-id)
-	 (display (format "Reference to external entity: ~A.\n"
-			  system-id))
-	 (open-file system-id "r"))))
-  
+                context
+                base
+                system-id
+                public-id)
+         (display (format "Reference to external entity: ~A.\n"
+                          system-id))
+         (open-file system-id "r"))))
+
   (expat:set-param-entity-parsing parser
-				  'expat:XML_PARAM_ENTITY_PARSING_ALWAYS)
+                                  'expat:XML_PARAM_ENTITY_PARSING_ALWAYS)
   ;; Specify callback functions
   (expat:set-character-data-handler parser
-				    (lambda (p value)
-				      (display "Char: ")
-				      (display value)
-				      (display ".\n")))
+                                    (lambda (p value)
+                                      (display "Char: ")
+                                      (display value)
+                                      (display ".\n")))
   (expat:set-external-entity-ref-handler parser
-					 external-entity-ref-handler)
+                                         external-entity-ref-handler)
   ;; Parse the file
   (mixp:parse-file parser "foo.xml"))
 @end lisp
@@ -331,7 +331,7 @@ interface, i.e the @code{xml:expat} module.
 Handlers are functions called by the parser at specific points in the
 XML document (for example when finding a new tag, or a comment, etc).
 This section explains how to specify these handlers, and what their
-prototype should be.  
+prototype should be.
 
 Most of the time, the first argument will be @code{user-data}.
 @code{user-data} is either a user-specified buffer (see
@@ -341,7 +341,7 @@ Most of the time, the first argument will be @code{user-data}.
 @c expat:set-element-handler
 @defun expat:set-element-handler parser start-handler end-handler
 Specify callback functions to be called when an element starts or
-end. 
+end.
 
 @var{parser} is the parser object returned by
 @code{expat:parser-create}.
@@ -355,7 +355,7 @@ This function will be called as follows:
 @end lisp
 
 @var{name} is the tag name.  @var{attributes} is an association list
-which contains the attributes with their values.  
+which contains the attributes with their values.
 
 @var{end-handler} is a function to be called when an closing tag is found
 (<foo>).  This function will be called as follows:
@@ -383,7 +383,7 @@ Called for normal text (i.e outside <> tags).
 @defun expat:set-processing-instruction-handler parser handler
 
 Sets the processing instruction handler, which should have the following
-prototype: 
+prototype:
 
 @lisp
 (handler @var{user-data} @var{pi-data})
@@ -466,7 +466,7 @@ See @code{expat:set-default-handler} for a description of the handler.
 @defun expat:set-unparsed-entity-decl-handler parser handler
 
 Sets the unparsed entity declaration handler, which should have the following
-prototype: 
+prototype:
 
 @lisp
 (handler @var{user-data} @var{entity-name} @var{base} @var{system-id}
@@ -501,7 +501,7 @@ The other arguments can be.
 @defun expat:set-namespace-decl-handler parser start-handler end-handler
 
 Sets the Namespace declaration handler, which should have the following
-prototype: 
+prototype:
 
 @lisp
 (start-namespace-decl-handler @var{user-data} @var{prefix} @var{uri})
@@ -520,7 +520,7 @@ attribute, uri will be null.
 @defun expat:set-not-standalone-handler parser handler
 
 Sets the Standalone declartion handler, which should have the following
-prototype: 
+prototype:
 
 @lisp
 (not-standalone-handler @var{user-data})
@@ -530,7 +530,7 @@ This is called if the document is not standalone (it has an
 external subset or a reference to a parameter entity, but does not
 have standalone="yes"). If this handler returns 0, then processing
 will not continue, and the parser will return a
-@code{expat:XML_ERROR_NOT_STANDALONE} error. 
+@code{expat:XML_ERROR_NOT_STANDALONE} error.
 @end defun
 
 @c expat:set-external-entity-ref-handler
@@ -554,16 +554,14 @@ external entity. For example, assuming that @code{system-id} refers to a
 relative file path, you may define the handler as follows:
 
 @lisp
-
 (lambda (my-parser
-	 context
-	 base
-	 system-id
-	 public-id)
+         context
+         base
+         system-id
+         public-id)
   (display (format "Reference to external entity: ~A.\n"
-		   system-id))
+                   system-id))
   (open-file system-id "r"))
-
 @end lisp
 
 The system identifier is defined by the XML specification as a URI.
@@ -894,9 +892,9 @@ And this is the data structure produced by @code{mixp:xml->tree}:
 
 @lisp
 (element ("foo" (("name" . "Paul")))
-	 (element ("bar" ())
-		  (character-data "Some text"))
-	 (element ("void" ())))
+  (element ("bar" ())
+    (character-data "Some text"))
+  (element ("void" ())))
 @end lisp
 
 Hint: use @code{call-with-input-file} or @code{call-with-input-string}
