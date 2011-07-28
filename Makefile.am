@@ -17,7 +17,7 @@ guile_expat_LDADD = libmixp.la
 
 noinst_HEADERS = generic_handlers.h gexpat.h
 
-EXTRA_DIST = BUGS doc samples test xml
+EXTRA_DIST = BUGS doc test xml
 
 BUILT_SOURCES = gexpat.x
 

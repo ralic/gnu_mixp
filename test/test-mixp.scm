@@ -458,7 +458,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
              (format #t
                      "tree built from XML different from expected tree ~A\n!=\n~A"
                      xml-tree expected))))
-  (let* ((file "../samples/REC-xml-19980210.xml")
+  (let* ((file "REC-xml-19980210.xml")
          (xml-list (call-with-input-file file mixp:xml->list))
          (xml-tree (call-with-input-file file mixp:xml->tree)))
     (check (equal? xml-list (mixp:tree->list xml-tree))
