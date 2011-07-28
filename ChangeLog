@@ -1,5 +1,14 @@
 2011-07-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc int] Add infrastructure for building documentation.
+
+	* doc/Makefile.am: New file.
+	* Makefile.am (SUBDIRS): New var.
+	(EXTRA_DIST): Remove doc.
+	* configure.ac (AC_CONFIG_FILES): Add doc/Makefile.
+
+2011-07-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Consoliate test files in test/.
 
 	* samples/REC-xml-19980210.xml: Move from here...

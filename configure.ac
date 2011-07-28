@@ -92,7 +92,10 @@ AC_CHECK_DECL(scm_gc_malloc, AC_DEFINE(GUILE_GC_MALLOC, scm_gc_malloc),
 
 AC_CONFIG_FILES([check-mixp], [chmod +x check-mixp])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+  Makefile
+  doc/Makefile
+])
 AC_OUTPUT
 
 dnl configure.ac ends here
