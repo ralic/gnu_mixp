@@ -1,5 +1,13 @@
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Prune obsoleted infrastructure.
+
+	* configure.ac (AC_CONFIG_FILES): Remove check-mixp.
+	* check-mixp.in: Delete file.
+	* guile-expat.c: Delete file.
+
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Import test/infrastructure from ttn-do 381 for "make check".
 
 	* test/Makefile.am: New file.

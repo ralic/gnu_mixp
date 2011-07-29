@@ -21,7 +21,6 @@ Makefile.in
 /config.status
 /configure
 /libtool
-/check-mixp
 
 /build-aux/config.guess
 /build-aux/config.sub
