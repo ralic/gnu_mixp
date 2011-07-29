@@ -1,6 +1,7 @@
 \input texinfo  @c -*-texinfo-*-
 @c %**start of header
 @setfilename mixp.info
+@documentencoding UTF-8
 @settitle Mixp (Guile interface to Expat) manual
 @c %**end of header
 
@@ -18,7 +19,7 @@
 @title Mixp (Guile interface to Expat) manual
 @subtitle For use with Mixp @value{VERSION}
 
-@author Thierry Bézecourt
+@author Thierry BÃ©zecourt
 @page
 @end titlepage
 @page
@@ -72,7 +73,7 @@ Another source of information, maybe more accurate, is expat itself:
 expat.html, xmlparse.h, and http://www.jclark.com/xml/expatfaq.html.
 
 Another source of information, maybe less accurate, is me (Thierry
-Bézecourt <mixp@@thbz.org>, or <thbz@@free.fr>).
+BÃ©zecourt <mixp@@thbz.org>, or <thbz@@free.fr>).
 
 @menu
 * Sample programs::             Hello, world

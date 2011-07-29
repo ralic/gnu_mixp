@@ -1,5 +1,12 @@
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc int] Re-encode .texi in UTF-8.
+
+	* mixp.texi: Specify document encoding as UTF-8;
+	on save, re-encode in UTF-8 (was ISO-8859-1 aka LATIN-1).
+
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc int] Remove "manual threading"; add missing ‘@top’ directive.
 
 	* mixp.texi: For each ‘@node’ line, remove
