@@ -1,7 +1,9 @@
 # anywhere
+*.exports
 *.la
 *.lo
 *.o
+*.snippets
 *.so
 *.x
 .deps
@@ -15,17 +17,16 @@ Makefile.in
 /autom4te.cache
 /config.build-subdirs
 /config.cache
-/config.h.in
 /config.log
 /config.status
 /configure
 /libtool
-/stamp-h1
-/config.h
 /check-mixp
 
 /build-aux/config.guess
 /build-aux/config.sub
+/build-aux/guile-baux.state
+/build-aux/guile-baux/
 /build-aux/install-sh
 /build-aux/libtool.m4
 /build-aux/ltmain.sh
@@ -36,6 +37,12 @@ Makefile.in
 /build-aux/mdate-sh
 /build-aux/missing
 /build-aux/texinfo.tex
+
+/src/config.h.in
+/src/stamp-h1
+/src/config.h
+/src/expat
+/src/utils
 
 /doc/mixp.aux
 /doc/mixp.cp

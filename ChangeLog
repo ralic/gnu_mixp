@@ -1,5 +1,34 @@
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Build from source in src/, not in top-level dir.
+
+	* src/Makefile.am: New file.
+	* build-aux/snuggle.m4: New file.
+	* build-aux/sofix: New file.
+	* build-aux/uninstall-sofixed: New file.
+	* autogen.sh: Don't check/ensure build-aux/ existence;
+	import Guile-BAUX modules for configure/build.
+	* configure.ac (AC_CONFIG_HEADERS): Move config.h to src/.
+	(DETERMINE_GUILE_LIBSITE_DIR): New macro call.
+	(guile_cv_mkmodcat): New GUILE_TOOLS_EXISTSP for make-module-catalog.
+	(mmc): New AC_SUBST.
+	(TRIPPY): New AM_CONDITIONAL.
+	(AC_CONFIG_FILES): Add src/Makefile.
+	* Makefile.am (SUBDIRS): Add src.
+	(lib_LTLIBRARIES, libmixp_la_SOURCES, libmixp_la_CFLAGS)
+	(libmixp_la_LDFLAGS, libmixp_la_LIBADD, bin_PROGRAMS)
+	(guile_expat_SOURCES, guile_expat_CFLAGS, guile_expat_LDFLAGS)
+	(guile_expat_LDADD, noinst_HEADERS, BUILT_SOURCES)
+	(subpkgdatadir, subpkgdata_DATA): Delete vars.
+	(gexpat.x): Delete prereq decl.
+	(SUFFIXES, SNARF): Delete vars.
+	(.c.x): Delete old-style suffix rule.
+	(MKDEP, CLEANFILES): Delete vars.
+	(EXTRA_DIST): Add build-aux/sofix,
+	build-aux/uninstall-sofixed, build-aux/guile-baux.
+
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Rename modules in new source; incorporate ttn-do dependecies.
 
 	* src/utils.scm: Rename from mixp.scm; rename to (mixp utils).

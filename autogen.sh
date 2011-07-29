@@ -8,7 +8,12 @@
 
 set -e
 
-test -d build-aux || mkdir build-aux
+guile-baux-tool import \
+    re-prefixed-site-dirs \
+    c2x \
+    gen-scheme-wrapper \
+    punify \
+    gbaux-do
 
 gnulib-tool --copy-file doc/INSTALL.UTF-8 INSTALL
 

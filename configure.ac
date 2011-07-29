@@ -23,7 +23,7 @@ dnl Boston, MA  02110-1301  USA
 AC_PREREQ([2.67])
 AC_INIT([Mixp],[0.6],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.11.1 gnu no-dependencies -Wall])
 AM_MAINTAINER_MODE
@@ -42,6 +42,14 @@ LT_PREREQ([2.2.6])
 LT_INIT([dlopen disable-static]) dnl module only
 
 GUILE_PROGS
+DETERMINE_GUILE_LIBSITE_DIR([mixp])
+GUILE_TOOLS_EXISTSP([mixp_cv_mkmodcat],[make-module-catalog])
+AS_IF([test xyes = x$mixp_cv_mkmodcat],
+      [mmc='${GUILE_TOOLS} make-module-catalog'],
+      [mmc=:])
+AC_SUBST([mmc])
+AM_CONDITIONAL([TRIPPY],[test x':' != x"$mmc"])
+
 GUILE_FLAGS
 GUILE_SITE_DIR
 
@@ -94,6 +102,7 @@ AC_CONFIG_FILES([check-mixp], [chmod +x check-mixp])
 
 AC_CONFIG_FILES([
   Makefile
+  src/Makefile
   doc/Makefile
 ])
 AC_OUTPUT
