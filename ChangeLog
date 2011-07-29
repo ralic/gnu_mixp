@@ -1,5 +1,15 @@
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Fix some improper ‘@xref’ usage.
+
+	These were flagged by makeinfo (GNU texinfo) 4.13.
+
+	* doc/mixp.texi (How to...): Use ‘@pxref’.
+	(Expat handlers): Reword to put ‘@xref’ at end of sentence.
+	(Error handling): Use ‘@pxref’.
+
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Prune obsoleted infrastructure.
 
 	* configure.ac (AC_CONFIG_FILES): Remove check-mixp.

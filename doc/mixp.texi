@@ -289,7 +289,7 @@ You may want to define handlers to be called when Mixp parses the DTD
 and finds an element declaration or an attribute list declaration.
 Unfortunately, this is not possible, due to limitations in expat.
 
-However, you may try to use the default handler (@xref{Expat handlers}).
+However, you may try to use the default handler (@pxref{Expat handlers}).
 If DTD reading is enabled (see the previous item), then the default
 handler will be called repeatedly while reading the DTD, and will
 receive each time a part of the DTD.  However, there is no guarantee
@@ -547,7 +547,7 @@ reference to an external entity in the document.  For example, the
 when it specifies an external DTD.  In that case, you should also call
 @code{(expat:set-param-entity-parsing parser) }, because you probably
 want Mixp to expand the references to entities declared in your DTD.
-See @xref{How to...} for an example.
+For an example, @xref{How to...}.
 
 The external entity reference handler should return an open port to the
 external entity. For example, assuming that @code{system-id} refers to a
@@ -761,8 +761,8 @@ In the Expat interface, @code{expat:parse} returns 0 when an error is
 encountered, i.e when the document is not well-formed.  Then
 @code{expat:get-error-code} should be called to retrieve an error code,
 as a Scheme symbol, which identifies the error.  The error codes are
-listed in the documentation of @code{expat:get-error-code} (@xref{Other
-expat functions}).
+listed in the documentation of @code{expat:get-error-code}
+(@pxref{Other expat functions}).
 
 The functions in the Mixp extensions use the same error codes, but they
 throw them as exceptions instead of returning 0.  The following codes
