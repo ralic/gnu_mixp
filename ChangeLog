@@ -1,3 +1,18 @@
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Rename modules in new source; incorporate ttn-do dependecies.
+
+	* src/utils.scm: Rename from mixp.scm; rename to (mixp utils).
+	(fs, accumulator): New procs, from (ttn-do zzz personally).
+	(ubs?): New object property, from (ttn-do zzz emacsdream).
+	(recognizable-as-ubs): New proc, from same.
+	(make-unsigned-byte-stream): Likewise; don't use ‘define*’;
+	take optional arg ‘check’ instead of keyword arg.
+	(utf8-reader, valid-ucs?, valid-ucs2?): Likewise.
+	* src/expat.c (init_mixp_expat_module):
+	Rename from ‘init_ttn_do_zz_xml_expat_module’.
+	(MOD_INIT_LINK_THUNK): Update ref; rename to (mixp expat).
+
 2011-07-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[int] Import variant source from ttn-do 381.

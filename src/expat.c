@@ -1,4 +1,4 @@
-/* expat.c --- guile 1.4.x interface to libexpat
+/* expat.c --- implement (mixp expat)
 
    Copyright (C) 2007, 2009, 2010, 2011 Thien-Thi Nguyen
    Portions Copyright (C) 1999, 2000 Thierry Bézecourt
@@ -1104,13 +1104,13 @@ init_gexpat (void)
 
 #ifdef LAME_LAME_LAME
 void
-init_ttn_do_zz_xml_expat_module (void)
+init_mixp_expat_module (void)
 {
   init_gexpat ();
 }
 #else
-MOD_INIT_LINK_THUNK ("ttn-do zz xml expat"
-                     ,ttn_do_zz_xml_expat
+MOD_INIT_LINK_THUNK ("mixp expat"
+                     ,mixp_expat
                      ,init_gexpat);
 #endif
 
