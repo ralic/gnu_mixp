@@ -1,7 +1,7 @@
-# Makefile.am
+#!/bin/sh
+# runtest --- run "@GUILE@" w/ proper test environment
 #
 # Copyright (C) 2011 Thien-Thi Nguyen
-# Copyright (C) 2002, 2003 Dmitry Morozhnikov
 #
 # This file is part of Mixp.
 #
@@ -20,15 +20,27 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
-AUTOMAKE_OPTIONS = foreign
+test x"$DEBUG" = x || dopt=--debug
 
-ACLOCAL_AMFLAGS = -I build-aux
+prefix=`pwd`/.fake
+exec_prefix="@exec_prefix@"
+libdir="@libdir@"
 
-SUBDIRS = src doc test
+if [ x"$GUILE_LIBSITE" = x ]
+then d="@GUILE_LIBSITE@"
+else d="$GUILE_LIBSITE"
+fi
 
-EXTRA_DIST = BUGS xml \
-  build-aux/sofix \
-  build-aux/uninstall-sofixed \
-  build-aux/guile-baux
+# Make sure ‘GUILE_LIBSITE’ is sane.
+test x"$DEBUG" = x || echo GUILE_LIBSITE: $d
+if [ -z "$d" ] || [ ! -d "$d" ]
+then
+    echo 'runtest: Invalid GUILE_LIBSITE value.'
+    exit 1
+fi
 
-# Makefile.am ends here
+exec ${GUILE-@GUILE@} $dopt \
+    -L "$d" \
+    -s $1
+
+# runtest ends here

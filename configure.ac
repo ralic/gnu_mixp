@@ -103,6 +103,8 @@ AC_CONFIG_FILES([check-mixp], [chmod +x check-mixp])
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
+  test/Makefile
+  test/runtest
   doc/Makefile
 ])
 AC_OUTPUT

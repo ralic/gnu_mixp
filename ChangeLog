@@ -1,5 +1,19 @@
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Import test/infrastructure from ttn-do 381 for "make check".
+
+	* test/Makefile.am: New file.
+	* test/runtest.in: New file.
+	* test/x001: New file.
+	* Makefile.am (SUBDIRS): Add test.
+	(EXTRA_DIST): Remove test.
+	(TESTS): Delete var.
+	* configure.ac (AC_CONFIG_FILES): Add test/Makefile, test/runtest.
+	* src/Makefile.am (stamp-all): New target.
+	(CLEANFILES): Add stamp-all.
+
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build] Build from source in src/, not in top-level dir.
 
 	* src/Makefile.am: New file.

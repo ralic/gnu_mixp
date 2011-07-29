@@ -1,7 +1,6 @@
 # Makefile.am
 #
 # Copyright (C) 2011 Thien-Thi Nguyen
-# Copyright (C) 2002, 2003 Dmitry Morozhnikov
 #
 # This file is part of Mixp.
 #
@@ -20,15 +19,37 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
-AUTOMAKE_OPTIONS = foreign
+TESTS_ENVIRONMENT = sh runtest
+TESTS = x001
 
-ACLOCAL_AMFLAGS = -I build-aux
+check_DATA = .fake
 
-SUBDIRS = src doc test
+submake = $(MAKE) $(AM_MAKEFLAGS)
 
-EXTRA_DIST = BUGS xml \
-  build-aux/sofix \
-  build-aux/uninstall-sofixed \
-  build-aux/guile-baux
+## This hair is so that we can do, e.g.:
+##  touch ../src/expat.c && make check
+.PHONY: ../src/stamp-all
+../src/stamp-all:
+	@cd ../src && $(submake) stamp-all
+
+stamp-all: ../src/stamp-all
+	@touch $@ -r $<
+
+.fake: stamp-all
+	top=`pwd`/.fake ;			\
+	rm -rf $$top ;				\
+	cd ../src ;				\
+	$(submake) install			\
+	  FOR_MAKE_CHECK=1			\
+	  prefix="$$top"
+
+clean-local:
+	-rm -rf .fake
+
+EXTRA_DIST = \
+  REC-xml-19980210.xml \
+  sub.inc \
+  test.dtd \
+  $(TESTS)
 
 # Makefile.am ends here

@@ -1,0 +1,533 @@
+;;; x001
+
+;; Copyright (C) 2007, 2009, 2010, 2011 Thien-Thi Nguyen
+;; Portions Copyright (C) 1999, 2000 Thierry Bézecourt
+;;
+;; This is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This software is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this package; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA  02110-1301  USA.
+
+(use-modules
+ ((mixp expat) #:prefix expat: #:select (make-xml-encoding
+                                         parser-create
+                                         hset!
+                                         set-encoding
+                                         set-base
+                                         get-base
+                                         parse
+                                         set-param-entity-parsing
+                                         symbol<-error-code
+                                         get-error-code
+                                         get-locus
+                                         error-string))
+ ((mixp utils) #:prefix mixp: #:select (parse-data
+                                        utf8->latin1
+                                        utf8->ucs2
+                                        xml->tree
+                                        xml->list
+                                        list->tree/one
+                                        tree->list/one)))
+
+(define testfile
+  (let ((srcdir (getenv "srcdir")))
+    (lambda (filename)
+      (in-vicinity srcdir filename))))
+
+(define (fs s . args)
+  (apply simple-format #f s args))
+
+(define verbose? (getenv "VERBOSE"))
+
+(define (fso s . args)
+  (and verbose? (apply simple-format #t s args)))
+
+(define (fse s . args)
+  (apply simple-format (current-error-port) s args))
+
+(define (accumulator)
+  (let* ((ls (list #f))
+         (tp ls))
+    (lambda stuff
+      (cond ((null? stuff) (cdr ls))
+            (else (set-cdr! tp stuff)
+                  (set! tp (last-pair tp)))))))
+
+(define memcheck? (getenv "MEMCHECK"))
+
+(cond (memcheck? (gc) (gc) (gc) (sleep 5)))
+
+;; A sample XML document used in several tests
+(define my-document
+  "<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?>
+<!DOCTYPE doc [<!ENTITY program.name 'gexpat'>
+               <!NOTATION SomeNotation PUBLIC 'nota'>]>
+<!-- Comment for the sample document -->
+<doc> <title> A sample XML document for &program.name; </title>
+
+<chapter name='Chapter 1' id='1'>Contents of Chapter 1.<br/> </chapter>
+
+<![CDATA[ba l> dsq>]]>
+
+<chapter name='Chapter 2' id='2'>Contents of Chapter 2.</chapter>
+
+</doc>")
+
+(define (err s . args)
+  (apply fse s args)
+  (newline (current-error-port)))
+
+(define trace (if (getenv "TRACE")
+                  (lambda args
+                    (for-each display args))
+                  noop))
+
+(define count (make-object-property))
+
+(define test-counter 0)
+(define test-failed (accumulator))
+(set! (count test-failed) 0)
+
+(define (failed++ desc failed s . args)
+  (test-failed (list test-counter desc))
+  (set! (count test-failed) (1+ (count test-failed)))
+  (apply err (string-append "FAIL[~S]: ~A - ~A. " s)
+         test-counter desc (failed) args))
+
+(define (good desc . failed)
+  (fso "PASS[~A]: ~A~A~%"
+       test-counter desc
+       (if (null? failed)
+           ""
+           (fs " - ~A" (car failed)))))
+
+(define-macro (check expression desc failed-msg)
+  `(let ((where (fs "evaluating: ~S" ',expression))
+         (thunk (lambda () ,expression))
+         (failed (lambda () ,failed-msg)))
+     (define (bad s . args)
+       (apply failed++ ,desc failed s args))
+     (set! test-counter (1+ test-counter))
+     (let ((res (catch #t thunk (lambda x
+                                  (if (and (not (null? x))
+                                           (pair? (car x)))
+                                      (caar x)
+                                      x)))))
+       (cond ((eq? res #t)
+              (good ,desc))
+             ((eq? res #f)
+              (bad "Result #f from ~A" where))
+             (else
+              (bad "Exception `~S' received while ~A" res where))))))
+
+(define-macro (check-exc expression exc desc failed-msg)
+  `(let ((during (fs "while evaluating: ~S" ',expression))
+         (thunk (lambda () ,expression))
+         (failed (lambda () ,failed-msg)))
+     (define (bad s . args)
+       (apply failed++ ,desc failed s args))
+     (set! test-counter (1+ test-counter))
+     (let ((res (catch #t thunk (lambda args (car args)))))
+       (cond ((memq res '(#t #f))
+              (bad "Missing exception `~S' ~A" ,exc during))
+             ((eq? res ,exc)
+              (good ,desc (failed)))
+             (else
+              (bad "Received unexpected answer `~S' ~A" res during))))))
+
+(define TESTS '())
+
+(define-macro (test description . body)
+  `(set! TESTS (append! TESTS (list (lambda () ,description ,@body)))))
+
+(define indent "")
+(define (indent-increase)
+  (set! indent (string-append indent "    ")))
+(define (indent-decrease)
+  (set! indent (substring indent 0 (- (string-length indent) 4))))
+
+(test "Test handlers"
+  ;; create the parser, and set the handlers
+  (let ((my-parser (expat:parser-create)))
+    (expat:hset!
+     my-parser
+
+     'element-start
+     (lambda (name atts)
+       (trace indent "§ ELEMENT START '" name "' - attributes " atts "\n")
+       (indent-increase))
+
+     'element-end
+     (lambda (name)
+       (indent-decrease)
+       (trace indent "§ ELEMENT END '" name "'\n"))
+
+     'character-data
+     (lambda (value)
+       (trace indent "§ CHARACTER DATA '" value " §\n"))
+
+     'comment
+     (lambda (value)
+       (trace indent "§ COMMENT '" value "' §\n"))
+
+     'cdata-section-start
+     (lambda ()
+       (trace indent "§ CDATA START §\n")
+       (indent-increase))
+
+     'cdata-section-end
+     (lambda ()
+       (indent-decrease)
+       (trace indent "§ CDATA END §\n")))
+
+    ;; parse the document, and print the errors, if any
+    (let ((res-parse (expat:parse my-parser my-document #t)))
+      (check (not (= res-parse 0))
+             "parse"
+             (fs "Parser error: ~A(~A)"
+                 (expat:get-error-code my-parser)
+                 (expat:error-string
+                  (expat:get-error-code my-parser)))))))
+
+(test "Try to parse a not well-formed document"
+  (let ((bad-xml "<doc>dfssfd</do>")
+        (badness 13)) ;;; -------^
+    (trace "Parsing a not well-formed document with expat:parse...\n")
+    (let ((p (expat:parser-create)))
+      (expat:hset! p 'character-data (lambda (c)
+                                       '()))
+      (let ((res (expat:parse p bad-xml #t)))
+        (check (equal? res 0)
+               "Parse bad XML"
+               "Parser did not return an error on not well-formed document")
+        (if (equal? res 0)
+            (let ((code (expat:get-error-code p))
+                  (locus (expat:get-locus p)))
+              (check (eqv? code 'XML_ERROR_TAG_MISMATCH)
+                     "Expect an 'XML_ERROR_TAG_MISMATCH error"
+                     (fs "Expecting error code 'XML_ERROR_TAG_MISMATCH, received ~A"
+                         code))
+              (let ((want (vector 1 badness 0 badness)))
+                (check (equal? want locus)
+                       "Locus of badness"
+                       (fs "Should be ~S but got ~S" want locus)))))))
+    (trace "Parsing a not well-formed document with mixp:parse-data...\n")
+    (check-exc (call-with-input-string bad-xml mixp:parse-data)
+               'XML_ERROR_TAG_MISMATCH
+               "Expect an 'XML_ERROR_TAG_MISMATCH exception"
+               "Parser did not return the expected exception on not well-formed document")))
+
+(test "Test unparsed entities and notations"
+  (let ((xml-doc "<!DOCTYPE doc [
+<!NOTATION vrml PUBLIC 'VRML 2'>
+<!ENTITY Antarctica SYSTEM 'http://www.antarctica.net' NDATA vrml>
+<!ATTLIST World src ENTITY #REQUIRED>]>
+<doc>
+ <World src='Antarctica' />
+</doc>")
+        (my-parser (expat:parser-create))
+        (acc (accumulator)))
+    (expat:hset! my-parser
+                 'notation-decl
+                 (lambda (notation-name base system-id public-id)
+                   (acc `(,notation-name
+                          ,public-id)))
+                 'unparsed-entity-decl
+                 (lambda (entity-name base system-id public-id n-name)
+                   (acc `(,entity-name
+                          ,system-id))))
+    (let ((res-parse (expat:parse my-parser xml-doc #t)))
+      (check (not (= res-parse 0))
+             "unparsed entities"
+             (fs "Parser error: ~A"
+                 (expat:error-string
+                  (expat:get-error-code my-parser))))
+      (check (equal? (acc)
+                     '(("vrml" "VRML 2")
+                       ("Antarctica" "http://www.antarctica.net")))
+             "unparsed entities"
+             (fs "Handler error: composed the following user data: ~A"
+                 (acc))))))
+
+(test "Test the error string reporting"
+  (let* ((code 'XML_ERROR_UNCLOSED_TOKEN)
+         (code-expected (expat:symbol<-error-code 5))
+         (msg (expat:error-string code)))
+    (check (equal? code code-expected)
+           "error string"
+           (fs "Returned code was ~A, expecting ~A"
+               code code-expected))
+    (check (> (string-length msg) 1)
+           "error string not empty"
+           (fs "Returned message was `~A'" msg))))
+
+(test "Create and print an encoding"
+  (let* ((map (make-vector 256 67))
+         (convert (lambda (s) (trace "convert\n") 68))
+         (release (lambda () (trace "release\n")))
+         (encoding (expat:make-xml-encoding map convert release)))
+    (trace encoding)
+    (trace "\n")
+    #t))
+
+(test "Use a document with characters which have a wrong encoding"
+  ;; 1. Wrong encoding in the document should raise an error
+  (let* ((doc "<?xml version='1.0' encoding='US-ASCII'
+standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
+         (my-parser (expat:parser-create))
+         (res-parse (expat:parse my-parser doc #t)))
+    (check (= res-parse 0)
+           "Expect an encoding error"
+           "Error, expecting an encoding error")
+    (if (= res-parse 0)
+        (let ((error-code (expat:get-error-code my-parser)))
+          (check (eqv? error-code 'XML_ERROR_INVALID_TOKEN)
+                 "Ok, got an INVALID TOKEN error as expected"
+                 (fs "Error: expecting error code 4, got ~A"
+                     error-code)))))
+  ;; 2. Wrong encoding in the document overriden by a good encoding
+  ;; in set-encoding should not raise an errore
+  (let* ((doc "<?xml version='1.0' encoding='foo'
+standalone='yes'?> <body>España no es un ascii país</body>")
+         (my-parser (expat:parser-create)))
+    (expat:set-encoding my-parser "ISO-8859-1")
+    (let ((res-parse (expat:parse my-parser doc #t)))
+      (check (not (= res-parse 0))
+             "Parse with ISO-8859-1 encoding"
+             (fs "Parsing error ~A"
+                 (expat:get-error-code my-parser)))))
+  ;; 2. set-encoding with an inexistant encoding should raise a
+  ;; specific error
+  (let* ((doc "<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?> <body>Whatever</body>")
+         (my-parser (expat:parser-create)))
+    (expat:set-encoding my-parser "foo")
+    (let ((res-parse (expat:parse my-parser doc #t)))
+      (check (= res-parse 0)
+             "Expect and encoding error"
+             "Error, expecting an encoding error")
+      (if (= res-parse 0)
+          (let ((error-code  (expat:get-error-code my-parser)))
+            (check (eqv? error-code 'XML_ERROR_UNKNOWN_ENCODING)
+                   "Expect an UNKNOWN ENCODING error"
+                   (fs "Error: expecting error code 18, got ~A"
+                       error-code)))))))
+
+';;; DISABLED.  TODO: unknown encoding handlers are not easy to test.
+(test "Test parsing of unknown encoding"
+  (let ((my-parser (expat:parser-create "thb-encoding")))
+    (expat:hset! my-parser
+                 'unknown-encoding
+                 (lambda (name)
+                   (if (string=? name "thb-encoding")
+                       (let ((map (make-vector 256 67))
+                             (convert (lambda (s) (trace "convert\n") 68))
+                             (release (lambda () (trace "release\n"))))
+                         (begin
+                           (trace "Recognized encoding " name "\n")
+                           (expat:make-xml-encoding map convert release))))))
+    (let ((res-parse (expat:parse my-parser my-document #t)))
+      (check (not (= res-parse 0))
+             "Unknown encoding handler"
+             (fs "Parser error: ~A"
+                 (expat:error-string
+                  (expat:get-error-code my-parser)))))))
+
+(test "Use the base"
+  (let ((my-parser (expat:parser-create))
+        (my-base "My base"))
+    (expat:hset! my-parser
+                 'notation-decl
+                 (lambda (notation-name base system-id public-id)
+                   (trace "§ NOTATION: notation-name=" notation-name
+                          ", base=" base
+                          ", system-id" system-id
+                          ", public-id" public-id " §\n")
+                   (check (equal? my-base base)
+                          "in handler"
+                          (fs "expected ~S but got ~S" my-base base))))
+    (let ((base (expat:get-base my-parser)))
+      (check (not base)
+             "initially #f"
+             (fs "expected ~S but got ~S" #f base)))
+    (expat:set-base my-parser my-base)
+    (let ((base (expat:get-base my-parser)))
+      (check (equal? my-base base)
+             "from expat:get-base"
+             (fs "expected ~S but got ~S" my-base base)))
+    (let ((res-parse (expat:parse my-parser my-document #t)))
+      (check (not (= res-parse 0))
+             "parse w/ base"
+             (fs "Parser error: ~A"
+                 (expat:error-string (expat:get-error-code my-parser)))))))
+
+(test "Test the encoding conversion functions"
+  (let ((from "an ASCII string"))
+    (check (equal? (mixp:utf8->latin1 from) from)
+           "mixp:utf8->latin1 on ASCII"
+           (fs "error with ascii string ~A != ~A~%"
+               (mixp:utf8->latin1 from) from)))
+  (let ((from "BÃ©zecourt")(to "Bézecourt"))
+    (check (equal? (mixp:utf8->latin1 from) to)
+           "mixp:utf8->latin1 on Latin1"
+           "error with Latin1 string~%"))
+  ;; From rfc-2279
+  (let ((from (map integer->char '(#x41 #xE2 #x89 #xA2 #xCE #x91 #x2E)))
+        (to (map (lambda (c) (map integer->char c))
+                 '((#x00 #x41) (#x22 #x62) (#x03 #x91) (#x00 #x2E)))))
+    (check (equal? (mixp:utf8->ucs2 from) to)
+           "mixp:utf8->ucs2"
+           "error with rfc-2279 sample #1~%"))
+  (let ((from (map integer->char
+                   '(#xED #x95 #x9C #xEA #xB5 #xAD #xEC #x96 #xB4)))
+        (to (map (lambda (c) (map integer->char c))
+                 '((#xD5 #x5C) (#xAD #x6D) (#xC5 #xB4)))))
+    (check (equal? (mixp:utf8->ucs2 from) to)
+           "mixp:utf8->ucs2"
+           "error with rfc-2279 sample #2~%"))
+  (let ((from (map integer->char
+                   '(#xE6 #x97 #xA5 #xE6 #x9C #xAC #xE8 #xAA #x9E)))
+        (to (map (lambda (c) (map integer->char c))
+                 '((#x65 #xE5) (#x67 #x2C) (#x8A #x9E)))))
+    (check (equal? (mixp:utf8->ucs2 from) to)
+           "mixp:utf8->ucs2"
+           "error with rfc-2279 sample #3~%"))
+  (check-exc (let ((from (map integer->char '(#xFF #xFF))))
+               (mixp:utf8->ucs2 from))
+             'invalid-utf8
+             "mixp:utf8->ucs2 on invalid input"
+             "An error was expected with invalid UTF-8 input (1)")
+  (check-exc (mixp:utf8->ucs2 (map integer->char '(#xC0 #x80)))
+             'invalid-utf8
+             "mixp:utf8->ucs2 on invalid input"
+             "An error was expected with invalid UTF-8 input (2)")
+  (check-exc (mixp:utf8->ucs2 (map integer->char '(#xED #xA1 #x8C #xED #xBE #xB4)))
+             'no-ucs2
+             "mixp:utf8->ucs2 on invalid input"
+             "An error was expected with invalid UTF-8 input (3)"))
+
+(test "Test the XML to list and XML to tree conversions"
+  (let ((document "<foo><bar>Some text</bar><void/></foo>"))
+    (let ((xml-list (call-with-input-string document
+                                            mixp:xml->list))
+          (expected '((start-element "foo" ())
+                      (start-element "bar" ())
+                      (character-data "Some text")
+                      (end-element "bar")
+                      (start-element "void" ())
+                      (end-element "void")
+                      (end-element "foo"))))
+      (check (equal? xml-list expected)
+             "xml->list"
+             (fs "list built from XML different from expected list: ~A~%!=~%~A"
+                 xml-list expected)))
+    (let ((xml-tree (call-with-input-string document
+                                            mixp:xml->tree))
+          (expected '((element ("foo" ())
+                        (element ("bar" ())
+                          (character-data "Some text"))
+                        (element ("void" ()))))))
+      (check (equal? xml-tree expected)
+             "xml->tree"
+             (fs "tree built from XML different from expected tree ~A~%!=~%~A"
+                 xml-tree expected))))
+  (let* ((file (testfile "REC-xml-19980210.xml"))
+         (xml-list (call-with-input-file file mixp:xml->list))
+         (xml-tree (call-with-input-file file mixp:xml->tree)))
+    (define (nth n ls)
+      (list-ref ls n))
+    (check (equal? xml-list (mixp:tree->list/one xml-tree))
+           "comparison of xml->tree->list and xml->list"
+           "xml->tree->list conversion different from xml->list conversion")
+    (check (equal? xml-tree (mixp:list->tree/one xml-list))
+           "xml->list->tree and xml->tree"
+           "xml->list->tree conversion different from xml->tree conversion")
+    (check (equal? (nth 1 (nth 32 (nth 22 (nth 5 (nth 7 xml-tree)))))
+                   '("div2" (("id" . "sec-predefined-ent"))))
+           "check an element in the tree"
+           "failed")
+    (check (equal? (nth 2014 xml-list)
+                   '(start-element "nt" (("def" . "NT-Nmtoken"))))
+           "check an element in a list"
+           "failed")))
+
+(test "Test the DTD parsing feature"
+  (let ((my-document
+         (fs "<!DOCTYPE numbers SYSTEM ~S>
+<numbers>&numbers;</numbers>" (testfile "test.dtd")))
+        (my-parser (expat:parser-create))
+        (str ""))
+    ;; Make sure sub.inc is available in cwd.
+    (let* ((sub "sub.inc")
+           (here (in-vicinity "." sub)))
+      (or (file-exists? here)
+          (copy-file (testfile sub) here)))
+    (expat:set-param-entity-parsing
+     my-parser 'XML_PARAM_ENTITY_PARSING_ALWAYS)
+    (expat:hset! my-parser
+                 'character-data
+                 (lambda (value)
+                   (set! str (string-append str value)))
+                 'external-entity-ref
+                 (lambda (context base system-id public-id)
+                   (open-file system-id "r")))
+    (let ((res-parse (expat:parse my-parser
+                                  my-document
+                                  #t)))
+      (check (not (= res-parse 0))
+             "parse"
+             (fs "Parser error: ~A(~A)"
+                 (expat:get-error-code my-parser)
+                 (expat:error-string (expat:get-error-code my-parser))))
+      (check (equal? str "0, 2, 4, 6, 8, 1, 3, 5, 7, 9")
+             "check the entity expansion"
+             "failed"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Main program : executes test functions, and catches the errors
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(let ((errors-list '()))
+  (for-each (lambda (fn)
+              (let* ((failed-count-before (count test-failed))
+                     (name (procedure-documentation fn)))
+                (fso "* ~A~%" name)
+                (fn)
+                (if (= (count test-failed) failed-count-before)
+                    (fso "=> ok")
+                    (fso "=> not ok: ~A tests failed"
+                         (- (count test-failed)
+                            failed-count-before)))
+                (fso "~%~%")))
+            TESTS)
+  (if (zero? (count test-failed))
+      (fso "All tests are successful~%")
+      (begin
+        (fso "The following tests failed:~%")
+        (for-each (lambda (t)
+                    (fso "\t~A: ~A~%" (car t) (cadr t)))
+                  (test-failed))
+        (exit #f))))
+
+(cond (memcheck? (gc) (sleep 5)
+                 (gc) (sleep 5)
+                 (gc) (sleep 5)
+                 (gc) (sleep 5)))
+
+;;; Local variables:
+;;; mode: scheme
+;;; coding: iso-latin-1
+;;; End:
+
+;;; x001 ends here

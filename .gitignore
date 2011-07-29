@@ -39,10 +39,15 @@ Makefile.in
 /build-aux/texinfo.tex
 
 /src/config.h.in
+/src/stamp-all
 /src/stamp-h1
 /src/config.h
 /src/expat
 /src/utils
+
+/test/.fake
+/test/runtest
+/test/stamp-all
 
 /doc/mixp.aux
 /doc/mixp.cp

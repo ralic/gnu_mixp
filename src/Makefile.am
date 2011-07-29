@@ -94,8 +94,12 @@ endif TRIPPY
 	-rmdir '$(DESTDIR)$(irootdir)'
 	-rmdir '$(DESTDIR)$(pkglibdir)'
 
+## See comment in ../test/Makefile.am.
+stamp-all: $(iroot_DATA) $(iroot_LTLIBRARIES) $(pkglib_LTLIBRARIES)
+	@touch $@
+
 DISTCLEANFILES = *.x *.exports
 
-CLEANFILES = *.x $(iroot_DATA)
+CLEANFILES = *.x $(iroot_DATA) stamp-all
 
 # Makefile.am ends here
