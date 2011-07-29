@@ -46,7 +46,6 @@ This documentation was last updated on @value{UPDATED} and covers Mixp
 version @value{VERSION}.
 
 @node Introduction
-@comment Introduction
 @chapter Introduction
 
 Mixp is a Scheme interface to James Clark's expat library. It may be
@@ -84,7 +83,6 @@ Bézecourt <mixp@@thbz.org>, or <thbz@@free.fr>).
 @end menu
 
 @node Sample programs
-@comment  node-name,  next,  previous,  up
 @section Sample programs
 @cindex sample programs
 
@@ -136,7 +134,6 @@ Result is :
 For more information about this interface, @xref{High-level extensions}.
 
 @node Loading Mixp
-@comment Loading Mixp
 @section Loading Mixp
 @cindex loading Mixp
 
@@ -154,7 +151,6 @@ the raw expat interface (i.e. the functions which name is prefixed by
 you want to use the extension functions (@xref{High-level extensions}.)
 
 @node Mixp components
-@comment Mixp components
 @section Mixp components
 @cindex mixp components
 
@@ -185,7 +181,6 @@ are located in the @code{xml} directory somewhere along your
 GUILE_LOAD_PATH.
 
 @node How to...
-@comment How to...
 @section How to...
 
 This section describes a few common tasks which may be solved with Mixp.
@@ -301,7 +296,6 @@ but not easy.
 @end itemize
 
 @node Bugs and suggestions
-@comment Bugs and suggestions
 @section Bugs and suggestions
 
 Please send bug reports to me (mixp@@thbz.org or thbz@@free.fr).  I would also appreciate
@@ -309,7 +303,6 @@ feedback about Mixp, and suggestions about what could be improved in the
 interface.
 
 @node Expat interface
-@comment Raw expat interface (expat:)
 @chapter Expat interface
 
 This section contains the reference documentation for the expat
@@ -324,7 +317,6 @@ interface, i.e the @code{xml:expat} module.
 @end menu
 
 @node Expat handlers
-@comment Expat Handlers
 @section Expat handlers
 @cindex handlers
 @cindex xml:expat API (handlers)
@@ -588,7 +580,6 @@ don't work for now.
 @end defun
 
 @node Other expat functions
-@comment Other expat functions
 @section Other expat functions
 @cindex xml:expat API (miscellaneous functions)
 
@@ -729,7 +720,6 @@ Returns an error message describing the expat error code defined by
 @end defun
 
 @node Encodings
-@comment Encodings
 @section Encodings
 @cindex encodings
 
@@ -755,7 +745,6 @@ parse a document which claims to be US-ASCII but contains 8-bit
 characters.
 
 @node Error handling
-@comment  node-name,  next,  previous,  up
 @section Error handling
 
 In the Expat interface, @code{expat:parse} returns 0 when an error is
@@ -780,7 +769,6 @@ demonstrates simple error handling with @code{mixp:parse-data} :
 @result{Received an error: expat:XML_ERROR_TAG_MISMATCH}
 
 @node Not implemented
-@comment Not implemented
 @section Not implemented
 
 The following function is a part of the expat interface, but it was not
@@ -792,7 +780,6 @@ implemented.
 You should also read the section about encodings @xref{Encodings}.
 
 @node High-level extensions
-@comment High-level extensions (mixp:)
 @chapter High-level extensions
 @cindex xml: API
 
@@ -929,7 +916,6 @@ Returns @code{#t} if the @var{arg} is a parser object (as created by
 @end defun
 
 @node Concept index
-@comment Concept index
 @unnumbered Concept index
 
 @ifinfo
@@ -941,7 +927,6 @@ in Info .
 @printindex cp
 
 @node Function index
-@comment Function index
 @unnumbered Function index
 
 @ifinfo
