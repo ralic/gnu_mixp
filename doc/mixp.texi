@@ -23,7 +23,8 @@
 @end titlepage
 @page
 
-@node Top, Introduction, (dir), (dir)
+@node Top
+@top  The (mixp expat) and (mixp utils) Modules
 
 @ifinfo
 This is Mixp, an XML Parser for Guile, written as an interface to James
@@ -44,7 +45,7 @@ subject to change.  However, it should be sufficient to get started.
 This documentation was last updated on @value{UPDATED} and covers Mixp
 version @value{VERSION}.
 
-@node Introduction, Expat interface, Top, Top
+@node Introduction
 @comment Introduction
 @chapter Introduction
 
@@ -82,7 +83,7 @@ Bézecourt <mixp@@thbz.org>, or <thbz@@free.fr>).
 * Bugs and suggestions::        Contact me
 @end menu
 
-@node Sample programs, Loading Mixp, Introduction, Introduction
+@node Sample programs
 @comment  node-name,  next,  previous,  up
 @section Sample programs
 @cindex sample programs
@@ -134,7 +135,7 @@ Result is :
 
 For more information about this interface, @xref{High-level extensions}.
 
-@node Loading Mixp, Mixp components, Sample programs, Introduction
+@node Loading Mixp
 @comment Loading Mixp
 @section Loading Mixp
 @cindex loading Mixp
@@ -152,7 +153,7 @@ the raw expat interface (i.e. the functions which name is prefixed by
 @code{expat:}, @xref{Expat interface}.) You need @code{xml:mixp} if
 you want to use the extension functions (@xref{High-level extensions}.)
 
-@node Mixp components, How to..., Loading Mixp, Introduction
+@node Mixp components
 @comment Mixp components
 @section Mixp components
 @cindex mixp components
@@ -183,7 +184,7 @@ which defines other parts of the @code{xml:mixp} interface. Both files
 are located in the @code{xml} directory somewhere along your
 GUILE_LOAD_PATH.
 
-@node How to..., Bugs and suggestions, Mixp components, Introduction
+@node How to...
 @comment How to...
 @section How to...
 
@@ -299,7 +300,7 @@ but not easy.
 
 @end itemize
 
-@node Bugs and suggestions,  , How to..., Introduction
+@node Bugs and suggestions
 @comment Bugs and suggestions
 @section Bugs and suggestions
 
@@ -307,7 +308,7 @@ Please send bug reports to me (mixp@@thbz.org or thbz@@free.fr).  I would also a
 feedback about Mixp, and suggestions about what could be improved in the
 interface.
 
-@node Expat interface, High-level extensions, Introduction, Top
+@node Expat interface
 @comment Raw expat interface (expat:)
 @chapter Expat interface
 
@@ -322,7 +323,7 @@ interface, i.e the @code{xml:expat} module.
 * Not implemented::             What is not here
 @end menu
 
-@node Expat handlers, Other expat functions, Expat interface, Expat interface
+@node Expat handlers
 @comment Expat Handlers
 @section Expat handlers
 @cindex handlers
@@ -586,7 +587,7 @@ don't work for now.
 
 @end defun
 
-@node Other expat functions, Encodings, Expat handlers, Expat interface
+@node Other expat functions
 @comment Other expat functions
 @section Other expat functions
 @cindex xml:expat API (miscellaneous functions)
@@ -727,7 +728,7 @@ Returns an error message describing the expat error code defined by
 @code{expat:get-error-code} on the parser object.
 @end defun
 
-@node Encodings, Error handling, Other expat functions, Expat interface
+@node Encodings
 @comment Encodings
 @section Encodings
 @cindex encodings
@@ -753,7 +754,7 @@ should be parsed correctly.  For example, you should get an error if you
 parse a document which claims to be US-ASCII but contains 8-bit
 characters.
 
-@node Error handling, Not implemented, Encodings, Expat interface
+@node Error handling
 @comment  node-name,  next,  previous,  up
 @section Error handling
 
@@ -778,7 +779,7 @@ demonstrates simple error handling with @code{mixp:parse-data} :
 @end lisp
 @result{Received an error: expat:XML_ERROR_TAG_MISMATCH}
 
-@node Not implemented,  , Error handling, Expat interface
+@node Not implemented
 @comment Not implemented
 @section Not implemented
 
@@ -790,7 +791,7 @@ implemented.
 
 You should also read the section about encodings @xref{Encodings}.
 
-@node High-level extensions, Concept index, Expat interface, Top
+@node High-level extensions
 @comment High-level extensions (mixp:)
 @chapter High-level extensions
 @cindex xml: API
@@ -927,7 +928,7 @@ Returns @code{#t} if the @var{arg} is a parser object (as created by
 @code{expat:parser-create}.
 @end defun
 
-@node Concept index, Function index, High-level extensions, Top
+@node Concept index
 @comment Concept index
 @unnumbered Concept index
 
@@ -939,7 +940,7 @@ in Info .
 
 @printindex cp
 
-@node Function index,  , Concept index, Top
+@node Function index
 @comment Function index
 @unnumbered Function index
 

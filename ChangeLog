@@ -1,5 +1,13 @@
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc int] Remove "manual threading"; add missing ‘@top’ directive.
+
+	* mixp.texi: For each ‘@node’ line, remove
+	everything from the first comma to end of line.
+	(Top): Add ‘@top’ directive.
+
+2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Fix some improper ‘@xref’ usage.
 
 	These were flagged by makeinfo (GNU texinfo) 4.13.
