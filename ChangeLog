@@ -1,5 +1,11 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Don't say "error code" in tests.
+
+	* test/x001: Rework to avoid "error code" and ‘error-code’.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Rename ‘get-error-code’ to ‘error-symbol’.
 
 	* src/expat.c (error_int_to_symbol): Delete func.

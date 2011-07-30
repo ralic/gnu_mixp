@@ -210,12 +210,13 @@
                "Parse bad XML"
                "Parser did not return an error on not well-formed document")
         (if (equal? res 0)
-            (let ((code (expat:error-symbol p))
+            (let ((es (expat:error-symbol p))
                   (locus (expat:get-locus p)))
-              (check (eqv? code 'XML_ERROR_TAG_MISMATCH)
+              (check (eqv? es 'XML_ERROR_TAG_MISMATCH)
                      "Expect an 'XML_ERROR_TAG_MISMATCH error"
-                     (fs "Expecting error code 'XML_ERROR_TAG_MISMATCH, received ~A"
-                         code))
+                     (fs "Expecting ~A received ~A"
+                         'XML_ERROR_TAG_MISMATCH
+                         es))
               (let ((want (vector 1 badness 0 badness)))
                 (check (equal? want locus)
                        "Locus of badness"
@@ -283,11 +284,12 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
            "Expect an encoding error"
            "Error, expecting an encoding error")
     (if (= res-parse 0)
-        (let ((error-code (expat:error-symbol my-parser)))
-          (check (eqv? error-code 'XML_ERROR_INVALID_TOKEN)
+        (let ((es (expat:error-symbol my-parser)))
+          (check (eqv? es 'XML_ERROR_INVALID_TOKEN)
                  "Ok, got an INVALID TOKEN error as expected"
-                 (fs "Error: expecting error code 4, got ~A"
-                     error-code)))))
+                 (fs "Error: expecting ~A, got ~A"
+                     'XML_ERROR_INVALID_TOKEN
+                     es)))))
   ;; 2. Wrong encoding in the document overriden by a good encoding
   ;; in set-encoding should not raise an errore
   (let* ((doc "<?xml version='1.0' encoding='foo'
@@ -309,11 +311,12 @@ standalone='yes'?> <body>España no es un ascii país</body>")
              "Expect and encoding error"
              "Error, expecting an encoding error")
       (if (= res-parse 0)
-          (let ((error-code  (expat:error-symbol my-parser)))
-            (check (eqv? error-code 'XML_ERROR_UNKNOWN_ENCODING)
+          (let ((es  (expat:error-symbol my-parser)))
+            (check (eqv? es 'XML_ERROR_UNKNOWN_ENCODING)
                    "Expect an UNKNOWN ENCODING error"
-                   (fs "Error: expecting error code 18, got ~A"
-                       error-code)))))))
+                   (fs "Error: expecting ~A, got ~A"
+                       'XML_ERROR_UNKNOWN_ENCODING
+                       es)))))))
 
 ';;; DISABLED.  TODO: unknown encoding handlers are not easy to test.
 (test "Test parsing of unknown encoding"
