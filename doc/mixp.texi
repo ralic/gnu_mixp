@@ -3,6 +3,7 @@
 @setfilename mixp.info
 @documentencoding UTF-8
 @settitle Mixp (Guile interface to Expat) manual
+@syncodeindex fn cp
 @c %**end of header
 
 @include version.texi
@@ -39,8 +40,8 @@ subject to change.  However, it should be sufficient to get started.
 * Introduction::                Introduction to the expat interface for Guile
 * Expat interface::             The reference documentation
 * High-level extensions::       A few Scheme extensions
-* Concept index::               The concept index
-* Function index::              The function index
+
+* Index::
 @end menu
 
 This documentation was last updated on @value{UPDATED} and covers Mixp
@@ -916,26 +917,16 @@ Returns @code{#t} if the @var{arg} is a parser object (as created by
 @code{expat:parser-create}.
 @end defun
 
-@node Concept index
-@unnumbered Concept index
+@node Index
+@unnumbered Index
 
 @ifinfo
 Sorry, some of the cross-reference links do not work under Emacs because
-the function names in the API contain colons. This is a documented bug
-in Info .
+the function names in the API contain colons.  This is a documented bug
+in Info.
 @end ifinfo
 
 @printindex cp
-
-@node Function index
-@unnumbered Function index
-
-@ifinfo
-Sorry, most of the cross-reference links do not work under Emacs because
-the function names contain colons. This is a documented bug in Info .
-@end ifinfo
-
-@printindex fn
 
 @summarycontents
 @contents

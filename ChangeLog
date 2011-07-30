@@ -1,5 +1,13 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Combine indices.
+
+	* doc/mixp.texi: Combine function index into concept index.
+	(Top): Update menu.
+	(Index): New @node, from merging ‘Concept index’ and ‘Function index’.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Add abstraction: UD_SIZE
 
 	* src/expat.c (UD_SIZE): New #define.
