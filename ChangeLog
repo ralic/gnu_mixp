@@ -1,5 +1,13 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Add some libexpat 2.0 error codes.
+
+	* src/expat.c (error_codes) [2 == XML_MAJOR_VERSION]: Add
+	‘XML_ERROR_RESERVED_PREFIX_XML’, ‘XML_ERROR_RESERVED_PREFIX_XMLNS’,
+	‘XML_ERROR_RESERVED_NAMESPACE_URI’.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Fix bug: Make ‘error-string’ handle unrecognized codes.
 
 	Strangely, ‘XML_ErrorString (XML_ERROR_NONE)’ => ‘NULL’.
