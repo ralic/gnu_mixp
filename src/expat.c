@@ -145,6 +145,8 @@ mark_parser (SCM obj)
   RETURN_FALSE ();
 }
 
+#define UD_SIZE  (hindex_count * sizeof (SCM))
+
 static size_t
 free_parser (SCM obj)
 {
@@ -155,7 +157,7 @@ free_parser (SCM obj)
   XML_ParserFree (p);
   SCM_SET_SMOB_DATA (obj, (p = NULL));
 
-  return hindex_count * sizeof (SCM);
+  return UD_SIZE;
 }
 
 static int
@@ -173,7 +175,7 @@ make_parser (XML_Parser p)
   int i; SCM *ud, *h;
 
   SCM_DEFER_INTS;
-  ud = as_ud (malloc (hindex_count * sizeof (SCM)));
+  ud = as_ud (malloc (UD_SIZE));
   for (i = 0, h = ud; i < hindex_count; i++, h++)
     *h = SCM_UNSPECIFIED;
   XML_SetUserData (p, ud);

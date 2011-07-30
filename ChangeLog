@@ -1,3 +1,10 @@
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[expat int] Add abstraction: UD_SIZE
+
+	* src/expat.c (UD_SIZE): New #define.
+	(free_parser, make_parser): Use ‘UD_SIZE’.
+
 2011-07-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc int] Re-encode .texi in UTF-8.
