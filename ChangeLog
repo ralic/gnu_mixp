@@ -1,5 +1,14 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Fix bug: Make ‘error-string’ handle unrecognized codes.
+
+	Strangely, ‘XML_ErrorString (XML_ERROR_NONE)’ => ‘NULL’.
+	That is the unique value in ‘enum XML_Error’ manifesting this.
+
+	* src/expat.c (error_string): Return ‘#f’ if ‘code’ is unrecognized.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Combine indices.
 
 	* doc/mixp.texi: Combine function index into concept index.

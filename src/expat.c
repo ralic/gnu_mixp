@@ -1064,12 +1064,18 @@ PRIMPROC
 (error_string, "error-string", 1, 0, 0,
  (SCM code),
  doc: /***********
-Return a string representing the error @var{code} (a symbol).  */)
+Return a string representing the error @var{code} (a symbol).
+If @var{code} is not recognized, return @code{#f}.  */)
 {
 #define FUNC_NAME s_error_string
+  /* TODO: Handle multibyte XML_LChar.  */
+  const XML_LChar *s;
+
   SCM_VALIDATE_SYMBOL (1, code);
 
-  return STRING (XML_ErrorString (error_symbol_to_int (code)));
+  return (s = XML_ErrorString (error_symbol_to_int (code)))
+    ? STRING (s)
+    : SCM_BOOL_F;
 #undef FUNC_NAME
 }
 
