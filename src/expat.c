@@ -975,14 +975,6 @@ static int
 /*
  * XML_Error
  */
-static SCM
-error_int_to_symbol (int code)
-{
-  return (error_codes_count > code
-          ? error_codes[code].sy
-          : SCM_BOOL_F);
-}
-
 static int
 error_symbol_to_int (SCM sym)
 {
@@ -995,17 +987,20 @@ error_symbol_to_int (SCM sym)
 }
 
 PRIMPROC
-(get_error_code, "get-error-code", 1, 0, 0,
+(error_symbol, "error-symbol", 1, 0, 0,
  (SCM parser),
  doc: /***********
 Return a symbol corresponding to the error code for @var{parser}.  */)
 {
-#define FUNC_NAME s_get_error_code
+#define FUNC_NAME s_error_symbol
   XML_Parser p;
+  enum XML_Error code;
 
   VALIDATE_PARSER ();
 
-  return error_int_to_symbol (XML_GetErrorCode (p));
+  return error_codes_count > (code = XML_GetErrorCode (p))
+    ? error_codes[code].sy
+    : SCM_BOOL_F;
 #undef FUNC_NAME
 }
 

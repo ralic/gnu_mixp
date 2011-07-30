@@ -47,7 +47,7 @@
                                                        parser-create
                                                        hset!
                                                        parse
-                                                       get-error-code)))
+                                                       error-symbol)))
 
 (define (fs s . args)
   (apply simple-format #f s args))
@@ -361,7 +361,7 @@
   (let ((parser (get-parser args parse-data)))
     (define (check s last?)
       (and (zero? (expat:parse parser s last?))
-           (throw (expat:get-error-code parser))))
+           (throw (expat:error-symbol parser))))
     (let loop ((line (next)))
       (cond ((not line))
             ((eof-object? line))

@@ -1,5 +1,15 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Rename ‘get-error-code’ to ‘error-symbol’.
+
+	* src/expat.c (error_int_to_symbol): Delete func.
+	(error_symbol): Rename from ‘get_error_code’; rename Scheme
+	proc to ‘error-symbol’; incorporate ‘error_int_to_symbol’.
+	* src/utils.scm: Do ‘s/get-error-code/error-symbol/g’.
+	* test/x001: Likewise.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Drop proc: symbol<-error-code
 
 	* src/expat.c (symbol_from_error_code): Delete func.
