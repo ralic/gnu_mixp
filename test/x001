@@ -27,7 +27,6 @@
                                          get-base
                                          parse
                                          set-param-entity-parsing
-                                         symbol<-error-code
                                          get-error-code
                                          get-locus
                                          error-string))
@@ -260,13 +259,7 @@
                  (acc))))))
 
 (test "Test the error string reporting"
-  (let* ((code 'XML_ERROR_UNCLOSED_TOKEN)
-         (code-expected (expat:symbol<-error-code 5))
-         (msg (expat:error-string code)))
-    (check (equal? code code-expected)
-           "error string"
-           (fs "Returned code was ~A, expecting ~A"
-               code code-expected))
+  (let ((msg (expat:error-string 'XML_ERROR_UNCLOSED_TOKEN)))
     (check (> (string-length msg) 1)
            "error string not empty"
            (fs "Returned message was `~A'" msg))))

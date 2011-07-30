@@ -995,19 +995,6 @@ error_symbol_to_int (SCM sym)
 }
 
 PRIMPROC
-(symbol_from_error_code, "symbol<-error-code", 1, 0, 0,
- (SCM code),
- doc: /***********
-Return the Scheme symbol which corresponds to
-an Expat integer error code.  */)
-{
-#define FUNC_NAME s_symbol_from_error_code
-  SCM_VALIDATE_INUM_RANGE (1, code, 0, error_codes_count);
-  return error_int_to_symbol (SCM_INUM (code));
-#undef FUNC_NAME
-}
-
-PRIMPROC
 (get_error_code, "get-error-code", 1, 0, 0,
  (SCM parser),
  doc: /***********

@@ -1,5 +1,13 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Drop proc: symbol<-error-code
+
+	* src/expat.c (symbol_from_error_code): Delete func.
+	* test/x001: Don't import ‘(mixp expat) symbol<-error-code’.
+	("Test the error string reporting"): Drop ‘symbol<-error-code’ check.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Add some libexpat 2.0 error codes.
 
 	* src/expat.c (error_codes) [2 == XML_MAJOR_VERSION]: Add
