@@ -19,24 +19,24 @@
 ;; Boston, MA  02110-1301  USA.
 
 (use-modules
- ((mixp expat) #:prefix expat: #:select (make-xml-encoding
-                                         parser-create
-                                         hset!
-                                         set-encoding
-                                         set-base
-                                         get-base
-                                         parse
-                                         set-param-entity-parsing
-                                         error-symbol
-                                         get-locus
-                                         error-string))
- ((mixp utils) #:prefix mixp: #:select (parse-data
-                                        utf8->latin1
-                                        utf8->ucs2
-                                        xml->tree
-                                        xml->list
-                                        list->tree/one
-                                        tree->list/one)))
+ ((mixp expat) #:prefix E: #:select (make-xml-encoding
+                                     parser-create
+                                     hset!
+                                     set-encoding
+                                     set-base
+                                     get-base
+                                     parse
+                                     set-param-entity-parsing
+                                     error-symbol
+                                     get-locus
+                                     error-string))
+ ((mixp utils) #:prefix U: #:select (parse-data
+                                     utf8->latin1
+                                     utf8->ucs2
+                                     xml->tree
+                                     xml->list
+                                     list->tree/one
+                                     tree->list/one)))
 
 (define testfile
   (let ((srcdir (getenv "srcdir")))
@@ -157,8 +157,8 @@
 
 (test "Test handlers"
   ;; create the parser, and set the handlers
-  (let ((my-parser (expat:parser-create)))
-    (expat:hset!
+  (let ((my-parser (E:parser-create)))
+    (E:hset!
      my-parser
 
      'element-start
@@ -190,28 +190,28 @@
        (trace indent "§ CDATA END §\n")))
 
     ;; parse the document, and print the errors, if any
-    (let ((res-parse (expat:parse my-parser my-document #t)))
+    (let ((res-parse (E:parse my-parser my-document #t)))
       (check (not (= res-parse 0))
              "parse"
              (fs "Parser error: ~A(~A)"
-                 (expat:error-symbol my-parser)
-                 (expat:error-string
-                  (expat:error-symbol my-parser)))))))
+                 (E:error-symbol my-parser)
+                 (E:error-string
+                  (E:error-symbol my-parser)))))))
 
 (test "Try to parse a not well-formed document"
   (let ((bad-xml "<doc>dfssfd</do>")
         (badness 13)) ;;; -------^
-    (trace "Parsing a not well-formed document with expat:parse...\n")
-    (let ((p (expat:parser-create)))
-      (expat:hset! p 'character-data (lambda (c)
-                                       '()))
-      (let ((res (expat:parse p bad-xml #t)))
+    (trace "Parsing a not well-formed document with E:parse...\n")
+    (let ((p (E:parser-create)))
+      (E:hset! p 'character-data (lambda (c)
+                                   '()))
+      (let ((res (E:parse p bad-xml #t)))
         (check (equal? res 0)
                "Parse bad XML"
                "Parser did not return an error on not well-formed document")
         (if (equal? res 0)
-            (let ((es (expat:error-symbol p))
-                  (locus (expat:get-locus p)))
+            (let ((es (E:error-symbol p))
+                  (locus (E:get-locus p)))
               (check (eqv? es 'XML_ERROR_TAG_MISMATCH)
                      "Expect an 'XML_ERROR_TAG_MISMATCH error"
                      (fs "Expecting ~A received ~A"
@@ -221,8 +221,8 @@
                 (check (equal? want locus)
                        "Locus of badness"
                        (fs "Should be ~S but got ~S" want locus)))))))
-    (trace "Parsing a not well-formed document with mixp:parse-data...\n")
-    (check-exc (call-with-input-string bad-xml mixp:parse-data)
+    (trace "Parsing a not well-formed document with U:parse-data...\n")
+    (check-exc (call-with-input-string bad-xml U:parse-data)
                'XML_ERROR_TAG_MISMATCH
                "Expect an 'XML_ERROR_TAG_MISMATCH exception"
                "Parser did not return the expected exception on not well-formed document")))
@@ -235,23 +235,23 @@
 <doc>
  <World src='Antarctica' />
 </doc>")
-        (my-parser (expat:parser-create))
+        (my-parser (E:parser-create))
         (acc (accumulator)))
-    (expat:hset! my-parser
-                 'notation-decl
-                 (lambda (notation-name base system-id public-id)
-                   (acc `(,notation-name
-                          ,public-id)))
-                 'unparsed-entity-decl
-                 (lambda (entity-name base system-id public-id n-name)
-                   (acc `(,entity-name
-                          ,system-id))))
-    (let ((res-parse (expat:parse my-parser xml-doc #t)))
+    (E:hset! my-parser
+             'notation-decl
+             (lambda (notation-name base system-id public-id)
+               (acc `(,notation-name
+                      ,public-id)))
+             'unparsed-entity-decl
+             (lambda (entity-name base system-id public-id n-name)
+               (acc `(,entity-name
+                      ,system-id))))
+    (let ((res-parse (E:parse my-parser xml-doc #t)))
       (check (not (= res-parse 0))
              "unparsed entities"
              (fs "Parser error: ~A"
-                 (expat:error-string
-                  (expat:error-symbol my-parser))))
+                 (E:error-string
+                  (E:error-symbol my-parser))))
       (check (equal? (acc)
                      '(("vrml" "VRML 2")
                        ("Antarctica" "http://www.antarctica.net")))
@@ -260,7 +260,7 @@
                  (acc))))))
 
 (test "Test the error string reporting"
-  (let ((msg (expat:error-string 'XML_ERROR_UNCLOSED_TOKEN)))
+  (let ((msg (E:error-string 'XML_ERROR_UNCLOSED_TOKEN)))
     (check (> (string-length msg) 1)
            "error string not empty"
            (fs "Returned message was `~A'" msg))))
@@ -269,7 +269,7 @@
   (let* ((map (make-vector 256 67))
          (convert (lambda (s) (trace "convert\n") 68))
          (release (lambda () (trace "release\n")))
-         (encoding (expat:make-xml-encoding map convert release)))
+         (encoding (E:make-xml-encoding map convert release)))
     (trace encoding)
     (trace "\n")
     #t))
@@ -278,13 +278,13 @@
   ;; 1. Wrong encoding in the document should raise an error
   (let* ((doc "<?xml version='1.0' encoding='US-ASCII'
 standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
-         (my-parser (expat:parser-create))
-         (res-parse (expat:parse my-parser doc #t)))
+         (my-parser (E:parser-create))
+         (res-parse (E:parse my-parser doc #t)))
     (check (= res-parse 0)
            "Expect an encoding error"
            "Error, expecting an encoding error")
     (if (= res-parse 0)
-        (let ((es (expat:error-symbol my-parser)))
+        (let ((es (E:error-symbol my-parser)))
           (check (eqv? es 'XML_ERROR_INVALID_TOKEN)
                  "Ok, got an INVALID TOKEN error as expected"
                  (fs "Error: expecting ~A, got ~A"
@@ -294,24 +294,24 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
   ;; in set-encoding should not raise an errore
   (let* ((doc "<?xml version='1.0' encoding='foo'
 standalone='yes'?> <body>España no es un ascii país</body>")
-         (my-parser (expat:parser-create)))
-    (expat:set-encoding my-parser "ISO-8859-1")
-    (let ((res-parse (expat:parse my-parser doc #t)))
+         (my-parser (E:parser-create)))
+    (E:set-encoding my-parser "ISO-8859-1")
+    (let ((res-parse (E:parse my-parser doc #t)))
       (check (not (= res-parse 0))
              "Parse with ISO-8859-1 encoding"
              (fs "Parsing error ~A"
-                 (expat:error-symbol my-parser)))))
+                 (E:error-symbol my-parser)))))
   ;; 2. set-encoding with an inexistant encoding should raise a
   ;; specific error
   (let* ((doc "<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?> <body>Whatever</body>")
-         (my-parser (expat:parser-create)))
-    (expat:set-encoding my-parser "foo")
-    (let ((res-parse (expat:parse my-parser doc #t)))
+         (my-parser (E:parser-create)))
+    (E:set-encoding my-parser "foo")
+    (let ((res-parse (E:parse my-parser doc #t)))
       (check (= res-parse 0)
              "Expect and encoding error"
              "Error, expecting an encoding error")
       (if (= res-parse 0)
-          (let ((es  (expat:error-symbol my-parser)))
+          (let ((es  (E:error-symbol my-parser)))
             (check (eqv? es 'XML_ERROR_UNKNOWN_ENCODING)
                    "Expect an UNKNOWN ENCODING error"
                    (fs "Error: expecting ~A, got ~A"
@@ -320,101 +320,101 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 
 ';;; DISABLED.  TODO: unknown encoding handlers are not easy to test.
 (test "Test parsing of unknown encoding"
-  (let ((my-parser (expat:parser-create "thb-encoding")))
-    (expat:hset! my-parser
-                 'unknown-encoding
-                 (lambda (name)
-                   (if (string=? name "thb-encoding")
-                       (let ((map (make-vector 256 67))
-                             (convert (lambda (s) (trace "convert\n") 68))
-                             (release (lambda () (trace "release\n"))))
-                         (begin
-                           (trace "Recognized encoding " name "\n")
-                           (expat:make-xml-encoding map convert release))))))
-    (let ((res-parse (expat:parse my-parser my-document #t)))
+  (let ((my-parser (E:parser-create "thb-encoding")))
+    (E:hset! my-parser
+             'unknown-encoding
+             (lambda (name)
+               (if (string=? name "thb-encoding")
+                   (let ((map (make-vector 256 67))
+                         (convert (lambda (s) (trace "convert\n") 68))
+                         (release (lambda () (trace "release\n"))))
+                     (begin
+                       (trace "Recognized encoding " name "\n")
+                       (E:make-xml-encoding map convert release))))))
+    (let ((res-parse (E:parse my-parser my-document #t)))
       (check (not (= res-parse 0))
              "Unknown encoding handler"
              (fs "Parser error: ~A"
-                 (expat:error-string
-                  (expat:error-symbol my-parser)))))))
+                 (E:error-string
+                  (E:error-symbol my-parser)))))))
 
 (test "Use the base"
-  (let ((my-parser (expat:parser-create))
+  (let ((my-parser (E:parser-create))
         (my-base "My base"))
-    (expat:hset! my-parser
-                 'notation-decl
-                 (lambda (notation-name base system-id public-id)
-                   (trace "§ NOTATION: notation-name=" notation-name
-                          ", base=" base
-                          ", system-id" system-id
-                          ", public-id" public-id " §\n")
-                   (check (equal? my-base base)
-                          "in handler"
-                          (fs "expected ~S but got ~S" my-base base))))
-    (let ((base (expat:get-base my-parser)))
+    (E:hset! my-parser
+             'notation-decl
+             (lambda (notation-name base system-id public-id)
+               (trace "§ NOTATION: notation-name=" notation-name
+                      ", base=" base
+                      ", system-id" system-id
+                      ", public-id" public-id " §\n")
+               (check (equal? my-base base)
+                      "in handler"
+                      (fs "expected ~S but got ~S" my-base base))))
+    (let ((base (E:get-base my-parser)))
       (check (not base)
              "initially #f"
              (fs "expected ~S but got ~S" #f base)))
-    (expat:set-base my-parser my-base)
-    (let ((base (expat:get-base my-parser)))
+    (E:set-base my-parser my-base)
+    (let ((base (E:get-base my-parser)))
       (check (equal? my-base base)
-             "from expat:get-base"
+             "from E:get-base"
              (fs "expected ~S but got ~S" my-base base)))
-    (let ((res-parse (expat:parse my-parser my-document #t)))
+    (let ((res-parse (E:parse my-parser my-document #t)))
       (check (not (= res-parse 0))
              "parse w/ base"
              (fs "Parser error: ~A"
-                 (expat:error-string (expat:error-symbol my-parser)))))))
+                 (E:error-string (E:error-symbol my-parser)))))))
 
 (test "Test the encoding conversion functions"
   (let ((from "an ASCII string"))
-    (check (equal? (mixp:utf8->latin1 from) from)
-           "mixp:utf8->latin1 on ASCII"
+    (check (equal? (U:utf8->latin1 from) from)
+           "U:utf8->latin1 on ASCII"
            (fs "error with ascii string ~A != ~A~%"
-               (mixp:utf8->latin1 from) from)))
+               (U:utf8->latin1 from) from)))
   (let ((from "BÃ©zecourt")(to "Bézecourt"))
-    (check (equal? (mixp:utf8->latin1 from) to)
-           "mixp:utf8->latin1 on Latin1"
+    (check (equal? (U:utf8->latin1 from) to)
+           "U:utf8->latin1 on Latin1"
            "error with Latin1 string~%"))
   ;; From rfc-2279
   (let ((from (map integer->char '(#x41 #xE2 #x89 #xA2 #xCE #x91 #x2E)))
         (to (map (lambda (c) (map integer->char c))
                  '((#x00 #x41) (#x22 #x62) (#x03 #x91) (#x00 #x2E)))))
-    (check (equal? (mixp:utf8->ucs2 from) to)
-           "mixp:utf8->ucs2"
+    (check (equal? (U:utf8->ucs2 from) to)
+           "U:utf8->ucs2"
            "error with rfc-2279 sample #1~%"))
   (let ((from (map integer->char
                    '(#xED #x95 #x9C #xEA #xB5 #xAD #xEC #x96 #xB4)))
         (to (map (lambda (c) (map integer->char c))
                  '((#xD5 #x5C) (#xAD #x6D) (#xC5 #xB4)))))
-    (check (equal? (mixp:utf8->ucs2 from) to)
-           "mixp:utf8->ucs2"
+    (check (equal? (U:utf8->ucs2 from) to)
+           "U:utf8->ucs2"
            "error with rfc-2279 sample #2~%"))
   (let ((from (map integer->char
                    '(#xE6 #x97 #xA5 #xE6 #x9C #xAC #xE8 #xAA #x9E)))
         (to (map (lambda (c) (map integer->char c))
                  '((#x65 #xE5) (#x67 #x2C) (#x8A #x9E)))))
-    (check (equal? (mixp:utf8->ucs2 from) to)
-           "mixp:utf8->ucs2"
+    (check (equal? (U:utf8->ucs2 from) to)
+           "U:utf8->ucs2"
            "error with rfc-2279 sample #3~%"))
   (check-exc (let ((from (map integer->char '(#xFF #xFF))))
-               (mixp:utf8->ucs2 from))
+               (U:utf8->ucs2 from))
              'invalid-utf8
-             "mixp:utf8->ucs2 on invalid input"
+             "U:utf8->ucs2 on invalid input"
              "An error was expected with invalid UTF-8 input (1)")
-  (check-exc (mixp:utf8->ucs2 (map integer->char '(#xC0 #x80)))
+  (check-exc (U:utf8->ucs2 (map integer->char '(#xC0 #x80)))
              'invalid-utf8
-             "mixp:utf8->ucs2 on invalid input"
+             "U:utf8->ucs2 on invalid input"
              "An error was expected with invalid UTF-8 input (2)")
-  (check-exc (mixp:utf8->ucs2 (map integer->char '(#xED #xA1 #x8C #xED #xBE #xB4)))
+  (check-exc (U:utf8->ucs2 (map integer->char '(#xED #xA1 #x8C #xED #xBE #xB4)))
              'no-ucs2
-             "mixp:utf8->ucs2 on invalid input"
+             "U:utf8->ucs2 on invalid input"
              "An error was expected with invalid UTF-8 input (3)"))
 
 (test "Test the XML to list and XML to tree conversions"
   (let ((document "<foo><bar>Some text</bar><void/></foo>"))
     (let ((xml-list (call-with-input-string document
-                                            mixp:xml->list))
+                                            U:xml->list))
           (expected '((start-element "foo" ())
                       (start-element "bar" ())
                       (character-data "Some text")
@@ -427,7 +427,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
              (fs "list built from XML different from expected list: ~A~%!=~%~A"
                  xml-list expected)))
     (let ((xml-tree (call-with-input-string document
-                                            mixp:xml->tree))
+                                            U:xml->tree))
           (expected '((element ("foo" ())
                         (element ("bar" ())
                           (character-data "Some text"))
@@ -437,14 +437,14 @@ standalone='yes'?> <body>España no es un ascii país</body>")
              (fs "tree built from XML different from expected tree ~A~%!=~%~A"
                  xml-tree expected))))
   (let* ((file (testfile "REC-xml-19980210.xml"))
-         (xml-list (call-with-input-file file mixp:xml->list))
-         (xml-tree (call-with-input-file file mixp:xml->tree)))
+         (xml-list (call-with-input-file file U:xml->list))
+         (xml-tree (call-with-input-file file U:xml->tree)))
     (define (nth n ls)
       (list-ref ls n))
-    (check (equal? xml-list (mixp:tree->list/one xml-tree))
+    (check (equal? xml-list (U:tree->list/one xml-tree))
            "comparison of xml->tree->list and xml->list"
            "xml->tree->list conversion different from xml->list conversion")
-    (check (equal? xml-tree (mixp:list->tree/one xml-list))
+    (check (equal? xml-tree (U:list->tree/one xml-list))
            "xml->list->tree and xml->tree"
            "xml->list->tree conversion different from xml->tree conversion")
     (check (equal? (nth 1 (nth 32 (nth 22 (nth 5 (nth 7 xml-tree)))))
@@ -460,30 +460,30 @@ standalone='yes'?> <body>España no es un ascii país</body>")
   (let ((my-document
          (fs "<!DOCTYPE numbers SYSTEM ~S>
 <numbers>&numbers;</numbers>" (testfile "test.dtd")))
-        (my-parser (expat:parser-create))
+        (my-parser (E:parser-create))
         (str ""))
     ;; Make sure sub.inc is available in cwd.
     (let* ((sub "sub.inc")
            (here (in-vicinity "." sub)))
       (or (file-exists? here)
           (copy-file (testfile sub) here)))
-    (expat:set-param-entity-parsing
+    (E:set-param-entity-parsing
      my-parser 'XML_PARAM_ENTITY_PARSING_ALWAYS)
-    (expat:hset! my-parser
-                 'character-data
-                 (lambda (value)
-                   (set! str (string-append str value)))
-                 'external-entity-ref
-                 (lambda (context base system-id public-id)
-                   (open-file system-id "r")))
-    (let ((res-parse (expat:parse my-parser
-                                  my-document
-                                  #t)))
+    (E:hset! my-parser
+             'character-data
+             (lambda (value)
+               (set! str (string-append str value)))
+             'external-entity-ref
+             (lambda (context base system-id public-id)
+               (open-file system-id "r")))
+    (let ((res-parse (E:parse my-parser
+                              my-document
+                              #t)))
       (check (not (= res-parse 0))
              "parse"
              (fs "Parser error: ~A(~A)"
-                 (expat:error-symbol my-parser)
-                 (expat:error-string (expat:error-symbol my-parser))))
+                 (E:error-symbol my-parser)
+                 (E:error-string (E:error-symbol my-parser))))
       (check (equal? str "0, 2, 4, 6, 8, 1, 3, 5, 7, 9")
              "check the entity expansion"
              "failed"))))

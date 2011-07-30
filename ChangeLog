@@ -1,5 +1,11 @@
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Use succint prefixes in ‘define-module’ form.
+
+	* test/x001: Do ‘s/expat:/E:/g’, ‘s/mixp:/U:/g’.
+
+2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Don't say "error code" in tests.
 
 	* test/x001: Rework to avoid "error code" and ‘error-code’.
