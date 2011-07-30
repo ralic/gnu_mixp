@@ -7,8 +7,8 @@ It has been tested with Guile 1.4 and 1.6.
 
 Mixp provides two modules for use by Guile Scheme code:
 
-  (xml expat)  -- corresponds to libexpat API
-  (xml mixp)   -- high-level convenience procs
+  (mixp expat)  -- corresponds roughly to libexpat API
+  (mixp utils)  -- high-level convenience procs
 
 See documentation in doc/ for details.
 
