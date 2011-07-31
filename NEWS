@@ -1,0 +1,20 @@
+NEWS for Mixp
+Copyright (C) 2011 Thien-Thi Nguyen
+See the end for copying conditions.
+
+
+- 0.6 | NOT YET RELEASED
+
+
+- etc
+Copyright (C) 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.
+
+	Local Variables:
+	mode: outline
+	outline-regexp: "\\([ ][ ]\\)*- "
+	fill-column: 72
+	fill-prefix: "\t"
+	End:
