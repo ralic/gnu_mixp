@@ -286,6 +286,8 @@ generic_element_start (void *data, const XML_Char *name,
         alist = scm_acons (STRING (atts[0]),
                            STRING (atts[1]),
                            alist);
+      if (! NULLP (alist))
+        alist = scm_reverse_x (alist, SCM_EOL);
 
       CALL2 (handler, STRING (name), alist);
     }

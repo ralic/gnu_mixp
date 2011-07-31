@@ -1,3 +1,10 @@
+2011-07-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[expat] Maintain attributes order.
+
+	* src/expat.c (generic_element_start): Reverse
+	the ‘acons’-built attributes alist if non-empty.
+
 2011-07-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Use succint prefixes in ‘define-module’ form.
