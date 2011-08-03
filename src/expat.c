@@ -61,8 +61,8 @@ hnames[] =
   "comment",
   "cdata-section-start",
   "cdata-section-end",
-  "lastchoice",
-  "lastchoice-expand",
+  "default",
+  "default-expand",
   "unparsed-entity-decl",
   "notation-decl",
   "namespace-decl-start",
@@ -79,29 +79,29 @@ static SCM halist;
 
 enum hindices
   {
-    element_start,
-    element_end,
-    character_data,
-    processing_instruction,
-    comment,
-    cdata_section_start,
-    cdata_section_end,
-    lastchoice,
-    lastchoice_expand,
-    unparsed_entity_decl,
-    notation_decl,
-    namespace_decl_start,
-    namespace_decl_end,
-    not_standalone,
-    external_entity_ref,
-    unknown_encoding,
+    hx_element_start,
+    hx_element_end,
+    hx_character_data,
+    hx_processing_instruction,
+    hx_comment,
+    hx_cdata_section_start,
+    hx_cdata_section_end,
+    hx_default,
+    hx_default_expand,
+    hx_unparsed_entity_decl,
+    hx_notation_decl,
+    hx_namespace_decl_start,
+    hx_namespace_decl_end,
+    hx_not_standalone,
+    hx_external_entity_ref,
+    hx_unknown_encoding,
     hindex_count
   };
 
 #define get_ud(x)  ((SCM *) XML_GetUserData (x))
 #define as_ud(x)   ((SCM *) (x))
 
-#define udsel(x,h)  (as_ud (x) [h])
+#define udsel(x,h)  (as_ud (x) [hx_ ## h])
 
 /* Smob for XML_Parser.  */
 
@@ -350,18 +350,18 @@ generic_cdata_section_end (void *data)
 }
 
 static void
-generic_lastchoice (void *data, const XML_Char *s, int len)
+generic_default (void *data, const XML_Char *s, int len)
 {
-  SCM handler = udsel (data, lastchoice);
+  SCM handler = udsel (data, default);
 
   if (SPECIFIEDP (handler))
     CALL1 (handler, BSTRING (s, len));
 }
 
 static void
-generic_lastchoice_expand (void *data, const XML_Char *s, int len)
+generic_default_expand (void *data, const XML_Char *s, int len)
 {
-  SCM handler = udsel (data, lastchoice_expand);
+  SCM handler = udsel (data, default_expand);
 
   if (SPECIFIEDP (handler))
     CALL1 (handler, BSTRING (s, len));
@@ -702,7 +702,7 @@ are done on the procedures.  */)
 #define M(x)  (usep ? x : NULL)         /* (maybe) */
 
 #define SETG1(camel,h)                                          \
-      case h:                                                   \
+      case hx_ ## h:                                            \
         {                                                       \
           SETH (h);                                             \
           XML_Set ## camel ## Handler (p, M (generic_ ## h));   \
@@ -710,7 +710,7 @@ are done on the procedures.  */)
       break
 
 #define SETG2(camel,h,which)                                    \
-      case h ## _ ## which:                                     \
+      case hx_ ## h ## _ ## which:                              \
         {                                                       \
           SETH (h ## _ ## which);                               \
           usep = (SPECIFIEDP (udsel (ud, h ## _start)) ||       \
@@ -731,8 +731,8 @@ are done on the procedures.  */)
           SETG1 (Comment, comment);
           SETG2 (CdataSection, cdata_section, start);
           SETG2 (CdataSection, cdata_section, end);
-          SETG1 (Default, lastchoice);
-          SETG1 (NiceDefaultExpand, lastchoice_expand);
+          SETG1 (Default, default);
+          SETG1 (NiceDefaultExpand, default_expand);
           SETG1 (UnparsedEntityDecl, unparsed_entity_decl);
           SETG1 (NotationDecl, notation_decl);
           SETG2 (NamespaceDecl, namespace_decl, start);

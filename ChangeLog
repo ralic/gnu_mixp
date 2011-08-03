@@ -1,5 +1,19 @@
 2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Rename lastchoice{,-expand} to default{,-expand}.
+
+	* src/expat.c (hnames): Use "default" and "default-expand"
+	instead of "lastchoice" and "lastchoice-expand".
+	(enum hindices): Rename all elements w/ prefix
+	"hx_"; use ‘hx_default’ and ‘hx_default_expand’.
+	(udsel): Prefix ‘h’ with "hx_".
+	(generic_default): Rename from ‘generic_lastchoice’.
+	(generic_default_expand): Rename from ‘generic_lastchoice_expand’.
+	(hset_x): Update local macros to prefix "hx_"; use ‘default’
+	and ‘default_expand’ instead of ‘lastchoice’ and ‘lastchoice_expand’.
+
+2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Make ‘hset!’ take alist as required 2nd arg.
 
 	* src/expat.c (hset_x): Rename 2nd arg to ‘alist’; change
