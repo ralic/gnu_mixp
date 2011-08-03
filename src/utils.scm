@@ -29,6 +29,9 @@
             utf8->ucs2
             utf8->ucs4
             xml->tree)
+  #:use-module ((srfi srfi-1) #:select (append-map
+                                        car+cdr))
+  #:use-module ((srfi srfi-11) #:select (let-values))
   #:use-module ((ice-9 streams) #:select (port->stream
                                           make-stream
                                           stream-car
@@ -429,103 +432,58 @@
              (loop))))
     (acc)))
 
-;;;
-;;; Build a data structure from an XML document.
-;;; Implementation note: flat lists and trees should be equivalent,
-;;; i.e it should be possible to build a list from a tree and a tree
-;;; from a list without losing information.
-;;;
-
 ;; Build a tree data structure from the XML document read from
 ;; @var{port}.  Each XML element produces a new branch in the tree.
+;; The internal parser uses @code{element-start}, @code{element-end},
+;; @code{character-data}, @code{notation-decl},
+;; @code{unparsed-entity-decl}, @code{processing-instruction}
+;; and @code{comment} handlers.  (TODO: Add other handlers.)
 ;;
 ;;-sig: (port [parser])
 ;;
 (define (xml->tree port . args)
-  (let ((xml-list (apply xml->list port args)))
-    (list->tree/one xml-list)))
+  (let ((parser (get-parser args xml->tree))
+        (box (list (list))))
 
-;; Transform a list of XML nodes @var{node-list} into a hierarchical
-;; data structure.
-;;
-(define (list->tree/one node-list)
-  (list->tree node-list '(())))
+    (define (box! x)
+      (set! box x))
 
-(define (list->tree node-list result)
-  ;; Note: this function is tail-recursive (hence the "result"
-  ;; argument), in order to handle XML document of any size.
-  (if (null? node-list)
-      (car result)
-      (let ((type (caar node-list)))
-        (case type
-          ((start-element)
-           (list->tree (cdr node-list)
-                       (cons (list 'element (cdar node-list))
-                             result)))
-          ((end-element)
-           (let ((level (car result))
-                 (up-levels (cdr result)))
-             (list->tree (cdr node-list)
-                         (if (null? up-levels)
-                             (list level)
-                             (cons (append (car up-levels)
-                                           (list level))
-                                   (cdr up-levels))))))
-          ((character-data
-            notation-decl
-            entity-decl
-            pi
-            comment)
-           (let ((level (if (null? result) '() (car result)))
-                 (up-levels (if (null? result) '() (cdr result))))
-             (list->tree (cdr node-list)
-                         (cons (append level
-                                       (list (car node-list)))
-                               up-levels))))
-          (else (throw 'mixp:invalid-node-type))))))
+    (define (three a b c)
+      (cons (append a b) c))
 
-;; Build a list from the XML document read from @var{port}.  The list
-;; contains elements of the form @code{(@var{tag} @var{rest}...)}
-;; with the following tags:
-;;
-;; @table @code
-;; @item start-element
-;; @itemx end-element
-;; Start and end elements, respectively
-;; @item character-data
-;; Character data
-;; @item notation-decl
-;; Notation declaration
-;; @item entity-decl
-;; Unparsed-entity declaration
-;; @item pi
-;; Processing instruction
-;; @item comment
-;; Comment
-;; @end table
-;;
-;;-sig: (port [parser])
-;;
-(define (xml->list port . args)
-  (let ((parser (get-parser args xml->list))
-        (nodes (accumulator)))
+    (define (element-start . rest)
+      (box! (cons (list 'element rest)
+                  box)))
 
-    (define (tagged tag)
-      (lambda rest
-        (nodes (cons tag rest))))
+    (define (element-end . rest)
+      (box! (let-values (((level up-levels) (car+cdr box)))
+              (if (null? up-levels)
+                  (list level)
+                  (three (car up-levels)
+                         (list level)
+                         (cdr up-levels))))))
 
-    (expat:hset!
-     parser
-     'element-start          (tagged 'start-element)
-     'element-end            (tagged 'end-element)
-     'character-data         (tagged 'character-data)
-     'notation-decl          (tagged 'notation-decl)
-     'unparsed-entity-decl   (tagged 'entity-decl)
-     'processing-instruction (tagged 'pi)
-     'comment                (tagged 'comment))
-    ;; TBD: other handlers...
+    (define (whatever type)
+      (lambda more
+        (box! (let-values (((level up-levels) (car+cdr box)))
+                (three level
+                       (list (cons type more))
+                       up-levels)))))
+
+    (apply expat:hset! parser
+           'element-start element-start
+           'element-end element-end
+           (append-map (lambda (type)
+                         (list type (whatever type)))
+                       '(character-data
+                         notation-decl
+                         unparsed-entity-decl
+                         processing-instruction
+                         comment
+                         ;; TODO: Add other handlers here.
+                         )))
     (parse-data port parser)
-    (nodes)))
+    (car box)))
 
 ;;; Local variables:
 ;;; coding: utf-8

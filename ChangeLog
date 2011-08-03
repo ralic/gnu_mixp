@@ -1,5 +1,14 @@
 2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[utils int] Rewrite ‘xml->tree’.
+
+	* src/utils.scm: Import ‘append-map’, ‘car+cdr’
+	from (srfi srfi-1); import ‘(srfi srfi-11) let-values’.
+	(xml->tree): Rewrite.
+	(list->tree/one, list->tree, xml->list): Delete procs.
+
+2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[utils] Internalize/prune list-related procs.
 
 	These impose a profligate implementation strategy
