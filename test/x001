@@ -63,6 +63,13 @@
 
 (cond (memcheck? (gc) (gc) (gc) (sleep 5)))
 
+(define (hset!/p parser . plist)
+  (E:hset! parser (let loop ((alist '()) (ls plist))
+                    (if (null? ls)
+                        alist
+                        (loop (acons (car ls) (cadr ls) alist)
+                              (cddr ls))))))
+
 ;; A sample XML document used in several tests
 (define my-document
   "<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?>
@@ -155,7 +162,7 @@
 (test "Test handlers"
   ;; create the parser, and set the handlers
   (let ((my-parser (E:parser-create)))
-    (E:hset!
+    (hset!/p
      my-parser
 
      'element-start
@@ -200,7 +207,7 @@
         (badness 13)) ;;; -------^
     (trace "Parsing a not well-formed document with E:parse...\n")
     (let ((p (E:parser-create)))
-      (E:hset! p 'character-data (lambda (c)
+      (hset!/p p 'character-data (lambda (c)
                                    '()))
       (let ((res (E:parse p bad-xml #t)))
         (check (equal? res 0)
@@ -234,7 +241,7 @@
 </doc>")
         (my-parser (E:parser-create))
         (acc (accumulator)))
-    (E:hset! my-parser
+    (hset!/p my-parser
              'notation-decl
              (lambda (notation-name base system-id public-id)
                (acc `(,notation-name
@@ -318,7 +325,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 ';;; DISABLED.  TODO: unknown encoding handlers are not easy to test.
 (test "Test parsing of unknown encoding"
   (let ((my-parser (E:parser-create "thb-encoding")))
-    (E:hset! my-parser
+    (hset!/p my-parser
              'unknown-encoding
              (lambda (name)
                (if (string=? name "thb-encoding")
@@ -338,7 +345,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
 (test "Use the base"
   (let ((my-parser (E:parser-create))
         (my-base "My base"))
-    (E:hset! my-parser
+    (hset!/p my-parser
              'notation-decl
              (lambda (notation-name base system-id public-id)
                (trace "§ NOTATION: notation-name=" notation-name
@@ -442,7 +449,7 @@ standalone='yes'?> <body>España no es un ascii país</body>")
           (copy-file (testfile sub) here)))
     (E:set-param-entity-parsing
      my-parser 'XML_PARAM_ENTITY_PARSING_ALWAYS)
-    (E:hset! my-parser
+    (hset!/p my-parser
              'character-data
              (lambda (value)
                (set! str (string-append str value)))

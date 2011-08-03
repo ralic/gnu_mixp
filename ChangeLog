@@ -1,5 +1,14 @@
 2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Make ‘hset!’ take alist as required 2nd arg.
+
+	* src/expat.c (hset_x): Rename 2nd arg to ‘alist’; change
+	req-opt-var spec to 2-0-0; update validation / setting.
+	* src/utils.scm (xml->tree): Update call to ‘expat:hset!’.
+	* test/x001 (hset!/p): New proc; do ‘s|E:hset!|hset!/p|g’.
+
+2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[utils int] Rewrite ‘xml->tree’.
 
 	* src/utils.scm: Import ‘append-map’, ‘car+cdr’

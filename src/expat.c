@@ -657,67 +657,46 @@ Declare that @var{parser} is the default current parser.  */)
 }
 
 PRIMPROC
-(hset_x, "hset!", 1, 0, 1,
- (SCM parser, SCM plist),
+(hset_x, "hset!", 2, 0, 0,
+ (SCM parser, SCM alist),
  doc: /***********
-Set handlers for @var{parser} as specified in @var{plist}.
-Valid values in @var{plist} are a procedure or @code{#f} (note,
-however, that no arity checks are done on the procedures).
-Valid properties in @var{plist} are (TODO: use @@table):
-
-@example
-element-start
-element-end
-character-data
-processing-instruction
-comment
-cdata-section-start
-cdata-section-end
-lastchoice
-lastchoice-expand
-unparsed-entity-decl
-notation-decl
-namespace-decl-start
-namespace-decl-end
-not-standalone
-external-entity-ref
-unknown-encoding
-@end example  */)
+Set handlers for @var{parser} as specified in @var{alist}.
+Valid values in @var{alist} are a procedure, @code{()} (the
+empty list) or @code{#f}.  Note, however, that no arity checks
+are done on the procedures.  */)
 {
 #define FUNC_NAME s_hset_x
   XML_Parser p;
   SCM *ud;
-  SCM ls, sym, val;
+  SCM ls, pair, sym, val;
 
   VALIDATE_PARSER ();
-  SCM_VALIDATE_CONS (2, plist);
+  SCM_VALIDATE_CONS (2, alist);
 
-#define POPTO(recip)  recip = CAR (ls), ls = CDR (ls)
-
-  /* First pass: validate ‘plist’.  */
-  ls = plist;
-  while (! NULLP (ls))
+  /* First pass: validate ‘alist’.  */
+  for (ls = alist; ! NULLP (ls); ls = CDR (ls))
     {
-      POPTO (sym);
+      pair = CAR (ls);
+      SCM_VALIDATE_CONS (2, pair);
+      sym = CAR (pair);
       SCM_VALIDATE_SYMBOL (2, sym);
-      ASSERT (plist, NOT_FALSEP (scm_assq (sym, halist)), 2);
-      SCM_VALIDATE_CONS (2, ls);
-      POPTO (val);
-      ASSERT (plist, SCM_FALSEP (val) || PROCP (val), 2);
+      ASSERT (sym, NOT_FALSEP (scm_assq (sym, halist)), 2);
+      val = CDR (pair);
+      ASSERT (val, NULLP (val) || SCM_FALSEP (val) || PROCP (val), 2);
     }
 
   /* Second pass: do it!  */
   ud = get_ud (p);
-  ls = plist;
-  while (! NULLP (ls))
+  for (ls = alist; ! NULLP (ls); ls = CDR (ls))
     {
       int usep;
 
-      POPTO (sym);
-      POPTO (val);
+      pair = CAR (ls);
+      sym = CAR (pair);
+      val = CDR (pair);
 
 #define SETH(x)                                         \
-      usep = NOT_FALSEP (val);                         \
+      usep = PROCP (val);                               \
       udsel (ud, x) = usep ? val : SCM_UNSPECIFIED      \
 
 #define M(x)  (usep ? x : NULL)         /* (maybe) */
@@ -768,8 +747,6 @@ unknown-encoding
 #undef SETG1
 #undef SETG2
     }
-
-#undef POPTO
 
   RETURN_UNSPECIFIED ();
 #undef FUNC_NAME

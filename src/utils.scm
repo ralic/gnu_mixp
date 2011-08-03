@@ -470,18 +470,17 @@
                        (list (cons type more))
                        up-levels)))))
 
-    (apply expat:hset! parser
-           'element-start element-start
-           'element-end element-end
-           (append-map (lambda (type)
-                         (list type (whatever type)))
-                       '(character-data
-                         notation-decl
-                         unparsed-entity-decl
-                         processing-instruction
-                         comment
-                         ;; TODO: Add other handlers here.
-                         )))
+    (expat:hset! parser `((element-start . ,element-start)
+                          (element-end . ,element-end)
+                          ,@(map (lambda (type)
+                                   (cons type (whatever type)))
+                                 '(character-data
+                                   notation-decl
+                                   unparsed-entity-decl
+                                   processing-instruction
+                                   comment
+                                   ;; TODO: Add other handlers here.
+                                   ))))
     (parse-data port parser)
     (car box)))
 
