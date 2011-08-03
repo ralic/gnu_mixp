@@ -28,12 +28,7 @@
             utf8->latin1
             utf8->ucs2
             utf8->ucs4
-            xml->tree
-            xml->list
-            list->tree/one
-            tree->list/one
-            list->tree
-            tree->list)
+            xml->tree)
   #:use-module ((ice-9 streams) #:select (port->stream
                                           make-stream
                                           stream-car
@@ -488,57 +483,6 @@
                                        (list (car node-list)))
                                up-levels))))
           (else (throw 'mixp:invalid-node-type))))))
-
-;; Build a list of XML nodes from the @var{tree} of XML nodes, as
-;; returned by @code{list->tree/one}.
-;;
-(define (tree->list/one tree)
-  (tree->list tree))
-
-(define (tree->list tree . args)
-  (let ((result '())
-        (other-branch '())
-        (cur-elems '()))
-    (if (not (null? args))
-        (begin (set! result (car args))
-               (if (not (null? (cdr args)))
-                   (begin (set! other-branch (cadr args))
-                          (set! cur-elems (caddr args))))))
-    (if (null? tree)
-        (if (null? other-branch)
-            (reverse! result)
-            (tree->list (car other-branch)
-                        result
-                        (cdr other-branch)
-                        (cdr cur-elems)))
-        (let* ((current-node (car tree))
-               (type (car current-node)))
-          (case type
-            ((element)
-             (tree->list (cddr current-node)
-                         (cons (cons 'start-element
-                                     (cadr current-node))
-                               result)
-                         (cons (append `((end-element
-                                          ,(caadr current-node)))
-                                       (cdr tree))
-                               other-branch)
-                         (cons (caadr current-node) cur-elems)))
-            ((end-element)
-             (tree->list (cdr tree)
-                         (cons current-node result)
-                         other-branch
-                         cur-elems))
-            ((character-data
-              notation-decl
-              entity-decl
-              pi
-              comment)
-             (tree->list (cdr tree)
-                         (cons current-node result)
-                         other-branch
-                         cur-elems))
-            (else (throw 'mixp:invalid-node-type)))))))
 
 ;; Build a list from the XML document read from @var{port}.  The list
 ;; contains elements of the form @code{(@var{tag} @var{rest}...)}

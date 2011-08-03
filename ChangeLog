@@ -1,3 +1,15 @@
+2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[utils] Internalize/prune list-related procs.
+
+	These impose a profligate implementation strategy
+	that we don't want to support long-term.
+
+	* test/x001: Don't import ‘xml->list’, ‘list->tree/one’,
+	‘tree->list/one’; remove tests that touch those procs.
+	* src/utils.scm (tree->list/one, tree->list): Delete procs.
+	(xml->list, list->tree/one, list->tree): Don't export.
+
 2011-07-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[expat] Maintain attributes order.

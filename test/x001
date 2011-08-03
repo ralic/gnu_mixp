@@ -33,10 +33,7 @@
  ((mixp utils) #:prefix U: #:select (parse-data
                                      utf8->latin1
                                      utf8->ucs2
-                                     xml->tree
-                                     xml->list
-                                     list->tree/one
-                                     tree->list/one)))
+                                     xml->tree)))
 
 (define testfile
   (let ((srcdir (getenv "srcdir")))
@@ -411,21 +408,8 @@ standalone='yes'?> <body>España no es un ascii país</body>")
              "U:utf8->ucs2 on invalid input"
              "An error was expected with invalid UTF-8 input (3)"))
 
-(test "Test the XML to list and XML to tree conversions"
+(test "Test the XML to tree conversion"
   (let ((document "<foo><bar>Some text</bar><void/></foo>"))
-    (let ((xml-list (call-with-input-string document
-                                            U:xml->list))
-          (expected '((start-element "foo" ())
-                      (start-element "bar" ())
-                      (character-data "Some text")
-                      (end-element "bar")
-                      (start-element "void" ())
-                      (end-element "void")
-                      (end-element "foo"))))
-      (check (equal? xml-list expected)
-             "xml->list"
-             (fs "list built from XML different from expected list: ~A~%!=~%~A"
-                 xml-list expected)))
     (let ((xml-tree (call-with-input-string document
                                             U:xml->tree))
           (expected '((element ("foo" ())
@@ -437,23 +421,12 @@ standalone='yes'?> <body>España no es un ascii país</body>")
              (fs "tree built from XML different from expected tree ~A~%!=~%~A"
                  xml-tree expected))))
   (let* ((file (testfile "REC-xml-19980210.xml"))
-         (xml-list (call-with-input-file file U:xml->list))
          (xml-tree (call-with-input-file file U:xml->tree)))
     (define (nth n ls)
       (list-ref ls n))
-    (check (equal? xml-list (U:tree->list/one xml-tree))
-           "comparison of xml->tree->list and xml->list"
-           "xml->tree->list conversion different from xml->list conversion")
-    (check (equal? xml-tree (U:list->tree/one xml-list))
-           "xml->list->tree and xml->tree"
-           "xml->list->tree conversion different from xml->tree conversion")
     (check (equal? (nth 1 (nth 32 (nth 22 (nth 5 (nth 7 xml-tree)))))
                    '("div2" (("id" . "sec-predefined-ent"))))
            "check an element in the tree"
-           "failed")
-    (check (equal? (nth 2014 xml-list)
-                   '(start-element "nt" (("def" . "NT-Nmtoken"))))
-           "check an element in a list"
            "failed")))
 
 (test "Test the DTD parsing feature"
