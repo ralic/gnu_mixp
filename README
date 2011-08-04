@@ -31,3 +31,10 @@ Don't Panic
 -----------
 Please report bugs to Thien-Thi Nguyen (the current Mixp maintainer).
 The email address is available in the output of "./configure --help".
+
+
+
+Copyright (C) 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.
