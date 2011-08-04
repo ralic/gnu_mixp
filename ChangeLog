@@ -1,5 +1,12 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Rewrite ‘trace’ in x001.
+
+	* test/x001 (trace): Rewrite to take
+	format string + args; update all callers.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Remove redundant ‘SPECIFIEDP’ checks.
 
 	For non-pair (no -start, -end) handlers, setting the generic

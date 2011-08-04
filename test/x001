@@ -90,8 +90,9 @@
   (newline (current-error-port)))
 
 (define trace (if (getenv "TRACE")
-                  (lambda args
-                    (for-each display args))
+                  (lambda (s . args)
+                    (apply simple-format #t s args)
+                    (newline))
                   noop))
 
 (define count (make-object-property))
@@ -160,37 +161,45 @@
 
 (test "Test handlers"
   ;; create the parser, and set the handlers
-  (let ((my-parser (E:parser-create)))
+  (let* ((my-parser (E:parser-create))
+         (v (E:get-locus my-parser)))
     (hset!/p
      my-parser
 
      'element-start
      (lambda (name atts)
-       (trace indent "§ ELEMENT START '" name "' - attributes " atts "\n")
+       (E:get-locus my-parser v)
+       (trace "~A§ ELEMENT START '~A' - attributes ~S @~A"
+              indent name atts v)
        (indent-increase))
 
      'element-end
      (lambda (name)
        (indent-decrease)
-       (trace indent "§ ELEMENT END '" name "'\n"))
+       (trace "~A§ ELEMENT END '~A'"
+              indent name))
 
      'character-data
      (lambda (value)
-       (trace indent "§ CHARACTER DATA '" value " §\n"))
+       (trace "~A§ CHARACTER DATA '~A' §"
+              indent value))
 
      'comment
      (lambda (value)
-       (trace indent "§ COMMENT '" value "' §\n"))
+       (trace "~A§ COMMENT '~A' §"
+              indent value))
 
      'cdata-section-start
      (lambda ()
-       (trace indent "§ CDATA START §\n")
+       (trace "~A§ CDATA START §"
+              indent)
        (indent-increase))
 
      'cdata-section-end
      (lambda ()
        (indent-decrease)
-       (trace indent "§ CDATA END §\n")))
+       (trace "~A§ CDATA END §"
+              indent)))
 
     ;; parse the document, and print the errors, if any
     (let ((res-parse (E:parse my-parser my-document #t)))
@@ -204,7 +213,7 @@
 (test "Try to parse a not well-formed document"
   (let ((bad-xml "<doc>dfssfd</do>")
         (badness 13)) ;;; -------^
-    (trace "Parsing a not well-formed document with E:parse...\n")
+    (trace "Parsing a not well-formed document with E:parse...")
     (let ((p (E:parser-create)))
       (hset!/p p 'character-data (lambda (c)
                                    '()))
@@ -224,7 +233,7 @@
                 (check (equal? want locus)
                        "Locus of badness"
                        (fs "Should be ~S but got ~S" want locus)))))))
-    (trace "Parsing a not well-formed document with U:parse-data...\n")
+    (trace "Parsing a not well-formed document with U:parse-data...")
     (check-exc (call-with-input-string bad-xml U:parse-data)
                'XML_ERROR_TAG_MISMATCH
                "Expect an 'XML_ERROR_TAG_MISMATCH exception"
@@ -270,11 +279,10 @@
 
 (test "Create and print an encoding"
   (let* ((map (make-vector 256 67))
-         (convert (lambda (s) (trace "convert\n") 68))
-         (release (lambda () (trace "release\n")))
+         (convert (lambda (s) (trace "convert") 68))
+         (release (lambda () (trace "release")))
          (encoding (E:make-xml-encoding map convert release)))
-    (trace encoding)
-    (trace "\n")
+    (trace "~S" encoding)
     #t))
 
 (test "Use a document with characters which have a wrong encoding"
@@ -302,10 +310,10 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
              (lambda (name)
                (if (string=? name "thb-encoding")
                    (let ((map (make-vector 256 67))
-                         (convert (lambda (s) (trace "convert\n") 68))
-                         (release (lambda () (trace "release\n"))))
+                         (convert (lambda (s) (trace "convert") 68))
+                         (release (lambda () (trace "release"))))
                      (begin
-                       (trace "Recognized encoding " name "\n")
+                       (trace "Recognized encoding ~S" name)
                        (E:make-xml-encoding map convert release))))))
     (let ((res-parse (E:parse my-parser my-document #t)))
       (check (not (= res-parse 0))
@@ -320,10 +328,11 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
     (hset!/p my-parser
              'notation-decl
              (lambda (notation-name base system-id public-id)
-               (trace "§ NOTATION: notation-name=" notation-name
-                      ", base=" base
-                      ", system-id" system-id
-                      ", public-id" public-id " §\n")
+               (trace "§ NOTATION: ~A=~S, ~A=~S, ~A=~S, ~A=~S §"
+                      'notation-name notation-name
+                      'base base
+                      'system-id system-id
+                      'public-id public-id)
                (check (equal? my-base base)
                       "in handler"
                       (fs "expected ~S but got ~S" my-base base))))
