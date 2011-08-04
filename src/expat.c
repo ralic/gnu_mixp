@@ -431,7 +431,7 @@ generic_not_standalone (void *data)
 
   return (SPECIFIEDP (handler)
           ? C_INT (CALL0 (handler))
-          : 1);
+          : XML_STATUS_OK);
 }
 
 static int
@@ -443,7 +443,8 @@ generic_external_entity_ref (XML_Parser p,
 {
   XML_Parser ext_p;
   SCM port, nl, buf;
-  int rv = 1, donep = 0;
+  enum XML_Status rv = XML_STATUS_OK;
+  int donep = 0;
 
   port = APPLY (udsel (get_ud (p), external_entity_ref),
                 LISTIFY (STRMAYBE (context),
@@ -497,7 +498,7 @@ generic_external_entity_ref (XML_Parser p,
 
       if (XML_STATUS_OK != parse_res)
         {
-          rv = 0;
+          rv = XML_STATUS_ERROR;
           donep = 1;
         }
     }
@@ -513,8 +514,7 @@ generic_unknown_encoding (void *data,
                           const XML_Char *name,
                           XML_Encoding *info)
 {
-  /* 1 means that the handler fills the XML_Encoding structure.  */
-  int res = 0;
+  enum XML_Status res = XML_STATUS_ERROR;
   SCM handler = udsel (data, unknown_encoding);
   SCM encoding_info = SCM_UNSPECIFIED;
 
@@ -524,8 +524,10 @@ generic_unknown_encoding (void *data,
   if (ENCODINGP (encoding_info))
     {
       XML_Encoding *tmp = UNPACK_ENCODING (encoding_info);
-      *info = *tmp;
-      res = 1;
+
+     *info = *tmp;
+     /* Inform expat that the XML_Encoding structure is valid.  */
+     res = XML_STATUS_OK;
     }
 
   return res;

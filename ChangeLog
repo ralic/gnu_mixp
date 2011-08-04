@@ -1,5 +1,13 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Use XML_STATUS_* more.
+
+	* src/expat.c (generic_not_standalone): Use ‘XML_STATUS_OK’.
+	(generic_external_entity_ref): Likewise, and ‘XML_STATUS_ERROR’.
+	(generic_unknown_encoding): Likewise.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Drop proc: set-encoding
 
 	* src/expat.c (set_encoding): Delete func.
