@@ -1,5 +1,11 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Use ‘INT_NUM’ and ‘C_INT’ more.
+
+	* src/expat.c: Do ‘s/SCM_MAKINUM/INT_NUM/g’, ‘s/SCM_INUM/C_INT/g’.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Do only one ‘scm_puts’ in print funcs.
 
 	* src/expat.c (print_parser, print_encoding):

@@ -430,7 +430,7 @@ generic_not_standalone (void *data)
   SCM handler = udsel (data, not_standalone);
 
   return (SPECIFIEDP (handler)
-          ? SCM_INUM (CALL0 (handler))
+          ? C_INT (CALL0 (handler))
           : 1);
 }
 
@@ -458,7 +458,7 @@ generic_external_entity_ref (XML_Parser p,
   ext_p = XML_ExternalEntityParserCreate (p, context, NULL);
 
 #define NEWBUF(size) \
-  scm_make_string (SCM_MAKINUM (size), SCM_MAKE_CHAR (0))
+  scm_make_string (NUM_INT (size), SCM_MAKE_CHAR (0))
 
   nl = STRING ("\n");
   buf = NEWBUF (1024);
@@ -476,8 +476,8 @@ generic_external_entity_ref (XML_Parser p,
         {
           SCM pair = scm_read_delimited_x (nl, buf, SCM_BOOL_T, port,
                                            SCM_UNDEFINED, SCM_UNDEFINED);
-          delim   =           CAR (pair);
-          nbytes += SCM_INUM (CDR (pair));
+          delim   =        CAR (pair);
+          nbytes += C_INT (CDR (pair));
           if (SHORTP () || EXTRAP ())
             {
               big = CONS (buf, big);
@@ -579,7 +579,7 @@ all conversion work.  */)
   /* The map goes directly into the XML_Encoding object.  */
   map_elts = SCM_VELTS (map);
   for (i = 0; i < 256; i++)
-    enc->map[i] = SCM_INUM (map_elts[i]);
+    enc->map[i] = C_INT (map_elts[i]);
 
   SCM_DEFER_INTS;
   enc->data = scm_must_malloc (sizeof (encoding_data),
@@ -723,7 +723,7 @@ are done on the procedures.  */)
         }                                                       \
       break
 
-      switch (SCM_INUM (CDR (scm_assq (sym, halist))))
+      switch (C_INT (CDR (scm_assq (sym, halist))))
         {
           SETG2 (Element, element, start);
           SETG2 (Element, element, end);
@@ -794,7 +794,7 @@ Set encoding for @var{parser} to @var{encoding} (a string).  */)
   VALIDATE_PARSER ();
   SCM_VALIDATE_STRING (1, encoding);
 
-  return SCM_MAKINUM (XML_SetEncoding (p, SCM_CHARS (encoding)));
+  return NUM_INT (XML_SetEncoding (p, SCM_CHARS (encoding)));
 #undef FUNC_NAME
 }
 
@@ -810,7 +810,7 @@ Set base for @var{parser} to @var{base}.  */)
   VALIDATE_PARSER ();
   SCM_VALIDATE_STRING (1, base);
 
-  return SCM_MAKINUM (XML_SetBase (p, SCM_CHARS (base)));
+  return NUM_INT (XML_SetBase (p, SCM_CHARS (base)));
 #undef FUNC_NAME
 }
 
@@ -843,7 +843,7 @@ Get the specified attribute count for @var{parser}.  */)
 
   VALIDATE_PARSER ();
 
-  return SCM_MAKINUM (XML_GetSpecifiedAttributeCount (p));
+  return NUM_INT (XML_GetSpecifiedAttributeCount (p));
 #undef FUNC_NAME
 }
 
@@ -863,8 +863,8 @@ this call is the last parsing to be done on @var{s}.  */)
   SCM_VALIDATE_STRING (2, s);
   UNBOUND_MEANS_UNSPECIFIED (finalp);
 
-  return SCM_MAKINUM (XML_Parse (p, ROZT (s), SCM_ROLENGTH (s),
-                                 SPECIFIED_NOT_FALSE (finalp)));
+  return NUM_INT (XML_Parse (p, ROZT (s), SCM_ROLENGTH (s),
+                             SPECIFIED_NOT_FALSE (finalp)));
 #undef FUNC_NAME
 }
 
@@ -883,8 +883,8 @@ means this call is the last parsing to be done.  */)
   SCM_VALIDATE_INUM (2, len);
   UNBOUND_MEANS_UNSPECIFIED (finalp);
 
-  return SCM_MAKINUM (XML_ParseBuffer (p, SCM_INUM (len),
-                                       SPECIFIED_NOT_FALSE (finalp)));
+  return NUM_INT (XML_ParseBuffer (p, C_INT (len),
+                                   SPECIFIED_NOT_FALSE (finalp)));
 #undef FUNC_NAME
 }
 
@@ -924,7 +924,7 @@ DTD subset).  See xmlparse.h for a complete description.  */)
         }
     }
 
-  return SCM_MAKINUM (XML_SetParamEntityParsing (p, intcode));
+  return NUM_INT (XML_SetParamEntityParsing (p, intcode));
 #undef FUNC_NAME
 }
 
@@ -1040,11 +1040,11 @@ than constructing a new one.  If an element in @var{stash} is
       v = stash;
     }
   else
-    v = scm_make_vector (SCM_MAKINUM (4), SCM_UNSPECIFIED);
+    v = scm_make_vector (NUM_INT (4), SCM_UNSPECIFIED);
 
-#define JAM(n,f)                                                \
-  if (NOT_FALSEP (VECREF (v, SCM_MAKINUM (n))))                 \
-    scm_vector_set_x (v, SCM_MAKINUM (n), SCM_MAKINUM (f (p)))
+#define JAM(n,f)                                        \
+  if (NOT_FALSEP (VECREF (v, NUM_INT (n))))             \
+    scm_vector_set_x (v, NUM_INT (n), NUM_INT (f (p)))
 
   JAM (0, XML_GetCurrentLineNumber);
   JAM (1, XML_GetCurrentColumnNumber);
@@ -1092,7 +1092,7 @@ init_gexpat (void)
   halist = SCM_EOL;
   while (n_hnames--)
     halist = scm_acons (PERMANENT (SYMBOL (hnames[n_hnames])),
-                        SCM_MAKINUM (n_hnames),
+                        NUM_INT (n_hnames),
                         halist);
   halist = PERMANENT (halist);
 
