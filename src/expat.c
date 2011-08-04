@@ -783,22 +783,6 @@ will be @code{#f}.  The alist keys are as for @code{hset!}.  */)
 }
 
 PRIMPROC
-(set_encoding, "set-encoding", 2, 0, 0,
- (SCM parser, SCM encoding),
- doc: /***********
-Set encoding for @var{parser} to @var{encoding} (a string).  */)
-{
-#define FUNC_NAME s_set_encoding
-  XML_Parser p;
-
-  VALIDATE_PARSER ();
-  SCM_VALIDATE_STRING (1, encoding);
-
-  return NUM_INT (XML_SetEncoding (p, SCM_CHARS (encoding)));
-#undef FUNC_NAME
-}
-
-PRIMPROC
 (set_base, "set-base", 2, 0, 0,
  (SCM parser, SCM base),
  doc: /***********

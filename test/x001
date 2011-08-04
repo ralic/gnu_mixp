@@ -22,7 +22,6 @@
  ((mixp expat) #:prefix E: #:select (make-xml-encoding
                                      parser-create
                                      hset!
-                                     set-encoding
                                      set-base
                                      get-base
                                      parse
@@ -279,7 +278,7 @@
     #t))
 
 (test "Use a document with characters which have a wrong encoding"
-  ;; 1. Wrong encoding in the document should raise an error
+  ;; Wrong encoding in the document should raise an error.
   (let* ((doc "<?xml version='1.0' encoding='US-ASCII'
 standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
          (my-parser (E:parser-create))
@@ -293,34 +292,7 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
                  "Ok, got an INVALID TOKEN error as expected"
                  (fs "Error: expecting ~A, got ~A"
                      'XML_ERROR_INVALID_TOKEN
-                     es)))))
-  ;; 2. Wrong encoding in the document overriden by a good encoding
-  ;; in set-encoding should not raise an errore
-  (let* ((doc "<?xml version='1.0' encoding='foo'
-standalone='yes'?> <body>España no es un ascii país</body>")
-         (my-parser (E:parser-create)))
-    (E:set-encoding my-parser "ISO-8859-1")
-    (let ((res-parse (E:parse my-parser doc #t)))
-      (check (not (= res-parse 0))
-             "Parse with ISO-8859-1 encoding"
-             (fs "Parsing error ~A"
-                 (E:error-symbol my-parser)))))
-  ;; 2. set-encoding with an inexistant encoding should raise a
-  ;; specific error
-  (let* ((doc "<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?> <body>Whatever</body>")
-         (my-parser (E:parser-create)))
-    (E:set-encoding my-parser "foo")
-    (let ((res-parse (E:parse my-parser doc #t)))
-      (check (= res-parse 0)
-             "Expect and encoding error"
-             "Error, expecting an encoding error")
-      (if (= res-parse 0)
-          (let ((es  (E:error-symbol my-parser)))
-            (check (eqv? es 'XML_ERROR_UNKNOWN_ENCODING)
-                   "Expect an UNKNOWN ENCODING error"
-                   (fs "Error: expecting ~A, got ~A"
-                       'XML_ERROR_UNKNOWN_ENCODING
-                       es)))))))
+                     es))))))
 
 ';;; DISABLED.  TODO: unknown encoding handlers are not easy to test.
 (test "Test parsing of unknown encoding"

@@ -1,5 +1,12 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Drop proc: set-encoding
+
+	* src/expat.c (set_encoding): Delete func.
+	* test/x001: Don't import ‘set-encoding’; don't test it.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Use ‘INT_NUM’ and ‘C_INT’ more.
 
 	* src/expat.c: Do ‘s/SCM_MAKINUM/INT_NUM/g’, ‘s/SCM_INUM/C_INT/g’.
