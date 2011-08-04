@@ -753,6 +753,35 @@ are done on the procedures.  */)
 }
 
 PRIMPROC
+(hget, "hget", 1, 0, 0,
+ (SCM parser),
+ doc: /***********
+Return an alist representing the handler set of @var{parser}.
+If a particular handler is not specified, that pair's @sc{cdr}
+will be @code{#f}.  The alist keys are as for @code{hset!}.  */)
+{
+#define FUNC_NAME s_hget
+  XML_Parser p;
+  int i = hindex_count;
+  SCM *ud;
+  SCM rv, sym, val;
+
+  VALIDATE_PARSER ();
+  ud = get_ud (p);
+  rv = SCM_EOL;
+  while (i--)
+    {
+      sym = SYMBOL (hnames[i]);
+      val = as_ud (ud)[i];
+      if (! PROCP (val))
+        val = SCM_BOOL_F;
+      rv = scm_acons (sym, val, rv);
+    }
+  return rv;
+#undef FUNC_NAME
+}
+
+PRIMPROC
 (set_encoding, "set-encoding", 2, 0, 0,
  (SCM parser, SCM encoding),
  doc: /***********

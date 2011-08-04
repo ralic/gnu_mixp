@@ -1,3 +1,9 @@
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[expat] Add proc: hget
+
+	* src/expat.c (hget): New PRIMPROC.
+
 2011-08-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[expat] Rename lastchoice{,-expand} to default{,-expand}.
