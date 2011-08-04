@@ -417,7 +417,9 @@ generic_namespace_decl_end (void *data, const XML_Char *prefix)
 static int
 generic_not_standalone (void *data)
 {
-  return C_INT (CALL0 (udsel (data, not_standalone)));
+  return SCM_FALSEP (CALL0 (udsel (data, not_standalone)))
+    ? XML_STATUS_ERROR
+    : XML_STATUS_OK;
 }
 
 static int

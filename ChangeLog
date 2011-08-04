@@ -1,5 +1,12 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Interpret ‘not-standalone’ rv #f to mean "signal error".
+
+	* src/expat.c (generic_not_standalone): If the Scheme proc
+	returns ‘#f’, return ‘XML_STATUS_ERROR’, else ‘XML_STATUS_OK’.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Fix bug: Handle NULL namespace decl prefix.
 
 	* src/expat.c (generic_namespace_decl_start)
