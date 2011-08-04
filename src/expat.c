@@ -163,9 +163,10 @@ free_parser (SCM obj)
 static int
 print_parser (SCM obj, SCM port, scm_print_state *pstate)
 {
-  scm_puts ("#<XML-Parser 0x", port);
-  scm_intprint ((long int) UNPACK_PARSER (obj), 16, port);
-  scm_putc ('>', port);
+  char buf[32];
+
+  snprintf (buf, 32, "#<XML-Parser %p>", (void *) UNPACK_PARSER (obj));
+  scm_puts (buf, port);
   return 1;
 }
 
@@ -235,16 +236,16 @@ free_encoding (SCM obj)
 static int
 print_encoding (SCM obj, SCM port, scm_print_state *pstate)
 {
+  char buf[4096];
   XML_Encoding *enc = UNPACK_ENCODING (obj);
-  int i;
+  int w, i;
 
-  scm_puts ("#<XML-Encoding", port);
+  w = snprintf (buf, 4096, "#<XML-Encoding");
   for (i = 0; i < 256; i++)
-    {
-      scm_puts (" ", port);
-      scm_display (SCM_MAKINUM (enc->map[i]), port);
-    }
-  scm_putc ('>', port);
+    w += snprintf (buf + w, 4096 - w, " %d", enc->map[i]);
+  buf[w++] = '>';
+  buf[w++] = '\0';
+  scm_puts (buf, port);
   return 1;
 }
 

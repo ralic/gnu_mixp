@@ -1,5 +1,12 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Do only one ‘scm_puts’ in print funcs.
+
+	* src/expat.c (print_parser, print_encoding):
+	Construct C string locally and ‘scm_puts’ once, at end.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Add proc: hget
 
 	* src/expat.c (hget): New PRIMPROC.
