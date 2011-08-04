@@ -1,5 +1,20 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Remove redundant ‘SPECIFIEDP’ checks.
+
+	For non-pair (no -start, -end) handlers, setting the generic
+	handler happens only if value satisfies init-time ‘PROCP’ check,
+	so all the parse-time ‘SPECIFIEDP’ checks are redundant.
+
+	* src/expat.c (generic_character_data)
+	(generic_processing_instruction, generic_comment)
+	(generic_default, generic_default_expand)
+	(generic_unparsed_entity_decl, generic_notation_decl)
+	(generic_not_standalone, generic_unknown_encoding): Don't
+	bother checking that the handler is ‘SPECIFIEDP’; use it directly.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Use XML_STATUS_* more.
 
 	* src/expat.c (generic_not_standalone): Use ‘XML_STATUS_OK’.

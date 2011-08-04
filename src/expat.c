@@ -306,10 +306,8 @@ generic_element_end (void *data, const XML_Char *name)
 static void
 generic_character_data (void *data, const XML_Char *name, int len)
 {
-  SCM handler = udsel (data, character_data);
-
-  if (SPECIFIEDP (handler))
-    CALL1 (handler, BSTRING (name, len));
+  CALL1 (udsel (data, character_data),
+         BSTRING (name, len));
 }
 
 static void
@@ -317,19 +315,15 @@ generic_processing_instruction (void *data,
                                 const XML_Char *target,
                                 const XML_Char *pi_data)
 {
-  SCM handler = udsel (data, processing_instruction);
-
-  if (SPECIFIEDP (handler))
-    CALL2 (handler, STRING (target), STRING (pi_data));
+  CALL2 (udsel (data, processing_instruction),
+         STRING (target), STRING (pi_data));
 }
 
 static void
 generic_comment (void *data, const XML_Char *comment_data)
 {
-  SCM handler = udsel (data, comment);
-
-  if (SPECIFIEDP (handler))
-    CALL1 (handler, STRING (comment_data));
+  CALL1 (udsel (data, comment),
+         STRING (comment_data));
 }
 
 static void
@@ -353,19 +347,15 @@ generic_cdata_section_end (void *data)
 static void
 generic_default (void *data, const XML_Char *s, int len)
 {
-  SCM handler = udsel (data, default);
-
-  if (SPECIFIEDP (handler))
-    CALL1 (handler, BSTRING (s, len));
+  CALL1 (udsel (data, default),
+         BSTRING (s, len));
 }
 
 static void
 generic_default_expand (void *data, const XML_Char *s, int len)
 {
-  SCM handler = udsel (data, default_expand);
-
-  if (SPECIFIEDP (handler))
-    CALL1 (handler, BSTRING (s, len));
+  CALL1 (udsel (data, default_expand),
+         BSTRING (s, len));
 }
 
 static void
@@ -376,15 +366,15 @@ generic_unparsed_entity_decl (void *data,
                               const XML_Char *publicId,
                               const XML_Char *notationName)
 {
-  SCM handler = udsel (data, unparsed_entity_decl);
   SCM arg1 = STRMAYBE (entityName);
   SCM arg2 = STRMAYBE (base);
   SCM arg3 = STRMAYBE (systemId);
   SCM arg4 = STRMAYBE (publicId);
   SCM arg5 = STRMAYBE (notationName);
 
-  APPLY (handler, LISTIFY (arg1, arg2, arg3, arg4, arg5,
-                           SCM_UNDEFINED));
+  APPLY (udsel (data, unparsed_entity_decl),
+         LISTIFY (arg1, arg2, arg3, arg4, arg5,
+                  SCM_UNDEFINED));
 }
 
 static void
@@ -394,14 +384,14 @@ generic_notation_decl (void *data,
                        const XML_Char *systemId,
                        const XML_Char *publicId)
 {
-  SCM handler = udsel (data, notation_decl);
   SCM arg1 = STRING (notationName);
   SCM arg2 = STRMAYBE (base);
   SCM arg3 = STRMAYBE (systemId);
   SCM arg4 = STRMAYBE (publicId);
 
-  APPLY (handler, LISTIFY (arg1, arg2, arg3, arg4,
-                           SCM_UNDEFINED));
+  APPLY (udsel (data, notation_decl),
+         LISTIFY (arg1, arg2, arg3, arg4,
+                  SCM_UNDEFINED));
 }
 
 static void
@@ -427,11 +417,7 @@ generic_namespace_decl_end (void *data, const XML_Char *prefix)
 static int
 generic_not_standalone (void *data)
 {
-  SCM handler = udsel (data, not_standalone);
-
-  return (SPECIFIEDP (handler)
-          ? C_INT (CALL0 (handler))
-          : XML_STATUS_OK);
+  return C_INT (CALL0 (udsel (data, not_standalone)));
 }
 
 static int
@@ -515,11 +501,8 @@ generic_unknown_encoding (void *data,
                           XML_Encoding *info)
 {
   enum XML_Status res = XML_STATUS_ERROR;
-  SCM handler = udsel (data, unknown_encoding);
-  SCM encoding_info = SCM_UNSPECIFIED;
-
-  if (SPECIFIEDP (handler))
-    encoding_info = CALL1 (handler, STRING (name));
+  SCM encoding_info = CALL1 (udsel (data, unknown_encoding),
+                             STRING (name));
 
   if (ENCODINGP (encoding_info))
     {
