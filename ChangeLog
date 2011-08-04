@@ -1,5 +1,12 @@
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Fix bug: Handle NULL namespace decl prefix.
+
+	* src/expat.c (generic_namespace_decl_start)
+	(generic_namespace_decl_end): Use ‘STRMAYBE’ for ‘prefix’.
+
+2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Rewrite ‘trace’ in x001.
 
 	* test/x001 (trace): Rewrite to take

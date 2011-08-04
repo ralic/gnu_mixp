@@ -402,7 +402,7 @@ generic_namespace_decl_start (void *data,
   SCM handler = udsel (data, namespace_decl_start);
 
   if (SPECIFIEDP (handler))
-    CALL2 (handler, STRING (prefix), STRING (uri));
+    CALL2 (handler, STRMAYBE (prefix), STRING (uri));
 }
 
 static void
@@ -411,7 +411,7 @@ generic_namespace_decl_end (void *data, const XML_Char *prefix)
   SCM handler = udsel (data, namespace_decl_end);
 
   if (SPECIFIEDP (handler))
-    CALL1 (handler, STRING (prefix));
+    CALL1 (handler, STRMAYBE (prefix));
 }
 
 static int
