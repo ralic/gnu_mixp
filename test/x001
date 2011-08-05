@@ -69,6 +69,8 @@
                         (loop (acons (car ls) (cadr ls) alist)
                               (cddr ls))))))
 
+(define bad-parse? zero?)
+
 ;; A sample XML document used in several tests
 (define my-document
   "<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?>
@@ -203,7 +205,7 @@
 
     ;; parse the document, and print the errors, if any
     (let ((res-parse (E:parse my-parser my-document #t)))
-      (check (not (= res-parse 0))
+      (check (not (bad-parse? res-parse))
              "parse"
              (fs "Parser error: ~A(~A)"
                  (E:error-symbol my-parser)
@@ -218,7 +220,7 @@
       (hset!/p p 'character-data (lambda (c)
                                    '()))
       (let ((res (E:parse p bad-xml #t)))
-        (check (equal? res 0)
+        (check (bad-parse? res)
                "Parse bad XML"
                "Parser did not return an error on not well-formed document")
         (if (equal? res 0)
@@ -259,7 +261,7 @@
                (acc `(,entity-name
                       ,system-id))))
     (let ((res-parse (E:parse my-parser xml-doc #t)))
-      (check (not (= res-parse 0))
+      (check (not (bad-parse? res-parse))
              "unparsed entities"
              (fs "Parser error: ~A"
                  (E:error-string
@@ -291,10 +293,10 @@
 standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
          (my-parser (E:parser-create))
          (res-parse (E:parse my-parser doc #t)))
-    (check (= res-parse 0)
+    (check (bad-parse? res-parse)
            "Expect an encoding error"
            "Error, expecting an encoding error")
-    (if (= res-parse 0)
+    (if (bad-parse? res-parse)
         (let ((es (E:error-symbol my-parser)))
           (check (eqv? es 'XML_ERROR_INVALID_TOKEN)
                  "Ok, got an INVALID TOKEN error as expected"
@@ -316,7 +318,7 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
                        (trace "Recognized encoding ~S" name)
                        (E:make-xml-encoding map convert release))))))
     (let ((res-parse (E:parse my-parser my-document #t)))
-      (check (not (= res-parse 0))
+      (check (not (bad-parse? res-parse))
              "Unknown encoding handler"
              (fs "Parser error: ~A"
                  (E:error-string
@@ -346,7 +348,7 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
              "from E:get-base"
              (fs "expected ~S but got ~S" my-base base)))
     (let ((res-parse (E:parse my-parser my-document #t)))
-      (check (not (= res-parse 0))
+      (check (not (bad-parse? res-parse))
              "parse w/ base"
              (fs "Parser error: ~A"
                  (E:error-string (E:error-symbol my-parser)))))))
@@ -440,7 +442,7 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
     (let ((res-parse (E:parse my-parser
                               my-document
                               #t)))
-      (check (not (= res-parse 0))
+      (check (not (bad-parse? res-parse))
              "parse"
              (fs "Parser error: ~A(~A)"
                  (E:error-symbol my-parser)

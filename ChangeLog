@@ -1,5 +1,11 @@
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Add abstraction: bad-parse?
+
+	* test/x001 (bad-parse?): New alias for ‘zero?’; use it throughout.
+
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Store ‘#f’ for unspecified handlers.
 
 	* src/expat.c (SPECIFIEDP): Delete macro.
