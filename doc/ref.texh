@@ -1,0 +1,399 @@
+@c ref.texh
+@c
+@c Copyright (C) 2011 Thien-Thi Nguyen
+@c
+@c This file is provided under the terms of the GNU FDL.
+@c See fdl.texi for details.
+
+@node Expat interface
+@chapter (mixp expat) Reference
+
+This chapter describes the libexpat interface, i.e., the
+@code{(mixp expat)} module.  The interface has been modified
+to be more ``Schemey''; it does not correspond one-to-one with
+libexpat.  Notably, things are more symbolic and ``condensed''.
+@tsin m (mixp expat)
+
+@menu
+* Symbols::                     Of the non-numeric kind
+* Parser::                      Everything revolves around this object
+* Expat handlers::              All the available callbacks
+* Encodings::                   When a document is not ASCII
+* Expat misc::                  Support for the handlers
+* Doing a parse::               And handling the occasional error
+* Not implemented::             What is not here
+@end menu
+
+@node Symbols
+@section Symbols
+
+Expat uses C @code{#define}s and @code{enum}s to operate symbolically.
+For @code{(mixp expat)}, we use Scheme symbols directly.
+
+@heading status
+@cindex status, symbolic
+@cindex symbolic status
+Several procedures return a symbolic status, one of the set:
+
+@example
+XML_STATUS_ERROR
+XML_STATUS_OK
+XML_STATUS_SUSPENDED
+@end example
+
+@heading error code
+@cindex error code, symbolic
+@cindex symbolic error code
+Here are all the symbolic error codes (@pxref{Doing a parse}),
+presented without the @samp{XML_ERROR_} prefix.
+
+@example
+;; since the beginning           UNEXPECTED_STATE
+NONE                             ENTITY_DECLARED_IN_PE
+NO_MEMORY                        FEATURE_REQUIRES_XML_DTD
+SYNTAX                           CANT_CHANGE_FEATURE_ONCE_PARSING
+NO_ELEMENTS
+INVALID_TOKEN                    ;; added in 1.95.7
+UNCLOSED_TOKEN                   UNBOUND_PREFIX
+PARTIAL_CHAR
+TAG_MISMATCH                     ;; added in 1.95.8
+DUPLICATE_ATTRIBUTE              UNDECLARING_PREFIX
+JUNK_AFTER_DOC_ELEMENT           INCOMPLETE_PE
+PARAM_ENTITY_REF                 XML_DECL
+UNDEFINED_ENTITY                 TEXT_DECL
+RECURSIVE_ENTITY_REF             PUBLICID
+ASYNC_ENTITY                     SUSPENDED
+BAD_CHAR_REF                     NOT_SUSPENDED
+BINARY_ENTITY_REF                ABORTED
+ATTRIBUTE_EXTERNAL_ENTITY_REF    FINISHED
+MISPLACED_XML_PI                 SUSPEND_PE
+UNKNOWN_ENCODING
+INCORRECT_ENCODING               ;; added in 2.0
+UNCLOSED_CDATA_SECTION           RESERVED_PREFIX_XML
+EXTERNAL_ENTITY_HANDLING         RESERVED_PREFIX_XMLNS
+NOT_STANDALONE                   RESERVED_NAMESPACE_URI
+@end example
+
+@node Parser
+@section Parser
+@cindex parser object
+
+Everything revolves around the @dfn{parser object}.  This section
+describes procedures to create and query such objects.
+
+@tsin i parser-create
+@tsin i parser-create-ns
+@tsin i parser?
+@tsin i get-locus
+
+@node Expat handlers
+@section Expat handlers
+@cindex handlers
+
+You must specify a set of @dfn{handlers}, or callback procedures,
+for the parser to call when it encounters specific situations while
+processing its input.  The @dfn{handler name} is a symbol.  Unlike
+libexpat, there is one centralized procedure for setting and one for
+getting the set.
+
+@tsin i hset!
+@tsin i hget
+
+In the following description, the handler's name is followed by the
+arguments that it will be called with.  These are normally string
+values unless otherwise noted.
+
+@macro basefromsetbase
+The @var{base} argument is whatever was set by @code{set-base}.
+(@pxref{Expat misc})
+@end macro
+
+@deffn {Handler} element-start name attributes
+This handler is called when expat sees an element start.
+@var{attributes} is an alist whose keys and values are all strings.
+
+@example
+<foo a="1" b="2">
+      name @result{} "foo"
+attributes @result{} (("a" . "1") ("b" . "2"))
+@end example
+@end deffn
+
+@deffn {Handler} element-end name
+Likewise, for element end.
+
+@example
+</foo>
+name @result{} "foo"
+@end example
+@end deffn
+
+@deffn {Handler} character-data data
+This handler is called for normal text (outside @samp{<>} tags).
+@var{data} should never be the empty string.
+It is encoded in UTF-8.
+@end deffn
+
+@deffn {Handler} processing-instruction target pi-data
+This handler is called for every processing instruction
+(@code{<?  ... ?>}).
+
+@example
+<?a   b c d e f  ?>
+ target @result{} "a"
+pi-data @result{} "b c d e f  "
+;; Note the trailing whitespace.
+@end example
+@end deffn
+
+@deffn {Handler} comment comment
+This handler is called for comments (@code{<!-- ... -->}).
+
+@example
+<!-- This is a comment.  -->
+comment @result{} " This is a comment.  "
+;; Note the surrounding whitespace.
+@end example
+@end deffn
+
+@deffn {Handler} cdata-section-start
+@deffnx {Handler} cdata-section-end
+This handler is called for @dfn{CDATA sections}
+(@code{<![CDATA[ ... ]]>}).
+@end deffn
+
+@deffn {Handler} default data
+@deffnx {Handler} default-expand data
+Both @code{default} and @code{default-expand} specify the default
+handler.  The difference regards processing of internal entities.
+
+@itemize
+@item Using @code{default} inhibits expansion of internal entities;
+they are passed, instead, to the handler.
+
+@item Using @code{default-expand} does not inhibit their expansion;
+they are not passed to the handler.
+@end itemize
+
+The default handler is called for any characters in the XML document
+for which there is no applicable handler.  This includes both
+characters that are part of markup which is of a kind that is not
+reported (comments, markup declarations), or characters that are part
+of a construct which could be reported but for which no handler has
+been supplied.  The characters are passed exactly as they were in the
+XML document except that they will be encoded in UTF-8.
+
+Line boundaries are not normalized.  Note that a byte order mark
+character is not passed to the default handler.  There are no
+guarantees about how characters are divided between calls to the
+default handler: for example, a comment might be split between
+multiple calls.
+@end deffn
+
+@deffn {Handler} unparsed-entity-decl entity-name base system-id public-id notation-name
+This handler is called for unparsed entity declarations
+(@code{<!ENTITY ...>}).
+The @var{entity-name}, @var{system-id} and @var{notation-name} arguments
+will never be @code{#f}.  The other arguments may be.
+@basefromsetbase{}.
+
+@example
+<!ENTITY Antarctica SYSTEM 'http://www.antarctica.net'
+         NDATA vrml>
+  entity-name @result{} "Antartica"
+    system-id @result{} "http://www.antarctica.net"
+    public-id @result{} #f
+notation-name @result{} "vrml"
+@end example
+@end deffn
+
+@deffn {Handler} notation-decl notation-name base system-id public-id
+This handler is called for notation declarations (@code{<!NOTATION ...>}).
+Except @var{notation-name}, some of the args may be @code{#f}.
+@basefromsetbase{}.
+
+@example
+<!NOTATION vrml PUBLIC 'VRML 2'>
+notation-name @result{} "vrml"
+    system-id @result{} #f
+    public-id @result{} "VRML 2"
+@end example
+@end deffn
+
+@deffn {Handler} namespace-decl-start prefix uri
+@deffnx {Handler} namespace-decl-end prefix
+When namespace processing is enabled (i.e., the parser was created with
+@code{parser-create-ns}), these are called once for each namespace
+declaration.  The call to the start and end element handlers occur
+@strong{between} the calls to the start and end namespace declaration
+handlers.  @var{prefix} may be @code{#f}.
+
+@example
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en" lang="en">
+prefix @result{} #f
+   uri @result{} "http://www.w3.org/1999/xhtml"
+@end example
+@end deffn
+
+@deffn {Handler} not-standalone
+This handler is called if the document is not standalone (it has an
+external subset or a reference to a parameter entity, but does not
+have @samp{standalone="yes"}).  If this handler returns @code{#f},
+then processing will not continue, and the parser will return a
+@code{XML_ERROR_NOT_STANDALONE} error.
+@end deffn
+
+@deffn {Handler} external-entity-ref context base system-id public-id
+Some of the args may be @code{#f}.
+@basefromsetbase{}.
+
+This handler is called when the parser finds a reference to an
+external entity in the document.  For example, the @code{<!DOCTYPE
+...>} declaration contains an external entity reference when it
+specifies an external DTD.  In that case, you should also call
+@code{set-param-entity-parsing} (@pxref{Expat misc}), because you
+probably want the parser to expand the references to entities
+declared in your DTD.  For an example, @xref{How to...}.
+
+The external entity reference handler should return an open port to
+the external entity.  For example, assuming that @code{system-id}
+refers to a relative file path, you may define the handler as follows:
+
+@lisp
+(lambda (context base system-id public-id)
+  (open-input-file system-id))
+@end lisp
+
+The system identifier (@var{system-id}) is defined by the XML
+specification as a URI.  Therefore, the example above will only work
+if you know that the system id is actually a filename.  You may need
+to use, for example, some kind of http client library if you want to
+support URIs which start with @samp{http://}.
+
+Note that the behaviour of this handler is very different in expat.
+@end deffn
+
+@deffn {Handler} unknown-encoding name
+This handler is called when the parser does not recognize the
+declared encoding of a document.
+It should use @code{make-xml-encoding} (@pxref{Expat misc}),
+if it thinks that it can teach the parser to decode @var{name}.
+
+@strong{NB}: Unknown encoding handlers have not been really tested,
+so they probably don't work for now.
+@end deffn
+
+@node Encodings
+@section Encodings
+@cindex encodings
+
+Expat supports the following encodings: UTF-8, UTF-16, ISO-8859-1,
+US-ASCII.
+
+The encoding is usually indicated in the first line of an XML file
+(the @code{<?xml... ?>} declaration).  But every data you will receive
+in your handlers (tag names, attributes, character data...), will be
+encoded in UTF-8, whatever the original encoding was.  UTF-8
+represents ASCII characters with no modification, but represents other
+characters with multi-byte characters.  ISO-8859-1 has a better
+support in standard editors, but is too euro-centric.
+
+The encoding features of expat are not completely supported in Mixp.
+Using unknown encoding handlers will not work, or at least I have not
+tested that feature.  However, XML documents which encoding (as
+specified in the @code{<?xml... ?>} declaration) is supported by expat
+should be parsed correctly.  For example, you should get an error if
+you parse a document which claims to be US-ASCII but contains 8-bit
+characters.
+
+@node Expat misc
+@section Expat misc
+@cindex miscellaneous procedures, @code{(mixp expat)}
+
+@tsin i default-current
+@tsin i set-base
+@tsin i get-base
+@tsin i get-specified-attribute-count
+@tsin i set-param-entity-parsing
+@tsin i make-xml-encoding
+
+@node Doing a parse
+@section Doing a parse
+@cindex parser, application to input
+
+After all the set up (@pxref{Expat handlers}), you will want to
+apply the parser to some input.  This section describes two
+procedures to do that, as well as two procedures to help you
+understand things better when All Does Not Go Well.
+
+@tsin i parse
+@tsin i parse-buffer
+
+@tsin i error-symbol
+@tsin i error-string
+
+Here is an example that uses the latter two procedures.
+@xref{Symbols}.
+
+@lisp
+(define BAD-XML "<doc>dfssfd</do>")
+;; NB: not same!  ^^^         ^^
+
+(use-modules ((mixp expat) #:prefix E:))
+
+(define PARSER (E:parser-create))
+(define RES (E:parse PARSER BAD-XML #t))
+RES @result{} XML_STATUS_ERROR
+
+(define ERR (E:error-symbol PARSER))
+ERR @result{} XML_ERROR_TAG_MISMATCH
+(E:error-string ERR) @result{} "mismatched tag"
+@end lisp
+
+@node Not implemented
+@section Not implemented
+@cindex libexpat leftovers
+@cindex leftovers, libexpat
+
+The following functions are part of the expat interface,
+but are not exposed to Scheme.
+
+@deffn {C Function} XML_SetEncoding
+The header file @file{expat.h} says that using this function
+``is equivalent to supplying an encoding argument to
+@code{XML_ParserCreate}'',
+and ``Note: Calling @code{XML_SetEncoding} after
+@code{XML_Parse} or @code{XML_ParseBuffer} has no
+effect and returns @code{XML_STATUS_ERROR}''.
+
+Thus, you can achieve the same effect in Mixp by specifying
+the encoding on parser creation (@pxref{Parser}).
+@end deffn
+
+@deffn {C Function} XML_StopParser
+@deffnx {C Function} XML_ResumeParser
+There is actually no good reason not to include stop/resume functionality.
+So, these are noted here as a ``to do'' item.  (Patches welcome!)
+@end deffn
+
+@deffn {C Function} XML_GetBuffer
+This kind of integratin awaits widespread (and stable) Guile
+``array leasing'' facilities.
+@end deffn
+
+@node High-level extensions
+@chapter (mixp utils) Reference
+@cindex utilities
+
+This chapter describes the @code{(mixp utils)} module,
+which provides high-level extensions to the raw expat interface.
+@tsin m (mixp utils)
+
+@tsin i parse-data
+@tsin i utf8->latin1
+@tsin i utf8->ucs2
+@tsin i utf8->ucs4
+@tsin i xml->tree
+
+@c ref.texh ends here

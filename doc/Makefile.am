@@ -20,9 +20,26 @@
 # Fifth Floor, Boston, MA  02110-1301  USA
 
 info_TEXINFOS = mixp.texi
+mixp_TEXINFOS = ref.texi fdl.texi
 
 AM_MAKEINFOHTMLFLAGS = --no-headers --no-split
 
-EXTRA_DIST = mixp.html
+EXTRA_DIST = ref.texh mixp.html
+
+if MAINTAINER_MODE
+
+bx = $(top_srcdir)/build-aux
+gx = $(bx)/guile-baux/gbaux-do
+
+SUFFIXES = .texh
+
+snippets = ../src/all.snippets
+
+.texh.texi:
+	$(gx) tsin -f $(snippets) -c utf-8 $<
+
+ref.texi: $(snippets)
+
+endif # MAINTAINER_MODE
 
 # Makefile.am ends here

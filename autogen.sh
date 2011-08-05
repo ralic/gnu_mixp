@@ -13,9 +13,13 @@ guile-baux-tool import \
     c2x \
     gen-scheme-wrapper \
     punify \
+    tsar \
+    c-tsar \
+    tsin \
     gbaux-do
 
 gnulib-tool --copy-file doc/INSTALL.UTF-8 INSTALL
+gnulib-tool --copy-file doc/fdl.texi
 
 autoreconf --verbose --force --install --symlink --warnings=all
 

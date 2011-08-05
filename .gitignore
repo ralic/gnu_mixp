@@ -48,6 +48,7 @@ Makefile.in
 /test/runtest
 /test/stamp-all
 
+/doc/fdl.texi
 /doc/mixp.aux
 /doc/mixp.cp
 /doc/mixp.cps
@@ -62,5 +63,6 @@ Makefile.in
 /doc/mixp.toc
 /doc/mixp.tp
 /doc/mixp.vr
+/doc/ref.texi
 /doc/stamp-vti
 /doc/version.texi

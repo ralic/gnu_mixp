@@ -1,5 +1,40 @@
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Use Guile-BAUX for doc maint; revamp content.
+
+	* autogen.sh: Import Guile-BAUX modules ‘tsar’,
+	‘c-tsar’, ‘tsin’; copy gnulib file doc/fdl.texi.
+	* src/expat.c (parser_create, parser_create_ns): Tweak docs.
+	* src/utils.scm: Likewise.  Also, throughout,
+	rework ‘sig’ doc-comment option to use ‘args’.
+	* src/Makefile.am (schemesource): New var.
+	(EXTRA_DIST): Use $(schemesource).
+	[MAINTAINER_MODE] (noinst_DATA): New var.
+	[MAINTAINER_MODE] (all.snippets)
+	(c.snippets, scheme.snippets): New targets.
+	[MAINTAINER_MODE] (CLEANFILES): Add *.snippets.
+	* doc/ref.texh: New file.
+	* doc/mixp.texi: Change title; remove @smallbook; add self as
+	another @author; remove @page; move @contents after title page;
+	surround Top node with @ifnottex; don't use @ifinfo.
+	(Top): Consolidate version info into blurb; rework
+	menu description column; add "GNU FDL" to menu.
+	(Introduction): Move FAQ url to footnote; use @uref;
+	add another link to the expat project page; rewrite blurb.
+	(Sample programs, Loading Mixp, Mixp components, How to...):
+	Rework blurbs, examples; add @cindex entries.
+	(Expat interface, High-level extensions): Delete these
+	nodes and their children; replace with ‘@include ref.texi’.
+	(GNU FDL): New node.
+	(Index): Remove apology; delete @summarycontents, @contents.
+	* doc/Makefile.am (mixp_TEXINFOS): New var.
+	(EXTRA_DIST): Add ref.texh.
+	[MAINTAINER_MODE] (bx, gx, SUFFIXES, snippets): New vars.
+	[MAINTAINER_MODE] (.texh.texi): New old-style suffix rule.
+	[MAINTAINER_MODE] (ref.texi): New target.
+
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Use symbolic status, not numeric.
 
 	* src/expat.c (statuses): New static ‘SCM’ array.

@@ -593,7 +593,7 @@ PRIMPROC
 (parser_create, "parser-create", 0, 1, 0,
  (SCM encoding),
  doc: /***********
-Return a new XML_Parser object.
+Return a new parser object.
 Optional arg @var{encoding} is a string specifying
 the encoding to use (for example, "UTF-8").  */)
 {
@@ -611,12 +611,13 @@ PRIMPROC
 (parser_create_ns, "parser-create-ns", 0, 2, 0,
  (SCM encoding, SCM namespace_separator),
  doc: /***********
-Optional arg @var{encoding} is a string specifying
-the encoding to use (for example, "UTF-8").
-Second optional arg @var{namespace-separator} is a character
-used to separate namespaces (for example @code{#\:}).
+Optional arg @var{encoding} is a string specifying the encoding to use.
+Second optional arg @var{namespace-separator} is a character used to
+separate the namespace part from the local part (e.g., @code{#\:}).
 
--sig: ([encoding [namespace-separator]])  */)
+Note: Using this proc (instead of @code{parser-create}) enables dispatch
+to the @code{namespace-decl-start} and @code{namespace-decl-end}
+handlers.  */)
 {
 #define FUNC_NAME s_parser_create_ns
   XML_Char *e = NULL;

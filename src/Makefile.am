@@ -22,7 +22,8 @@
 SUFFIXES = .scm
 
 schemestems = utils
-EXTRA_DIST = $(schemestems:=.scm)
+schemesource = $(schemestems:=.scm)
+EXTRA_DIST = $(schemesource)
 
 bx = $(top_srcdir)/build-aux
 gx = $(bx)/guile-baux/gbaux-do
@@ -66,6 +67,21 @@ endif !TRIPPY
 .scm:
 	$(gx) punify -n $< > $@
 
+if MAINTAINER_MODE
+
+noinst_DATA = all.snippets
+
+all.snippets: c.snippets scheme.snippets
+	$(gx) tsar -f $@ -c utf-8 concat $^
+
+c.snippets: $(expat_la_SOURCES)
+	$(gx) c-tsar -f $@ -c utf-8 update $^ -- $(snarfcppopts)
+
+scheme.snippets: $(schemesource)
+	$(gx) tsar -f $@ -c utf-8 update $^
+
+endif # MAINTAINER_MODE
+
 update-libsite-module-catalog:
 	$(mmc) -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
 
@@ -101,5 +117,8 @@ stamp-all: $(iroot_DATA) $(iroot_LTLIBRARIES) $(pkglib_LTLIBRARIES)
 DISTCLEANFILES = *.x *.exports
 
 CLEANFILES = *.x $(iroot_DATA) stamp-all
+if MAINTAINER_MODE
+CLEANFILES += *.snippets
+endif
 
 # Makefile.am ends here

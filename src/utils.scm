@@ -81,7 +81,7 @@
 ;; is not an integer in the range [0,255], throw @var{check} with the
 ;; element as arg.
 ;;
-;;-sig: (source [kwopts...])
+;;-args: (- 1 0)
 ;;
 (define (make-unsigned-byte-stream source . check)
 
@@ -204,7 +204,7 @@
 ;; similar to that of the @code{#:skip!} command.
 ;; @end table
 ;;
-;;-sig: (from [init-pos])
+;;-args: (- 1 0)
 ;;
 (define (utf8-reader from . init-pos)
   (let ((posbox (if (null? init-pos)
@@ -351,14 +351,14 @@
 ;; Read all bytes from @var{port} (until it yields the EOF object), and
 ;; throw an error if the input does not represent a valid XML document.
 ;;
-;;-sig: (port [parser])
+;;-args: (- 1 0 parser)
 ;;
 (define (parse-data port . args)
   (define (next)
     (read-line port 'concat))
   (let ((parser (get-parser args parse-data)))
     (define (check s last?)
-      (and (zero? (expat:parse parser s last?))
+      (and (eq? 'XML_STATUS_ERROR (expat:parse parser s last?))
            (throw (expat:error-symbol parser))))
     (let loop ((line (next)))
       (cond ((not line))
@@ -434,12 +434,28 @@
 
 ;; Build a tree data structure from the XML document read from
 ;; @var{port}.  Each XML element produces a new branch in the tree.
-;; The internal parser uses @code{element-start}, @code{element-end},
+;; Optional arg @var{parser} specifies another parser to use.
+;; The internal parser uses element start (and end),
 ;; @code{character-data}, @code{notation-decl},
 ;; @code{unparsed-entity-decl}, @code{processing-instruction}
 ;; and @code{comment} handlers.  (TODO: Add other handlers.)
 ;;
-;;-sig: (port [parser])
+;; For example, consider this sample XML document:
+;;
+;; @example
+;; <foo name='Paul'><bar>Some text</bar><void/></foo>
+;; @end example
+;;
+;; Here is the data structure produced by @code{xml->tree}:
+;;
+;; @lisp
+;; (element ("foo" (("name" . "Paul")))
+;;   (element ("bar" ())
+;;     (character-data "Some text"))
+;;   (element ("void" ())))
+;; @end lisp
+;;
+;;-args: (- 1 0 parser)
 ;;
 (define (xml->tree port . args)
   (let ((parser (get-parser args xml->tree))
