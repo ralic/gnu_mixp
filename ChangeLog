@@ -1,5 +1,15 @@
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Use symbolic status, not numeric.
+
+	* src/expat.c (statuses): New static ‘SCM’ array.
+	(symbolic_status): New static func.
+	(set_base, parse, parse_buffer): Use ‘symbolic_status’.
+	(init_gexpat): Initialize ‘statuses’.
+	* test/x001 (bad-parse?): Update.
+
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Add abstraction: bad-parse?
 
 	* test/x001 (bad-parse?): New alias for ‘zero?’; use it throughout.

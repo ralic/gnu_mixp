@@ -47,6 +47,14 @@ struct enumsym
 
 #define PAIR(x)  { #x, SCM_UNSPECIFIED }
 
+static SCM statuses[3];
+
+static SCM
+symbolic_status (enum XML_Status n)
+{
+  return statuses[n];
+}
+
 static const char const *
 hnames[] =
 {
@@ -769,7 +777,8 @@ PRIMPROC
 (set_base, "set-base", 2, 0, 0,
  (SCM parser, SCM base),
  doc: /***********
-Set base for @var{parser} to @var{base}.  */)
+Set base for @var{parser} to @var{base}.
+Return a symbolic status.  */)
 {
 #define FUNC_NAME s_set_base
   XML_Parser p;
@@ -777,7 +786,8 @@ Set base for @var{parser} to @var{base}.  */)
   VALIDATE_PARSER ();
   SCM_VALIDATE_STRING (1, base);
 
-  return NUM_INT (XML_SetBase (p, SCM_CHARS (base)));
+  return symbolic_status
+    (XML_SetBase (p, SCM_CHARS (base)));
 #undef FUNC_NAME
 }
 
@@ -820,7 +830,8 @@ PRIMPROC
  doc: /***********
 Use @var{parser} to parse string @var{s}.
 Optional third arg @var{finalp}, if non-@code{#f}, means
-this call is the last parsing to be done on @var{s}.  */)
+this call is the last parsing to be done on @var{s}.
+Return a symbolic status.  */)
 {
 #define FUNC_NAME s_parse
   XML_Parser p;
@@ -830,7 +841,7 @@ this call is the last parsing to be done on @var{s}.  */)
   SCM_VALIDATE_STRING (2, s);
   UNBOUND_MEANS_FALSE (finalp);
 
-  return NUM_INT
+  return symbolic_status
     (XML_Parse (p, ROZT (s), SCM_ROLENGTH (s),
                 NOT_FALSEP (finalp)));
 #undef FUNC_NAME
@@ -842,7 +853,8 @@ PRIMPROC
  doc: /***********
 Use @var{parser} to parse @var{len} bytes of the internal buffer.
 Optional third arg @var{finalp}, if non-@code{#f},
-means this call is the last parsing to be done.  */)
+means this call is the last parsing to be done.
+Return a symbolic status.  */)
 {
 #define FUNC_NAME s_parse_buffer
   XML_Parser p;
@@ -851,7 +863,7 @@ means this call is the last parsing to be done.  */)
   SCM_VALIDATE_INUM (2, len);
   UNBOUND_MEANS_FALSE (finalp);
 
-  return NUM_INT
+  return symbolic_status
     (XML_ParseBuffer (p, C_INT (len), NOT_FALSEP (finalp)));
 #undef FUNC_NAME
 }
@@ -1071,6 +1083,12 @@ init_gexpat (void)
   for (code = 0; code < error_codes_count; code++)
     error_codes[code].sy =
       PERMANENT (SYMBOL (error_codes[code].nm));
+
+#define JAM(x)  statuses[x] = PERMANENT (SYMBOL (#x))
+  JAM (XML_STATUS_ERROR);
+  JAM (XML_STATUS_OK);
+  JAM (XML_STATUS_SUSPENDED);
+#undef JAM
 
 #include "expat.x"
 }

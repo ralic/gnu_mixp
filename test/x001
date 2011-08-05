@@ -69,7 +69,8 @@
                         (loop (acons (car ls) (cadr ls) alist)
                               (cddr ls))))))
 
-(define bad-parse? zero?)
+(define (bad-parse? symbol)
+  (eq? 'XML_STATUS_ERROR symbol))
 
 ;; A sample XML document used in several tests
 (define my-document
