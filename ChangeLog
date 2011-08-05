@@ -1,5 +1,17 @@
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[maint] Delete obsoleted implementation.
+
+	* Makefile.am (EXTRA_DIST): Remove xml.
+	* generic_handlers.h: Delete file.
+	* gexpat.c: Delete file.
+	* gexpat.h: Delete file.
+	* xml/expat.scm: Delete file.
+	* xml/mixp.scm: Delete file.
+	* xml/: Delete directory.
+
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Use Guile-BAUX for doc maint; revamp content.
 
 	* autogen.sh: Import Guile-BAUX modules ‘tsar’,

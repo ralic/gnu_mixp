@@ -26,7 +26,7 @@ ACLOCAL_AMFLAGS = -I build-aux
 
 SUBDIRS = src doc test
 
-EXTRA_DIST = BUGS xml \
+EXTRA_DIST = BUGS \
   build-aux/sofix \
   build-aux/uninstall-sofixed \
   build-aux/guile-baux
