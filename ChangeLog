@@ -1,3 +1,12 @@
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[expat int] Add abstraction: UNBOUND_MEANS_FALSE
+
+	* src/expat.c (UNBOUND_MEANS_FALSE): New macro.
+	(UNBOUND_MEANS_UNSPECIFIED, SPECIFIED_NOT_FALSE): Delete macros.
+	(parse): Use ‘UNBOUND_MEANS_FALSE’, ‘NOT_FALSEP’.
+	(parse_buffer, get_locus): Likewise.
+
 2011-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[expat] Interpret ‘not-standalone’ rv #f to mean "signal error".

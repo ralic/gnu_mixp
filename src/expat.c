@@ -35,10 +35,8 @@
 
 #define SPECIFIEDP(x)  (SCM_UNSPECIFIED != (x))
 
-#define UNBOUND_MEANS_UNSPECIFIED(x) \
-  if (! GIVENP (x)) x = SCM_UNSPECIFIED
-
-#define SPECIFIED_NOT_FALSE(x)  (SPECIFIEDP (x) && NOT_FALSEP (x))
+#define UNBOUND_MEANS_FALSE(x) \
+  if (! GIVENP (x)) x = SCM_BOOL_F
 
 #define PROCP(x)    (SCM_NIMP (x) && SCM_CLOSUREP (x))
 
@@ -832,10 +830,11 @@ this call is the last parsing to be done on @var{s}.  */)
   VALIDATE_PARSER ();
 
   SCM_VALIDATE_STRING (2, s);
-  UNBOUND_MEANS_UNSPECIFIED (finalp);
+  UNBOUND_MEANS_FALSE (finalp);
 
-  return NUM_INT (XML_Parse (p, ROZT (s), SCM_ROLENGTH (s),
-                             SPECIFIED_NOT_FALSE (finalp)));
+  return NUM_INT
+    (XML_Parse (p, ROZT (s), SCM_ROLENGTH (s),
+                NOT_FALSEP (finalp)));
 #undef FUNC_NAME
 }
 
@@ -852,10 +851,10 @@ means this call is the last parsing to be done.  */)
 
   VALIDATE_PARSER ();
   SCM_VALIDATE_INUM (2, len);
-  UNBOUND_MEANS_UNSPECIFIED (finalp);
+  UNBOUND_MEANS_FALSE (finalp);
 
-  return NUM_INT (XML_ParseBuffer (p, C_INT (len),
-                                   SPECIFIED_NOT_FALSE (finalp)));
+  return NUM_INT
+    (XML_ParseBuffer (p, C_INT (len), NOT_FALSEP (finalp)));
 #undef FUNC_NAME
 }
 
@@ -1004,8 +1003,8 @@ than constructing a new one.  If an element in @var{stash} is
   SCM v;
 
   VALIDATE_PARSER ();
-  UNBOUND_MEANS_UNSPECIFIED (stash);
-  if (SPECIFIEDP (stash) && NOT_FALSEP (stash))
+  UNBOUND_MEANS_FALSE (stash);
+  if (NOT_FALSEP (stash))
     {
       SCM_VALIDATE_VECTOR (2, stash);
       v = stash;
