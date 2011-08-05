@@ -33,8 +33,6 @@
 
 #define STRMAYBE(x)  DEFAULT_FALSE (x, STRING (x))
 
-#define SPECIFIEDP(x)  (SCM_UNSPECIFIED != (x))
-
 #define UNBOUND_MEANS_FALSE(x) \
   if (! GIVENP (x)) x = SCM_BOOL_F
 
@@ -138,7 +136,7 @@ mark_parser (SCM obj)
   int i; SCM *h;
 
   for (i = 0, h = get_ud (p); i < hindex_count; i++, h++)
-    if (SPECIFIEDP (*h))
+    if (NOT_FALSEP (*h))
       scm_gc_mark (*h);
   RETURN_FALSE ();
 }
@@ -176,7 +174,7 @@ make_parser (XML_Parser p)
   SCM_DEFER_INTS;
   ud = as_ud (malloc (UD_SIZE));
   for (i = 0, h = ud; i < hindex_count; i++, h++)
-    *h = SCM_UNSPECIFIED;
+    *h = SCM_BOOL_F;
   XML_SetUserData (p, ud);
   SCM_ALLOW_INTS;
 
@@ -277,7 +275,7 @@ generic_element_start (void *data, const XML_Char *name,
 
   /* Note: the start handler is unbound if #f was specified as the
      second argument of set-element-handler.  */
-  if (SPECIFIEDP (handler))
+  if (NOT_FALSEP (handler))
     {
       SCM alist = SCM_EOL;
 
@@ -297,7 +295,7 @@ generic_element_end (void *data, const XML_Char *name)
 {
   SCM handler = udsel (data, element_end);
 
-  if (SPECIFIEDP (handler))
+  if (NOT_FALSEP (handler))
     CALL1 (handler, STRING (name));
 }
 
@@ -329,7 +327,7 @@ generic_cdata_section_start (void *data)
 {
   SCM handler = udsel (data, cdata_section_start);
 
-  if (SPECIFIEDP (handler))
+  if (NOT_FALSEP (handler))
     CALL0 (handler);
 }
 
@@ -338,7 +336,7 @@ generic_cdata_section_end (void *data)
 {
   SCM handler = udsel (data, cdata_section_end);
 
-  if (SPECIFIEDP (handler))
+  if (NOT_FALSEP (handler))
     CALL0 (handler);
 }
 
@@ -399,7 +397,7 @@ generic_namespace_decl_start (void *data,
 {
   SCM handler = udsel (data, namespace_decl_start);
 
-  if (SPECIFIEDP (handler))
+  if (NOT_FALSEP (handler))
     CALL2 (handler, STRMAYBE (prefix), STRING (uri));
 }
 
@@ -408,7 +406,7 @@ generic_namespace_decl_end (void *data, const XML_Char *prefix)
 {
   SCM handler = udsel (data, namespace_decl_end);
 
-  if (SPECIFIEDP (handler))
+  if (NOT_FALSEP (handler))
     CALL1 (handler, STRMAYBE (prefix));
 }
 
@@ -681,9 +679,9 @@ are done on the procedures.  */)
       sym = CAR (pair);
       val = CDR (pair);
 
-#define SETH(x)                                         \
-      usep = PROCP (val);                               \
-      udsel (ud, x) = usep ? val : SCM_UNSPECIFIED      \
+#define SETH(x)                                 \
+      usep = PROCP (val);                       \
+      udsel (ud, x) = usep ? val : SCM_BOOL_F
 
 #define M(x)  (usep ? x : NULL)         /* (maybe) */
 
@@ -699,8 +697,8 @@ are done on the procedures.  */)
       case hx_ ## h ## _ ## which:                              \
         {                                                       \
           SETH (h ## _ ## which);                               \
-          usep = (SPECIFIEDP (udsel (ud, h ## _start)) ||       \
-                  SPECIFIEDP (udsel (ud, h ## _end)));          \
+          usep = (NOT_FALSEP (udsel (ud, h ## _start)) ||       \
+                  NOT_FALSEP (udsel (ud, h ## _end)));          \
           XML_Set ## camel ## Handler                           \
             (p,                                                 \
              M (generic_ ## h ## _start),                       \

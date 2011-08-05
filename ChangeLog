@@ -1,5 +1,16 @@
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Store ‘#f’ for unspecified handlers.
+
+	* src/expat.c (SPECIFIEDP): Delete macro.
+	(mark_parser, make_parser, generic_element_start, generic_element_end)
+	(generic_cdata_section_start, generic_cdata_section_end)
+	(generic_namespace_decl_start, generic_namespace_decl_end):
+	Use ‘NOT_FALSEP’.
+	(hset_x): Use ‘SCM_BOOL_F’, ‘NOT_FALSEP’.
+
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Add abstraction: UNBOUND_MEANS_FALSE
 
 	* src/expat.c (UNBOUND_MEANS_FALSE): New macro.
