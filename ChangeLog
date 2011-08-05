@@ -1,5 +1,11 @@
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.5
+
+	* configure.ac (AC_INIT): Bump version to "0.5" for release.
+
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[maint] Delete obsoleted implementation.
 
 	* Makefile.am (EXTRA_DIST): Remove xml.
