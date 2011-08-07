@@ -411,11 +411,11 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
              "xml->tree"
              (fs "tree built from XML different from expected tree ~A~%!=~%~A"
                  xml-tree expected))))
-  (let* ((file (testfile "REC-xml-19980210.xml"))
+  (let* ((file (testfile "REC-xml-20081126.xml"))
          (xml-tree (call-with-input-file file U:xml->tree)))
     (define (nth n ls)
       (list-ref ls n))
-    (check (equal? (nth 1 (nth 32 (nth 22 (nth 5 (nth 7 xml-tree)))))
+    (check (equal? (nth 1 (nth 37 (nth 22 (nth 15 (nth 1 xml-tree)))))
                    '("div2" (("id" . "sec-predefined-ent"))))
            "check an element in the tree"
            "failed")))

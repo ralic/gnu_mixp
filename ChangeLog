@@ -1,3 +1,12 @@
+2011-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Use 5th edition of REC-xml.
+
+	* test/REC-xml-20081126.xml: New file.
+	* test/README: New file.
+	* test/x001: Update coords for ‘xml->tree’ test.
+	* test/REC-xml-19980210.xml: Delete file.
+
 2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.5
