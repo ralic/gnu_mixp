@@ -1,0 +1,62 @@
+HACKING Mixp                                                    -*- org -*-
+
+This file is both a guide for newcomers and a todo list for oldstayers.
+It lives in the repo but is not included in the distribution.
+
+* 0.6
+*** TODO change type of "encoding name" from string to symbol
+*** TODO add "symbolic names" flag to parser-create{-ns}
+***** element NAME a symbol, or pair of symbols (-ns)
+***** idem processing-instuction TARGET
+***** idem unparsed-entity-decl ENTITY-NAME (??? *-ID, *-NAME)
+***** idem notation-decl NOTATION-NAME (??? *-ID)
+***** idem namespace-decl PREFIX
+***** (???) idem external-ref CONTEXT (??? *-ID)
+*** TODO add EXPERIMENTAL module (mixp simit) for SXML imitation
+
+* other stuff to do
+*** make (mixp simit) pass the SXML test suite(s)
+*** portability
+***** avoid deprecated stuff completely (sigh)
+***** Guile 2.x
+*** freeze ABI/API; use libtool versioning
+*** bump to 1.0
+
+* portability
+  bbr ≡ boot build run
+  |     guile | expat | b | b | r |
+  | 1.4.1.123 | 2.0.1 | x | x | x |
+  |     1.8.7 | 2.0.1 | x | x | x |
+
+* coding standards
+*** C code: indent -nut
+*** indent with emacs (don't like the result? fix emacs!)
+*** (setq indent-tabs-mode nil)
+*** (add-hook 'before-save-hook 'delete-trailing-whitespace)
+*** everything (except test/x001) UTF-8
+*** ChangeLog
+***** ttn-style: TITLE LF LF {BLURB LF LF}* BODY
+***** exclude titles suffixed "; nfc." (no functional change)
+
+* copyright update policy
+*** individual files only on change
+*** individual years
+
+* repository branches
+*** no ‘master’ -- do not panic!
+*** a -- "anchor", "asis", "already", "argh-just-leave-me-alone"
+    This branch is for what was already released.  It will never be rebased.
+    Its tip will always have a commit title starting with "Release".
+*** p -- "perhaps", "probably"
+    This branch is where largely-stable changes intended for the next release
+    live.  It's very unlikely to undergo rebase, but not entirely impossible.
+    Mixp hackers probably want to start here.
+*** q-TOPIC -- "questionably", "querulously"
+    These are experimental, exploring the particular TOPIC.  They are intended
+    to be ephemeral, undergoing rebase, amendment, and ultimately removal.
+
+* etc
+Copyright (C) 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.
