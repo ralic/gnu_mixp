@@ -3,7 +3,7 @@ Mixp
 Mixp is a Guile interface to expat, James Clark's XML Parser,
 originally written by Thierry Bézecourt.  This release of Mixp is
 available under the terms of the GNU GPL v3 (or later); see COPYING.
-It has been tested with Guile 1.4 and 1.6.
+It has been tested with Guile 1.4 and 1.8, and libexpat 2.0.1.
 
 Mixp provides two modules for use by Guile Scheme code:
 
@@ -11,6 +11,9 @@ Mixp provides two modules for use by Guile Scheme code:
   (mixp utils)  -- high-level convenience procs
 
 See documentation in doc/ for details.
+
+This is alpha code (pre 1.0 release).  It may have bugs,
+and the interfaces may change from version to version.
 
 
 Installation
