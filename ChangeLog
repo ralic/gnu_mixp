@@ -1,5 +1,13 @@
 2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Fix bug: Declare smob sizes.
+
+	* src/gi.h (DEFSMOB): Take arg ‘sz’.
+	* src/expat.c (init_gexpat): Declare sizes
+	of ‘XML-Parser’, ‘XML-Encoding’ smobs.
+
+2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[inst] Also do sofix, uninstall-sofixed, mmc if !TRIPPY.
 
 	* src/Makefile.am (fixargs): Bifurcate on ‘if TRIPPY’.
