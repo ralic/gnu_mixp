@@ -1,3 +1,11 @@
+2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[inst] Also do sofix, uninstall-sofixed, mmc if !TRIPPY.
+
+	* src/Makefile.am (fixargs): Bifurcate on ‘if TRIPPY’.
+	(install-data-hook): Do sofix and mmc unconditionally.
+	(uninstall-hook): Do uninstall-sofixed and mmc unconditionally.
+
 2011-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Use 5th edition of REC-xml.

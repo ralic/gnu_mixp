@@ -85,14 +85,18 @@ endif # MAINTAINER_MODE
 update-libsite-module-catalog:
 	$(mmc) -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
 
+if TRIPPY
 fixargs = '$(DESTDIR)$(irootdir)' $(iroot_LTLIBRARIES)
+else !TRIPPY
+fixargs = '$(DESTDIR)$(pkglibdir)' $(pkglib_LTLIBRARIES)
+endif !TRIPPY
 submake = $(MAKE) $(AM_MAKEFLAGS)
 
 install-data-hook:
-if TRIPPY
-	-rmdir '$(DESTDIR)$(pkglibdir)'
 	$(bx)/sofix no-la,no-symlinks $(fixargs)
 	$(submake) update-libsite-module-catalog
+if TRIPPY
+	-rmdir '$(DESTDIR)$(pkglibdir)'
 else !TRIPPY
 	@if [ 1 = '$(FOR_MAKE_CHECK)' ] ; then	\
 	  mv -f expat expat.STASH ;		\
@@ -103,10 +107,8 @@ else !TRIPPY
 endif !TRIPPY
 
 uninstall-hook:
-if TRIPPY
 	$(bx)/uninstall-sofixed $(fixargs)
 	$(submake) update-libsite-module-catalog
-endif TRIPPY
 	-rmdir '$(DESTDIR)$(irootdir)'
 	-rmdir '$(DESTDIR)$(pkglibdir)'
 
