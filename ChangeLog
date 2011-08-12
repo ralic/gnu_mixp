@@ -1,5 +1,11 @@
 2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Decruft: Remove obsoleted configure.ac macro call.
+
+	* configure.ac (GUILE_SITE_DIR): Delete macro call.
+
+2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Fix bug: Declare smob sizes.
 
 	* src/gi.h (DEFSMOB): Take arg ‘sz’.

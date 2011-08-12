@@ -51,7 +51,6 @@ AC_SUBST([mmc])
 AM_CONDITIONAL([TRIPPY],[test x':' != x"$mmc"])
 
 GUILE_FLAGS
-GUILE_SITE_DIR
 
 dnl Check if --with-expat[=DIR] is specified and
 dnl Expat >= 1.95.0 is installed in the system.
