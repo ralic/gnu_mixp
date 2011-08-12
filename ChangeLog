@@ -1,5 +1,15 @@
 2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Use snuggle.m4 more.
+
+	* build-aux/snuggle.m4: Sync w/ upstream serial 4.
+	* configure.ac: Do ‘s/GUILE_PROGS/SNUGGLE_PROGS/’,
+	‘s/DETERMINE_GUILE_LIBSITE_DIR/SNUGGLE_GUILE_LIBSITE_DIR/’,
+	‘s/GUILE_TOOLS_EXISTSP/SNUGGLE_GUILE_TOOLS_EXISTSP/’,
+	‘s/GUILE_FLAGS/SNUGGLE_FLAGS/’.
+
+2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Decruft: Remove obsoleted configure.ac macro call.
 
 	* configure.ac (GUILE_SITE_DIR): Delete macro call.

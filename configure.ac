@@ -41,16 +41,16 @@ AC_SEARCH_LIBS([strerror],[cposix])
 LT_PREREQ([2.2.6])
 LT_INIT([dlopen disable-static]) dnl module only
 
-GUILE_PROGS
-DETERMINE_GUILE_LIBSITE_DIR([mixp])
-GUILE_TOOLS_EXISTSP([mixp_cv_mkmodcat],[make-module-catalog])
+SNUGGLE_PROGS
+SNUGGLE_GUILE_LIBSITE_DIR([mixp])
+SNUGGLE_GUILE_TOOLS_EXISTSP([mixp_cv_mkmodcat],[make-module-catalog])
 AS_IF([test xyes = x$mixp_cv_mkmodcat],
       [mmc='${GUILE_TOOLS} make-module-catalog'],
       [mmc=:])
 AC_SUBST([mmc])
 AM_CONDITIONAL([TRIPPY],[test x':' != x"$mmc"])
 
-GUILE_FLAGS
+SNUGGLE_FLAGS
 
 dnl Check if --with-expat[=DIR] is specified and
 dnl Expat >= 1.95.0 is installed in the system.
