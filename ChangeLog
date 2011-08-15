@@ -1,3 +1,10 @@
+2011-08-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build int] Decruft: Delete unused LIB{CURRENT,REVISION,AGE} vars.
+
+	* configure.ac (LIBCURRENT, LIBREVISION)
+	(LIBAGE): Don't set var; don't AC_SUBST.
+
 2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Use snuggle.m4 more.
