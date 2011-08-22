@@ -4,6 +4,7 @@ This file is both a guide for newcomers and a todo list for oldstayers.
 It lives in the repo but is not included in the distribution.
 
 * 0.6
+*** DONE add EXPERIMENTAL module (mixp simit) for SXML imitation
 *** TODO change type of "encoding name" from string to symbol
 *** TODO add "symbolic names" flag to parser-create{-ns}
 ***** element NAME a symbol, or pair of symbols (-ns)
@@ -12,7 +13,6 @@ It lives in the repo but is not included in the distribution.
 ***** idem notation-decl NOTATION-NAME (??? *-ID)
 ***** idem namespace-decl PREFIX
 ***** (???) idem external-ref CONTEXT (??? *-ID)
-*** TODO add EXPERIMENTAL module (mixp simit) for SXML imitation
 
 * other stuff to do
 *** make (mixp simit) pass the SXML test suite(s)
