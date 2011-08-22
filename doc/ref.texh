@@ -396,4 +396,19 @@ which provides high-level extensions to the raw expat interface.
 @tsin i utf8->ucs4
 @tsin i xml->tree
 
+@node Imitating SXML
+@chapter (mixp simit) Reference
+@cindex SXML
+
+SXML over SSAX is the usual way to go about things, but we don't
+mind being unusual on occasion.  This chapter describes the
+@strong{EXPERIMENTAL}
+@code{(mixp simit)} module, which provides ``SXML over Expat'',
+more or less.  (The level of imitation is low while we figure
+out what the heck is going on.  Later, things should align more,
+and weasel words like ``SXML-ish'' should go away@dots{})
+@tsin m (mixp simit)
+
+@tsin i from-port
+
 @c ref.texh ends here

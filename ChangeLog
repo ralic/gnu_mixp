@@ -1,3 +1,12 @@
+2011-08-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New module: (mixp simit)
+
+	* src/simit.scm: New file.
+	* src/Makefile.am (schemestems): Add simit.
+	* doc/mixp.texi (Top): Add menu item "Imitating SXML".
+	* ref/texh.texh (Imitating SXML): New node/chapter.
+
 2011-08-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Decruft: Delete unused LIB{CURRENT,REVISION,AGE} vars.

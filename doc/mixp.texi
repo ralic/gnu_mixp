@@ -46,6 +46,7 @@ Mixp version @value{VERSION}.
 * Introduction::                Look before you leap
 * Expat interface::             Reference for (mixp expat)
 * High-level extensions::       Reference for (mixp utils)
+* Imitating SXML::              Reference for (mixp simit)
 
 * GNU FDL::                     Copying and sharing this documentation
 

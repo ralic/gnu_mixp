@@ -42,6 +42,7 @@ Makefile.in
 /src/stamp-h1
 /src/config.h
 /src/expat
+/src/simit
 /src/utils
 
 /test/.fake

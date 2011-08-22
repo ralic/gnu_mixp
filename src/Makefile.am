@@ -21,7 +21,7 @@
 
 SUFFIXES = .scm
 
-schemestems = utils
+schemestems = utils simit
 schemesource = $(schemestems:=.scm)
 EXTRA_DIST = $(schemesource)
 
