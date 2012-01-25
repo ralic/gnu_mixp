@@ -1,5 +1,12 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Decruft: Delete unused #define:s.
+
+	* src/gi.h (PAIRP, NUMBERP, PROCEDUREP, NUM_LONG, NUM_ULONG)
+	(C_BOOL, C_ULONG, VECTOR_LEN, CALL3): Delete #define:s.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Use ‘STRINGP’ more.
 
 	* src/gi.h (ASSERT_STRING): Use ‘STRINGP’.

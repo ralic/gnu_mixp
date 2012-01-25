@@ -27,21 +27,13 @@
 #include <libguile.h>
 #include <guile/gh.h>
 #define NULLP             gh_null_p
-#define PAIRP             gh_pair_p
 #define STRINGP           gh_string_p
-#define NUMBERP           gh_number_p
-#define PROCEDUREP        gh_procedure_p
 #define BOOLEAN           gh_bool2scm
 #define NUM_INT           gh_int2scm
-#define NUM_LONG          gh_long2scm
-#define NUM_ULONG         gh_ulong2scm
 #define SYMBOL            gh_symbol2scm
 #define STRING            gh_str02scm
 #define BSTRING           gh_str2scm
-#define C_BOOL            gh_scm2bool
 #define C_INT             gh_scm2int
-#define C_ULONG           gh_scm2ulong
-#define VECTOR_LEN        gh_vector_length
 #define VECREF            gh_vector_ref
 #define EQ                gh_eq_p
 #define CONS              gh_cons
@@ -52,7 +44,6 @@
 #define CALL0             gh_call0
 #define CALL1             gh_call1
 #define CALL2             gh_call2
-#define CALL3             gh_call3
 
 #define DEFSMOB(tagvar,name,sz,m,f,p)                           \
   tagvar = scm_make_smob_type_mfpe (name, sz, m, f, p, NULL)
