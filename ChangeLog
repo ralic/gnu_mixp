@@ -1,5 +1,14 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Re-implement ‘SCM_VALIDATE_VECTOR_LEN’ for Guile 1.8.x.
+
+	This avoids deprecation warnings, sigh.
+
+	* src/expat.c [0x0108 == GI_LEVEL] (SCM_VALIDATE_VECTOR_LEN): #undef
+	and re-#define, using ‘scm_is_vector’ and ‘scm_c_vector_length’.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Add abstractions: GI_LEVEL, GI_LEVEL_NOT_YET_1_8
 
 	* gi.h (GI_LEVEL, GI_LEVEL_NOT_YET_1_8): New #define:s.

@@ -586,6 +586,17 @@ otherwise @code{#f}.  */)
   return BOOLEAN (PARSERP (obj));
 }
 
+/* Guile 1.8.x ‘SCM_VALIDATE_VECTOR_LEN’ uses deprecated
+   macros ‘SCM_VECTORP’ and ‘SCM_VECTOR_LENGTH’ internally.
+   Work around this oversight.  */
+#if 0x0108 == GI_LEVEL
+#undef SCM_VALIDATE_VECTOR_LEN
+#define SCM_VALIDATE_VECTOR_LEN(pos, v, len)            \
+  SCM_ASSERT (scm_is_vector (v)                         \
+              && len == scm_c_vector_length (v),        \
+              v, pos, FUNC_NAME)
+#endif  /* 0x0108 == GI_LEVEL */
+
 PRIMPROC
 (make_encoding, "make-xml-encoding", 3, 0, 0,
  (SCM map, SCM convert, SCM release),
