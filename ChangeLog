@@ -1,5 +1,15 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Add abstractions: GCMALLOC, GCFREE, GCRV
+
+	* src/gi.h (GCMALLOC, GCFREE, GCRV): New macros.
+	* src/expat.c (free_parser): Add local typedef ‘ud_struct_t’;
+	use ‘GCFREE’, ‘GCRV’.
+	(free_encoding): Use ‘GCFREE’, ‘GCRV’.
+	(make_encoding): Use ‘GCMALLOC’.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat] Don't declare smob sizes.
 
 	This undoes the misguided 2011-08-12, "Fix bug: Declare smob sizes".

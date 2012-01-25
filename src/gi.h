@@ -48,6 +48,10 @@
 #define DEFSMOB(tagvar,name,m,f,p)                              \
   tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)
 
+#define GCMALLOC(sz,what)    scm_must_malloc (sz, what)
+#define GCFREE(ptr,what)     scm_must_free (ptr)
+#define GCRV(sz)             sz
+
 /*
  * backward (sometimes foresight was incomplete)
  */

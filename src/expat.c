@@ -199,14 +199,17 @@ mark_parser (SCM obj)
 static size_t
 free_parser (SCM obj)
 {
+  /* For the benefit of ‘GCFREE’.  */
+  typedef struct { SCM h[hindex_count]; } ud_struct_t;
+
   XML_Parser p = UNPACK_PARSER (obj);
 
-  free (get_ud (p));
+  GCFREE ((ud_struct_t *) get_ud (p), "parser-user-data");
   XML_SetUserData (p, NULL);
   XML_ParserFree (p);
   SCM_SET_SMOB_DATA (obj, (p = NULL));
 
-  return UD_SIZE;
+  return GCRV (UD_SIZE);
 }
 
 static int
@@ -276,10 +279,10 @@ free_encoding (SCM obj)
 {
   XML_Encoding *enc = UNPACK_ENCODING (obj);
 
-  free (enc->data);
-  free (enc);
+  GCFREE (get_ed (enc), "encoding-data");
+  GCFREE (enc, "XML-Encoding");
 
-  return sizeof (XML_Encoding) + sizeof (encoding_data);
+  return GCRV (sizeof (XML_Encoding) + sizeof (encoding_data));
 }
 
 static int
@@ -611,8 +614,7 @@ all conversion work.  */)
   SCM_VALIDATE_CLOSURE (3, release);
 
   NOINTS ();
-  enc = (XML_Encoding *) scm_must_malloc (sizeof (XML_Encoding),
-                                          "XML_Encoding");
+  enc = GCMALLOC (sizeof (XML_Encoding), "XML-Encoding");
   INTSOK ();
 
   /* The map goes directly into the XML_Encoding object.  */
@@ -621,8 +623,7 @@ all conversion work.  */)
     enc->map[i] = C_INT (map_elts[i]);
 
   NOINTS ();
-  enc->data = scm_must_malloc (sizeof (encoding_data),
-                               "encoding_data");
+  enc->data = GCMALLOC (sizeof (encoding_data), "encoding-data");
   INTSOK ();
 
   xe_data = get_ed (enc);
