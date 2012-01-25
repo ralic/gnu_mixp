@@ -45,8 +45,8 @@
 #define CALL1             gh_call1
 #define CALL2             gh_call2
 
-#define DEFSMOB(tagvar,name,sz,m,f,p)                           \
-  tagvar = scm_make_smob_type_mfpe (name, sz, m, f, p, NULL)
+#define DEFSMOB(tagvar,name,m,f,p)                              \
+  tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)
 
 /*
  * backward (sometimes foresight was incomplete)

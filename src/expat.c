@@ -1137,9 +1137,9 @@ init_gexpat (void)
 {
   int code;
 
-  DEFSMOB (parser_tag, "XML-Parser", sizeof (XML_Parser),
+  DEFSMOB (parser_tag, "XML-Parser",
            mark_parser, free_parser, print_parser);
-  DEFSMOB (encoding_tag, "XML-Encoding", sizeof (XML_Encoding *),
+  DEFSMOB (encoding_tag, "XML-Encoding",
            mark_encoding, free_encoding, print_encoding);
 
   halist = SCM_EOL;

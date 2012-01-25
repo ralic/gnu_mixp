@@ -1,5 +1,14 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Don't declare smob sizes.
+
+	This undoes the misguided 2011-08-12, "Fix bug: Declare smob sizes".
+
+	* src/gi.h (DEFSMOB): No longer take ‘sz’.
+	* src/expat.c (init_gexpat): Update calls to ‘DEFSMOB’.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Use ‘NOINTS’, ‘INTSOK’ more.
 
 	* src/expat.c (make_parser, make_encoding): Use ‘NOINTS’, ‘INTSOK’.
