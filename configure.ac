@@ -1,6 +1,6 @@
 dnl configure.ac
 dnl
-dnl Copyright (C) 2011 Thien-Thi Nguyen
+dnl Copyright (C) 2011, 2012 Thien-Thi Nguyen
 dnl Copyright (C) 2002, 2003 Dmitry Morozhnikov
 dnl
 dnl This file is part of Mixp.
@@ -21,7 +21,7 @@ dnl Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 dnl Boston, MA  02110-1301  USA
 
 AC_PREREQ([2.67])
-AC_INIT([Mixp],[0.5],[ttn@gnuvola.org])
+AC_INIT([Mixp],[0.6],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_MACRO_DIR([build-aux])

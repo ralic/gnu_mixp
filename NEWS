@@ -1,6 +1,10 @@
 NEWS for Mixp
-Copyright (C) 2011 Thien-Thi Nguyen
 See the end for copying conditions.
+
+
+- 0.6 | 2012-01-25
+  - new EXPERIMENTAL module ‘(mixp simit)’
+  - improved portability (tested w/ Guile 1.8.7)
 
 
 - 0.5 | 2011-08-05
@@ -42,7 +46,7 @@ See the end for copying conditions.
 
 
 - etc
-Copyright (C) 2011 Thien-Thi Nguyen
+Copyright (C) 2011, 2012 Thien-Thi Nguyen
 
 Copying and distribution of this file, with or without modification,
 are permitted provided the copyright notice and this notice are preserved.

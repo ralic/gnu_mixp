@@ -1,5 +1,11 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.6
+
+	* configure.ac (AC_INIT): Bump version to "0.6" for release.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[dist] Distribute test/REC-xml-20081126.xml.
 
 	Omission from 2011-08-07, "Use 5th edition of REC-xml".
