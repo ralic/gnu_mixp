@@ -1,3 +1,9 @@
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Use ‘STRINGP’ more.
+
+	* src/gi.h (ASSERT_STRING): Use ‘STRINGP’.
+
 2011-08-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New module: (mixp simit)
