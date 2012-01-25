@@ -52,6 +52,8 @@ typedef struct {
 #define RS(svar)    c ## svar .s
 #define RLEN(svar)  c ## svar .len
 
+#if GI_LEVEL_NOT_YET_1_8
+
 #define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL(sym)      \
   scm_string_copy (scm_symbol_to_string (sym))
 
@@ -74,6 +76,33 @@ typedef struct {
   while (0)
 
 #define UNFINANGLE(svar)
+
+#else  /* !GI_LEVEL_NOT_YET_1_8 */
+
+#define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL  scm_symbol_to_string
+
+#define REND(svar)          RS (svar) [RLEN (svar)]
+#define NUL_AT_END_X(svar)  REND (svar) = '\0'
+
+#define _FINANGLE(svar,p1)  do                                  \
+    {                                                           \
+      RS (svar) = scm_to_locale_stringn (svar, &RLEN (svar));   \
+      if (RS (svar))                                            \
+        {                                                       \
+          if (p1 && REND (svar))                                \
+            {                                                   \
+              RS (svar) = realloc (RS (svar), 1 + RLEN (svar)); \
+              NUL_AT_END_X (svar);                              \
+            }                                                   \
+        }                                                       \
+      else                                                      \
+        RS (svar) = strdup ("");                                \
+    }                                                           \
+  while (0)
+
+#define UNFINANGLE(svar)  free (RS (svar))
+
+#endif  /* !GI_LEVEL_NOT_YET_1_8 */
 
 /* Use ‘FINANGLE_RAW’ when the consumer of the C string takes full range
    (start address plus length) info.  Otherwise, ‘FINANGLE’.  */
@@ -629,9 +658,21 @@ all conversion work.  */)
   INTSOK ();
 
   /* The map goes directly into the XML_Encoding object.  */
-  map_elts = SCM_VELTS (map);
-  for (i = 0; i < 256; i++)
-    enc->map[i] = C_INT (map_elts[i]);
+  {
+#if GI_LEVEL_NOT_YET_1_8
+    map_elts = SCM_VELTS (map);
+#else
+    scm_t_array_handle handle;
+
+    scm_array_get_handle (map, &handle);
+    map_elts = scm_array_handle_elements (&handle);
+#endif
+    for (i = 0; i < 256; i++)
+      enc->map[i] = C_INT (map_elts[i]);
+#if !GI_LEVEL_NOT_YET_1_8
+    scm_array_handle_release (&handle);
+#endif
+  }
 
   NOINTS ();
   enc->data = GCMALLOC (sizeof (encoding_data), "encoding-data");

@@ -1,5 +1,23 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Specialize for ‘!GI_LEVEL_NOT_YET_1_8’.
+
+	This eliminates deprecation warnings for "make check",
+	which admittedly is not known to be comprehensive.
+
+	* src/gi.h (NULLP, BOOLEAN, NUM_INT, SYMBOL, STRING)
+	(BSTRING, C_INT, VECREF, EQ, CONS, CAR, CDR, APPLY, LISTIFY)
+	(CALL0, CALL1, CALL2, DEFSMOB, GCMALLOC, GCFREE, GCRV, NOINTS)
+	(INTSOK): Bifurcate, adding new elems for ‘!GI_LEVEL_NOT_YET_1_8’.
+	(SCM_ROCHARS, SCM_ROLENGTH, SCM_ROUCHARS): Delete macros.
+	* src/expat.c (FINANGLABLE_SCHEME_STRING_FROM_SYMBOL)
+	(REND, NUL_AT_END_X, _FINANGLE, UNFINANGLE):
+	Bifurcate, adding new elems for ‘!GI_LEVEL_NOT_YET_1_8’.
+	(make_encoding) [!GI_LEVEL_NOT_YET_1_8]: Create a local
+	array handle; use it extract the base; release afterwards.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Re-implement ‘SCM_VALIDATE_VECTOR_LEN’ for Guile 1.8.x.
 
 	This avoids deprecation warnings, sigh.
