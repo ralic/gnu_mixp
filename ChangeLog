@@ -1,5 +1,11 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Use ‘NOINTS’, ‘INTSOK’ more.
+
+	* src/expat.c (make_parser, make_encoding): Use ‘NOINTS’, ‘INTSOK’.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Add abstractions for "symbol/string as C byte range".
 
 	* src/expat.c (range_t): New typedef.

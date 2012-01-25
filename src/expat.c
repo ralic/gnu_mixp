@@ -224,12 +224,12 @@ make_parser (XML_Parser p)
 {
   int i; SCM *ud, *h;
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ud = as_ud (malloc (UD_SIZE));
   for (i = 0, h = ud; i < hindex_count; i++, h++)
     *h = SCM_BOOL_F;
   XML_SetUserData (p, ud);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   SCM_RETURN_NEWSMOB (parser_tag, p);
 }
@@ -610,20 +610,20 @@ all conversion work.  */)
   SCM_VALIDATE_CLOSURE (2, convert);
   SCM_VALIDATE_CLOSURE (3, release);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   enc = (XML_Encoding *) scm_must_malloc (sizeof (XML_Encoding),
                                           "XML_Encoding");
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   /* The map goes directly into the XML_Encoding object.  */
   map_elts = SCM_VELTS (map);
   for (i = 0; i < 256; i++)
     enc->map[i] = C_INT (map_elts[i]);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   enc->data = scm_must_malloc (sizeof (encoding_data),
                                "encoding_data");
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   xe_data = get_ed (enc);
   xe_data->map = enc->map;
