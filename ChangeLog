@@ -1,5 +1,14 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[dist] Distribute test/REC-xml-20081126.xml.
+
+	Omission from 2011-08-07, "Use 5th edition of REC-xml".
+
+	* test/Makefile.am (EXTRA_DIST): Remove
+	REC-xml-19980210.xml; add REC-xml-20081126.xml.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[maint] Upgrade snuggle.m4.
 
 	* build-aux/snuggle.m4: Sync w/ upstream serial 5.

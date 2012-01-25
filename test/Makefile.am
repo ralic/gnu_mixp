@@ -47,7 +47,7 @@ clean-local:
 	-rm -rf .fake
 
 EXTRA_DIST = \
-  REC-xml-19980210.xml \
+  REC-xml-20081126.xml \
   sub.inc \
   test.dtd \
   $(TESTS)
