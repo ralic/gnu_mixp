@@ -1,5 +1,11 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[maint] Upgrade snuggle.m4.
+
+	* build-aux/snuggle.m4: Sync w/ upstream serial 5.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Specialize for ‘!GI_LEVEL_NOT_YET_1_8’.
 
 	This eliminates deprecation warnings for "make check",
