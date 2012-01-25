@@ -1,5 +1,11 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Add abstractions: GI_LEVEL, GI_LEVEL_NOT_YET_1_8
+
+	* gi.h (GI_LEVEL, GI_LEVEL_NOT_YET_1_8): New #define:s.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Add abstractions: GCMALLOC, GCFREE, GCRV
 
 	* src/gi.h (GCMALLOC, GCFREE, GCRV): New macros.
