@@ -1,6 +1,6 @@
 /* expat.c --- implement (mixp expat)
 
-   Copyright (C) 2007, 2009, 2010, 2011 Thien-Thi Nguyen
+   Copyright (C) 2007, 2009, 2010, 2011, 2012 Thien-Thi Nguyen
    Portions Copyright (C) 1999, 2000 Thierry Bézecourt
 
    This is free software; you can redistribute it and/or modify
