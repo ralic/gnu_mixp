@@ -39,6 +39,51 @@
 #define PROCP(x)    (SCM_NIMP (x) && SCM_CLOSUREP (x))
 
 
+/* finangle.h --- Abstractions for Scheme objects to C string conversion
+ *
+ * serial 1
+ */
+
+typedef struct {
+  char *s;
+  size_t len;
+} range_t;
+
+#define RS(svar)    c ## svar .s
+#define RLEN(svar)  c ## svar .len
+
+#define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL(sym)      \
+  scm_string_copy (scm_symbol_to_string (sym))
+
+/* Coerce a Scheme (sub)string that is to be used in contexts where the
+   extracted C string is expected to be read-only and zero-terminated.  We
+   check this condition precisely instead of simply coercing all (sub)strings,
+   to avoid waste for those substrings that may in fact (by lucky accident)
+   already satisfy the condition.  */
+#define ROZT_X(x)                                       \
+  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
+    x = BSTRING (SCM_ROCHARS (x), SCM_ROLENGTH (x))
+
+#define _FINANGLE(svar,p1)  do                  \
+    {                                           \
+      if (p1)                                   \
+        ROZT_X (svar);                          \
+      RS (svar) = SCM_ROCHARS (svar);           \
+      RLEN (svar) = SCM_ROLENGTH (svar);        \
+    }                                           \
+  while (0)
+
+#define UNFINANGLE(svar)
+
+/* Use ‘FINANGLE_RAW’ when the consumer of the C string takes full range
+   (start address plus length) info.  Otherwise, ‘FINANGLE’.  */
+
+#define FINANGLE_RAW(svar)  _FINANGLE (svar, 0)
+#define FINANGLE(svar)      _FINANGLE (svar, 1)
+
+/* finangle.h ends here */
+
+
 struct enumsym
 {
   char *nm;
@@ -435,6 +480,7 @@ generic_external_entity_ref (XML_Parser p,
 {
   XML_Parser ext_p;
   SCM port, nl, buf;
+  range_t cbuf;
   enum XML_Status rv = XML_STATUS_OK;
   int donep = 0;
 
@@ -485,8 +531,10 @@ generic_external_entity_ref (XML_Parser p,
 #undef SHORTP
 #undef EXTRAP
 
-      parse_res = XML_Parse (ext_p, ROZT (buf), nbytes,
+      FINANGLE_RAW (buf);
+      parse_res = XML_Parse (ext_p, RS (buf), nbytes,
                              (donep = (delim == SCM_EOF_VAL)));
+      UNFINANGLE (buf);
 
       if (XML_STATUS_OK != parse_res)
         {
@@ -598,12 +646,20 @@ Optional arg @var{encoding} is a string specifying
 the encoding to use (for example, "UTF-8").  */)
 {
 #define FUNC_NAME s_parser_create
+  range_t cencoding;
   XML_Char *e = NULL;
+  SCM rv;
 
   if (GIVENP (encoding))
-    SCM_VALIDATE_STRING_COPY (1, encoding, e);
-
-  return make_parser (XML_ParserCreate (e));
+    {
+      SCM_VALIDATE_STRING (1, encoding);
+      FINANGLE (encoding);
+      e = RS (encoding);
+    }
+  rv = make_parser (XML_ParserCreate (e));
+  if (e)
+    UNFINANGLE (encoding);
+  return rv;
 #undef FUNC_NAME
 }
 
@@ -620,15 +676,24 @@ to the @code{namespace-decl-start} and @code{namespace-decl-end}
 handlers.  */)
 {
 #define FUNC_NAME s_parser_create_ns
+  range_t cencoding;
   XML_Char *e = NULL;
   XML_Char c = '\0';
+  SCM rv;
 
   if (GIVENP (encoding))
-    SCM_VALIDATE_STRING_COPY (1, encoding, e);
+    {
+      SCM_VALIDATE_STRING (1, encoding);
+      FINANGLE (encoding);
+      e = RS (encoding);
+    }
   if (GIVENP (namespace_separator))
     SCM_VALIDATE_CHAR_COPY (2, namespace_separator, c);
 
-  return make_parser (XML_ParserCreateNS (e, c));
+  rv = make_parser (XML_ParserCreateNS (e, c));
+  if (e)
+    UNFINANGLE (encoding);
+  return rv;
 #undef FUNC_NAME
 }
 
@@ -783,12 +848,16 @@ Return a symbolic status.  */)
 {
 #define FUNC_NAME s_set_base
   XML_Parser p;
+  range_t cbase;
+  enum XML_Status status;
 
   VALIDATE_PARSER ();
   SCM_VALIDATE_STRING (1, base);
 
-  return symbolic_status
-    (XML_SetBase (p, SCM_CHARS (base)));
+  FINANGLE (base);
+  status = XML_SetBase (p, RS (base));
+  UNFINANGLE (base);
+  return symbolic_status (status);
 #undef FUNC_NAME
 }
 
@@ -836,15 +905,18 @@ Return a symbolic status.  */)
 {
 #define FUNC_NAME s_parse
   XML_Parser p;
+  range_t cs;
+  enum XML_Status status;
 
   VALIDATE_PARSER ();
 
   SCM_VALIDATE_STRING (2, s);
   UNBOUND_MEANS_FALSE (finalp);
 
-  return symbolic_status
-    (XML_Parse (p, ROZT (s), SCM_ROLENGTH (s),
-                NOT_FALSEP (finalp)));
+  FINANGLE_RAW (s);
+  status = XML_Parse (p, RS (s), RLEN (s), NOT_FALSEP (finalp));
+  UNFINANGLE (s);
+  return symbolic_status (status);
 #undef FUNC_NAME
 }
 

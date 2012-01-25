@@ -1,5 +1,18 @@
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Add abstractions for "symbol/string as C byte range".
+
+	* src/expat.c (range_t): New typedef.
+	(RS, RLEN, FINANGLABLE_SCHEME_STRING_FROM_SYMBOL, ROZT_X)
+	(_FINANGLE, UNFINANGLE, FINANGLE_RAW, FINANGLE): New macros.
+	(generic_external_entity_ref): Use ‘FINANGLE_RAW’, ‘UNFINANGLE’.
+	(parser_create, parser_create_ns, set_base):
+	Use ‘FINANGLE’, ‘UNFINANGLE’.
+	(parse): Use ‘FINANGLE_RAW’, ‘UNFINANGLE’.
+	* src/gi.h (ROZT_X, ROZT): Delete macros.
+
+2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Decruft: Delete unused #define:s.
 
 	* src/gi.h (PAIRP, NUMBERP, PROCEDUREP, NUM_LONG, NUM_ULONG)

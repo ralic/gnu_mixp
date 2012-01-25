@@ -101,17 +101,6 @@ scm_init_ ## fname_frag ## _module (void)                               \
 #define SCM_ROUCHARS(x)  ((unsigned char *) SCM_ROCHARS (x))
 #endif
 
-/* Coerce a string that is to be used in contexts where the extracted C
-   string is expected to be zero-terminated and is read-only.  We check
-   this condition precisely instead of simply coercing all substrings,
-   to avoid waste for those substrings that may in fact already satisfy
-   the condition.  Callers should extract w/ ROZT.  */
-#define ROZT_X(x)                                       \
-  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
-    x = BSTRING (SCM_ROCHARS (x), SCM_ROLENGTH (x))
-
-#define ROZT(x)  (SCM_ROCHARS (x))
-
 #define SMOBDATA(obj)  ((void *) SCM_SMOB_DATA (obj))
 
 #define PCHAIN(...)  (LISTIFY (__VA_ARGS__, SCM_UNDEFINED))
