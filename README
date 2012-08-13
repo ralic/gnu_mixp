@@ -9,6 +9,7 @@ Mixp provides two modules for use by Guile Scheme code:
 
   (mixp expat)  -- corresponds roughly to libexpat API
   (mixp utils)  -- high-level convenience procs
+  (mixp simit)  -- SXML imitation
 
 See documentation in doc/ for details.
 
