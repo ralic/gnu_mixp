@@ -28,6 +28,7 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.11.1 gnu no-dependencies -Wall])
 AM_MAINTAINER_MODE
 
+AM_PROG_AR
 AC_PROG_CC
 AC_SEARCH_LIBS([strerror],[cposix])
 LT_PREREQ([2.2.6])

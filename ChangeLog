@@ -1,3 +1,11 @@
+2012-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Handle "non-POSIX archiver" requirement.
+
+	This is prompted by a warning from autoreconf.
+
+	* configure.ac (AM_PROG_AR): New macro call.
+
 2012-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.6

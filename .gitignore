@@ -22,6 +22,7 @@ Makefile.in
 /configure
 /libtool
 
+/build-aux/ar-lib
 /build-aux/config.guess
 /build-aux/config.sub
 /build-aux/guile-baux.state
