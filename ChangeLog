@@ -1,3 +1,9 @@
+2013-03-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Bump Automake min vers to 1.12.2.
+
+	* configure.ac (AM_INIT_AUTOMAKE): ...here.
+
 2012-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot] Handle "non-POSIX archiver" requirement.
