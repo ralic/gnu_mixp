@@ -1,5 +1,11 @@
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[dist] Create .xz tarball instead of .gz on "make dist".
+
+	* configure.ac (AM_INIT_AUTOMAKE): Add options ‘no-dist-gzip’, ‘dist-xz’.
+
+2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Make sure "tests" are run serially.
 
 	At the moment, there is only one test.  :-/
