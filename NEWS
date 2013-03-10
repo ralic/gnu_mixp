@@ -2,6 +2,21 @@ NEWS for Mixp
 See the end for copying conditions.
 
 
+- 0.7 | 2013-03-10
+
+  - distribution now .tar.xz
+
+	If you have GNU tar, you can use "tar xf" and it will DTRT.
+	If not, you can use "xz -dc TARBALL | tar xf -" to unpack.
+
+  - bootstrap tools upgraded
+    - GNU Autoconf 2.69
+    - GNU Automake 1.13.1
+    - Guile-BAUX 20121120.1242.e233fad
+    - SNUGGLE 0.2
+    - GNU Texinfo 5.0
+
+
 - 0.6 | 2012-01-25
   - new EXPERIMENTAL module ‘(mixp simit)’
   - improved portability (tested w/ Guile 1.8.7)
@@ -46,7 +61,7 @@ See the end for copying conditions.
 
 
 - etc
-Copyright (C) 2011, 2012 Thien-Thi Nguyen
+Copyright (C) 2011, 2012, 2013 Thien-Thi Nguyen
 
 Copying and distribution of this file, with or without modification,
 are permitted provided the copyright notice and this notice are preserved.

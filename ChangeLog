@@ -1,5 +1,11 @@
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.7
+
+	* configure.ac (AC_INIT): Bump version to "0.7" for release.
+
+2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[dist] Create .xz tarball instead of .gz on "make dist".
 
 	* configure.ac (AM_INIT_AUTOMAKE): Add options ‘no-dist-gzip’, ‘dist-xz’.
