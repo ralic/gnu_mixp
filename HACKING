@@ -3,8 +3,8 @@ HACKING Mixp                                                    -*- org -*-
 This file is both a guide for newcomers and a todo list for oldstayers.
 It lives in the repo but is not included in the distribution.
 
-* 0.6
-*** DONE add EXPERIMENTAL module (mixp simit) for SXML imitation
+* next
+*** TODO write tests for (mixp simit)
 *** TODO change type of "encoding name" from string to symbol
 *** TODO add "symbolic names" flag to parser-create{-ns}
 ***** element NAME a symbol, or pair of symbols (-ns)
