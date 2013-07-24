@@ -6,8 +6,8 @@ See the end for copying conditions.
 
   - distribution now .tar.xz
 
-	If you have GNU tar, you can use "tar xf" and it will DTRT.
-	If not, you can use "xz -dc TARBALL | tar xf -" to unpack.
+    If you have GNU tar, you can use "tar xf" and it will DTRT.
+    If not, you can use "xz -dc TARBALL | tar xf -" to unpack.
 
   - bootstrap tools upgraded
     - GNU Autoconf 2.69
@@ -69,6 +69,4 @@ are permitted provided the copyright notice and this notice are preserved.
 	Local Variables:
 	mode: outline
 	outline-regexp: "\\([ ][ ]\\)*- "
-	fill-column: 72
-	fill-prefix: "\t"
 	End:
