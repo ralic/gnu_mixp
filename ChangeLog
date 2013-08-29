@@ -1,3 +1,13 @@
+2013-08-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc slog] Add blank lines around @tsin directives.
+
+	Apparently, makeinfo 5.0 doesn't automagically add blank
+	lines around @deffn et al, like makeinfo 4.13 used to do.
+	<http://lists.gnu.org/archive/html/bug-texinfo/2013-02/msg00129.html>
+
+	* doc/ref.texh: ...here, throughout.
+
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.7

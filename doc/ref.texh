@@ -12,6 +12,7 @@ This chapter describes the libexpat interface, i.e., the
 @code{(mixp expat)} module.  The interface has been modified
 to be more ``Schemey''; it does not correspond one-to-one with
 libexpat.  Notably, things are more symbolic and ``condensed''.
+
 @tsin m (mixp expat)
 
 @menu
@@ -82,8 +83,11 @@ Everything revolves around the @dfn{parser object}.  This section
 describes procedures to create and query such objects.
 
 @tsin i parser-create
+
 @tsin i parser-create-ns
+
 @tsin i parser?
+
 @tsin i get-locus
 
 @node Expat handlers
@@ -97,6 +101,7 @@ libexpat, there is one centralized procedure for setting and one for
 getting the set.
 
 @tsin i hset!
+
 @tsin i hget
 
 In the following description, the handler's name is followed by the
@@ -312,10 +317,15 @@ characters.
 @cindex miscellaneous procedures, @code{(mixp expat)}
 
 @tsin i default-current
+
 @tsin i set-base
+
 @tsin i get-base
+
 @tsin i get-specified-attribute-count
+
 @tsin i set-param-entity-parsing
+
 @tsin i make-xml-encoding
 
 @node Doing a parse
@@ -328,9 +338,11 @@ procedures to do that, as well as two procedures to help you
 understand things better when All Does Not Go Well.
 
 @tsin i parse
+
 @tsin i parse-buffer
 
 @tsin i error-symbol
+
 @tsin i error-string
 
 Here is an example that uses the latter two procedures.
@@ -388,12 +400,17 @@ This kind of integratin awaits widespread (and stable) Guile
 
 This chapter describes the @code{(mixp utils)} module,
 which provides high-level extensions to the raw expat interface.
+
 @tsin m (mixp utils)
 
 @tsin i parse-data
+
 @tsin i utf8->latin1
+
 @tsin i utf8->ucs2
+
 @tsin i utf8->ucs4
+
 @tsin i xml->tree
 
 @node Imitating SXML
@@ -407,6 +424,7 @@ mind being unusual on occasion.  This chapter describes the
 more or less.  (The level of imitation is low while we figure
 out what the heck is going on.  Later, things should align more,
 and weasel words like ``SXML-ish'' should go away@dots{})
+
 @tsin m (mixp simit)
 
 @tsin i from-port
