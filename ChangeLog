@@ -1,3 +1,10 @@
+2014-12-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v slog] Use first-line ‘coding’ cookie; use value nice to Guile 2.
+
+	* test/x001: Move ‘coding’ cookie from eof "Local variables"
+	block to first line; change value to ‘iso-8859-1’.
+
 2013-12-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Change bug-report email address.

@@ -1,4 +1,4 @@
-;;; x001
+;;; x001                          -*- mode: scheme; coding: iso-8859-1 -*-
 
 ;; Copyright (C) 2007, 2009, 2010, 2011 Thien-Thi Nguyen
 ;; Portions Copyright (C) 1999, 2000 Thierry Bézecourt
@@ -484,10 +484,5 @@ standalone='yes'?> <body>Les Français ne sont pas ascii</body>")
                  (gc) (sleep 5)
                  (gc) (sleep 5)
                  (gc) (sleep 5)))
-
-;;; Local variables:
-;;; mode: scheme
-;;; coding: iso-latin-1
-;;; End:
 
 ;;; x001 ends here
