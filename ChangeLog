@@ -1,5 +1,14 @@
 2014-12-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat] Fix bug: Use ‘GCMALLOC’ for parser handler vector.
+
+	Regression introduced / omission from 2012-01-25,
+	"Add abstractions: GCMALLOC, GCFREE, GCRV".
+
+	* src/expat.c (make_parser): ...here.
+
+2014-12-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v slog] Use first-line ‘coding’ cookie; use value nice to Guile 2.
 
 	* test/x001: Move ‘coding’ cookie from eof "Local variables"

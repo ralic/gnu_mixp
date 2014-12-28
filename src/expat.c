@@ -257,7 +257,7 @@ make_parser (XML_Parser p)
   int i; SCM *ud, *h;
 
   NOINTS ();
-  ud = as_ud (malloc (UD_SIZE));
+  ud = as_ud (GCMALLOC (UD_SIZE, "parser-user-data"));
   for (i = 0, h = ud; i < hindex_count; i++, h++)
     *h = SCM_BOOL_F;
   XML_SetUserData (p, ud);
