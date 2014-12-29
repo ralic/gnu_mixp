@@ -1,3 +1,10 @@
+2014-12-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build int] Use "guile-baux-tool snuggle" for snuggle.m4.
+
+	* build-aux/snuggle.m4: Delete file.
+	* autogen.sh: Invoke "guile-baux-tool snuggle".
+
 2014-12-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[expat] Fix bug: Use ‘GCMALLOC’ for parser handler vector.

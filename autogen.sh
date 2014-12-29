@@ -8,6 +8,7 @@
 
 set -e
 
+guile-baux-tool snuggle m4 build-aux
 guile-baux-tool import \
     re-prefixed-site-dirs \
     c2x \

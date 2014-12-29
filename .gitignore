@@ -37,6 +37,7 @@ Makefile.in
 /build-aux/lt~obsolete.m4
 /build-aux/mdate-sh
 /build-aux/missing
+/build-aux/snuggle.m4
 /build-aux/texinfo.tex
 
 /src/config.h.in
