@@ -1,5 +1,12 @@
 2014-12-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[boot] Add SNUGGLE headers.
+
+	* autogen.sh: Invoke "guile-baux-tool snuggle".
+	* src/Makefile.am (EXTRA_DIST): Add snuggle.
+
+2014-12-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use "guile-baux-tool snuggle" for snuggle.m4.
 
 	* build-aux/snuggle.m4: Delete file.

@@ -24,6 +24,7 @@ SUFFIXES = .scm
 schemestems = utils simit
 schemesource = $(schemestems:=.scm)
 EXTRA_DIST = $(schemesource)
+EXTRA_DIST += snuggle
 
 bx = $(top_srcdir)/build-aux
 gx = $(bx)/guile-baux/gbaux-do

@@ -48,6 +48,8 @@ Makefile.in
 /src/simit
 /src/utils
 
+/src/snuggle
+
 /test/.fake
 /test/runtest
 /test/stamp-all
