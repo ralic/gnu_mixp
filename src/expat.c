@@ -574,8 +574,8 @@ all conversion work.  */)
   int i;
 
   SCM_VALIDATE_VECTOR_LEN (1, map, 256);
-  SCM_VALIDATE_CLOSURE (2, convert);
-  SCM_VALIDATE_CLOSURE (3, release);
+  SCM_VALIDATE_PROC (2, convert);
+  SCM_VALIDATE_PROC (3, release);
 
   NOINTS ();
   enc = GCMALLOC (sizeof (XML_Encoding), "XML-Encoding");
