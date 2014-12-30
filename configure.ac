@@ -45,6 +45,8 @@ AM_CONDITIONAL([TRIPPY],[test x':' != x"$mmc"])
 
 SNUGGLE_FLAGS
 
+SNUGGLE_CHECK_CLASSIC_HEADERS
+
 dnl Check if --with-expat[=DIR] is specified and
 dnl Expat >= 1.95.0 is installed in the system.
 dnl If yes, substitute EXPAT_CFLAGS, EXPAT_LIBS with regard to

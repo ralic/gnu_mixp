@@ -1,3 +1,26 @@
+2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Use SNUGGLE headers.
+
+	* configure.ac: Call ‘SNUGGLE_CHECK_CLASSIC_HEADERS’.
+	* src/Makefile.am (expat): Prefix thunk-name template w/ "scm_".
+	* src/gi.h: #include "snuggle/level.h", "snuggle/humdrum.h",
+	"snuggle/defsmob.h", "snuggle/finangle.h", "snuggle/modsup.h".
+	(NOINTS, INTSOK): Use ‘GI_LEVEL_1_8’.
+	(GI_LEVEL, GI_LEVEL_NOT_YET_1_8, NULLP, STRINGP, BOOLEAN)
+	(NUM_INT, SYMBOL, STRING, BSTRING, C_INT, VECREF, EQ, CONS, CAR)
+	(CDR, APPLY, LISTIFY, CALL0, CALL1, CALL2, DEFSMOB, GCMALLOC)
+	(GCFREE, GCRV, GH_DEFPROC, GH_MODULE_LINK_FUNC)
+	(MOD_INIT_LINK_THUNK): Delete #define:s, macros.
+	* src/expat.c (range_t): Delete typedef.
+	(RS, RLEN, FINANGLABLE_SCHEME_STRING_FROM_SYMBOL, ROZT_X)
+	(_FINANGLE, UNFINANGLE): Delete macros.
+	(SCM_VALIDATE_VECTOR_LEN): Use ‘GI_LEVEL_PRECISELY_1_8’.
+	(parser_p): Use ‘GI_LEVEL_1_8’.
+	(get_locus, JAM): Use ‘VECTOR_REF’.
+	(MOD_INIT_LINK_THUNK): De-bifucrate, keeping ‘!LAME_LAME_LAME’
+	branch; also, remove spurilous trailing semicolon.
+
 2014-12-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot] Add SNUGGLE headers.

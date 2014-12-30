@@ -58,7 +58,7 @@ iroot_DATA += expat
 
 expat: expat.la expat.exports
 	$(gx) gen-scheme-wrapper \
-	  -o $@ $< -g mixp -t init_~A_module \
+	  -o $@ $< -g mixp -t scm_init_~A_module \
 	  -i '$(pkglibdir)'
 endif !TRIPPY
 

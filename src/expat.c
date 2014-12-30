@@ -39,80 +39,6 @@
 #define PROCP(x)    (SCM_NIMP (x) && SCM_CLOSUREP (x))
 
 
-/* finangle.h --- Abstractions for Scheme objects to C string conversion
- *
- * serial 1
- */
-
-typedef struct {
-  char *s;
-  size_t len;
-} range_t;
-
-#define RS(svar)    c ## svar .s
-#define RLEN(svar)  c ## svar .len
-
-#if GI_LEVEL_NOT_YET_1_8
-
-#define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL(sym)      \
-  scm_string_copy (scm_symbol_to_string (sym))
-
-/* Coerce a Scheme (sub)string that is to be used in contexts where the
-   extracted C string is expected to be read-only and zero-terminated.  We
-   check this condition precisely instead of simply coercing all (sub)strings,
-   to avoid waste for those substrings that may in fact (by lucky accident)
-   already satisfy the condition.  */
-#define ROZT_X(x)                                       \
-  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
-    x = BSTRING (SCM_ROCHARS (x), SCM_ROLENGTH (x))
-
-#define _FINANGLE(svar,p1)  do                  \
-    {                                           \
-      if (p1)                                   \
-        ROZT_X (svar);                          \
-      RS (svar) = SCM_ROCHARS (svar);           \
-      RLEN (svar) = SCM_ROLENGTH (svar);        \
-    }                                           \
-  while (0)
-
-#define UNFINANGLE(svar)
-
-#else  /* !GI_LEVEL_NOT_YET_1_8 */
-
-#define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL  scm_symbol_to_string
-
-#define REND(svar)          RS (svar) [RLEN (svar)]
-#define NUL_AT_END_X(svar)  REND (svar) = '\0'
-
-#define _FINANGLE(svar,p1)  do                                  \
-    {                                                           \
-      RS (svar) = scm_to_locale_stringn (svar, &RLEN (svar));   \
-      if (RS (svar))                                            \
-        {                                                       \
-          if (p1 && REND (svar))                                \
-            {                                                   \
-              RS (svar) = realloc (RS (svar), 1 + RLEN (svar)); \
-              NUL_AT_END_X (svar);                              \
-            }                                                   \
-        }                                                       \
-      else                                                      \
-        RS (svar) = strdup ("");                                \
-    }                                                           \
-  while (0)
-
-#define UNFINANGLE(svar)  free (RS (svar))
-
-#endif  /* !GI_LEVEL_NOT_YET_1_8 */
-
-/* Use ‘FINANGLE_RAW’ when the consumer of the C string takes full range
-   (start address plus length) info.  Otherwise, ‘FINANGLE’.  */
-
-#define FINANGLE_RAW(svar)  _FINANGLE (svar, 0)
-#define FINANGLE(svar)      _FINANGLE (svar, 1)
-
-/* finangle.h ends here */
-
-
 struct enumsym
 {
   char *nm;
@@ -618,13 +544,13 @@ otherwise @code{#f}.  */)
 /* Guile 1.8.x ‘SCM_VALIDATE_VECTOR_LEN’ uses deprecated
    macros ‘SCM_VECTORP’ and ‘SCM_VECTOR_LENGTH’ internally.
    Work around this oversight.  */
-#if 0x0108 == GI_LEVEL
+#if GI_LEVEL_PRECISELY_1_8
 #undef SCM_VALIDATE_VECTOR_LEN
 #define SCM_VALIDATE_VECTOR_LEN(pos, v, len)            \
   SCM_ASSERT (scm_is_vector (v)                         \
               && len == scm_c_vector_length (v),        \
               v, pos, FUNC_NAME)
-#endif  /* 0x0108 == GI_LEVEL */
+#endif  /* GI_LEVEL_PRECISELY_1_8 */
 
 PRIMPROC
 (make_encoding, "make-xml-encoding", 3, 0, 0,
@@ -659,7 +585,7 @@ all conversion work.  */)
 
   /* The map goes directly into the XML_Encoding object.  */
   {
-#if GI_LEVEL_NOT_YET_1_8
+#if ! GI_LEVEL_1_8
     map_elts = SCM_VELTS (map);
 #else
     scm_t_array_handle handle;
@@ -669,7 +595,7 @@ all conversion work.  */)
 #endif
     for (i = 0; i < 256; i++)
       enc->map[i] = C_INT (map_elts[i]);
-#if !GI_LEVEL_NOT_YET_1_8
+#if GI_LEVEL_1_8
     scm_array_handle_release (&handle);
 #endif
   }
@@ -1149,7 +1075,7 @@ than constructing a new one.  If an element in @var{stash} is
     v = scm_make_vector (NUM_INT (4), SCM_UNSPECIFIED);
 
 #define JAM(n,f)                                        \
-  if (NOT_FALSEP (VECREF (v, NUM_INT (n))))             \
+  if (NOT_FALSEP (VECTOR_REF (v, n)))                   \
     scm_vector_set_x (v, NUM_INT (n), NUM_INT (f (p)))
 
   JAM (0, XML_GetCurrentLineNumber);
@@ -1219,17 +1145,9 @@ init_gexpat (void)
 #include "expat.x"
 }
 
-#ifdef LAME_LAME_LAME
-void
-init_mixp_expat_module (void)
-{
-  init_gexpat ();
-}
-#else
 MOD_INIT_LINK_THUNK ("mixp expat"
                      ,mixp_expat
-                     ,init_gexpat);
-#endif
+                     ,init_gexpat)
 
 /*
  * Local variables:
