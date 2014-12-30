@@ -1,5 +1,11 @@
 2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat slog] Use ‘SCM_VALIDATE_INT_COPY’.
+
+	* src/expat.c (parse_buffer): ...here.
+
+2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[expat int] Use ‘SCM_VALIDATE_PROC’, not ‘SCM_VALIDATE_CLOSURE’.
 
 	* src/expat.c (make_encoding): ...here.

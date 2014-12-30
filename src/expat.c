@@ -908,13 +908,14 @@ Return a symbolic status.  */)
 {
 #define FUNC_NAME s_parse_buffer
   XML_Parser p;
+  int clen;                            /* ∄ ‘SCM_VALIDATE_INT’.  */
 
   VALIDATE_PARSER ();
-  SCM_VALIDATE_INUM (2, len);
+  SCM_VALIDATE_INT_COPY (2, len, clen);
   UNBOUND_MEANS_FALSE (finalp);
 
   return symbolic_status
-    (XML_ParseBuffer (p, C_INT (len), NOT_FALSEP (finalp)));
+    (XML_ParseBuffer (p, clen, NOT_FALSEP (finalp)));
 #undef FUNC_NAME
 }
 
