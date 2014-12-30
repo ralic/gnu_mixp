@@ -43,6 +43,8 @@
 #define INTSOK()
 #endif
 
+#define PROCP(x)           PROCEDUREP (x)
+
 #define GIVENP(x)          (! SCM_UNBNDP (x))
 #define NOT_FALSEP(x)      (SCM_NFALSEP (x))
 

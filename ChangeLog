@@ -1,5 +1,12 @@
 2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[expat int] Use SNUGGLE ‘PROCEDUREP’.
+
+	* src/gi.h (PROCP): New macro.
+	* src/expat.c (PROCP): Delete macro.
+
+2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Use SNUGGLE headers.
 
 	* configure.ac: Call ‘SNUGGLE_CHECK_CLASSIC_HEADERS’.

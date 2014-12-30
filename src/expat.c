@@ -36,8 +36,6 @@
 #define UNBOUND_MEANS_FALSE(x) \
   if (! GIVENP (x)) x = SCM_BOOL_F
 
-#define PROCP(x)    (SCM_NIMP (x) && SCM_CLOSUREP (x))
-
 
 struct enumsym
 {
